@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import GoogleAuthService from '../services/GoogleAuthService'
+import GaneshaImage from '../assets/Ganesh.jpeg'
 
 const NewSignUpPage = () => {
   const [formData, setFormData] = useState({
@@ -14,8 +15,43 @@ const NewSignUpPage = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [agreeToTerms, setAgreeToTerms] = useState(false)
   const [isGoogleConfigured, setIsGoogleConfigured] = useState(false)
+  const [firstLine, setFirstLine] = useState('')
+  const [secondLine, setSecondLine] = useState('')
+  const [isFirstLineAnimating, setIsFirstLineAnimating] = useState(false)
+  const [isSecondLineAnimating, setIsSecondLineAnimating] = useState(false)
+  const [currentMantraIndex, setCurrentMantraIndex] = useState(0)
   const { signup } = useAuth()
   const navigate = useNavigate()
+
+  const mantraLines = [
+    [
+      "वक्रतुण्ड महाकाय सूर्यकोटि समप्रभ।",
+      "निर्विघ्नं कुरु मे देव सर्वकार्येषु सर्वदा॥"
+    ],
+    [
+      "विघ्नेश्वराय वरदाय सुरप्रियाय लम्बोदराय सकलाय जगद्धितायं।",
+      "एकदन्ताय शुद्घाय सुमुखाय नमो नमः।"
+    ],
+    [
+      "अमेयाय च हेरम्ब परशुधारकाय ते।",
+      "एकदंताय विद्‍महे। वक्रतुण्डाय धीमहि। तन्नो दंती प्रचोदयात्॥"
+    ]
+  ]
+
+  const mantraTranslations = [
+    {
+      romanized: "Vakratunda Mahakaya Suryakoti Samaprabha, Nirvighnam Kuru Me Deva Sarvakaryeshu Sarvada",
+      meaning: "O Lord with curved trunk and massive body, shining like million suns, remove all obstacles from my path in all endeavors always"
+    },
+    {
+      romanized: "Vighneshvaraya Varadaya Surapriyaya Lambodaraya Sakalaya Jagaddhitayam, Ekadantaya Shudghaya Sumukhaya Namo Namah",
+      meaning: "Salutations to the remover of obstacles, the boon giver, beloved of gods, pot-bellied one, complete one, benefactor of universe, single-tusked, pure and pleasant-faced"
+    },
+    {
+      romanized: "Ameyaya Cha Heramba Parashudhrakaya Te, Ekadantaya Vidmahe Vakratundaya Dhimahi Tanno Danti Prachodayat",
+      meaning: "To the immeasurable Heramba who holds the axe, we know the single-tusked one, we meditate on the curved-trunk one, may that tusked one inspire us"
+    }
+  ]
 
   useEffect(() => {
     // Check if Google Auth is configured and initialize it
@@ -35,6 +71,45 @@ const NewSignUpPage = () => {
 
     initGoogle()
   }, [])
+
+  // Sequential line-by-line animation effect for mantra
+  useEffect(() => {
+    const animateMantra = () => {
+      // Reset everything
+      setFirstLine('')
+      setSecondLine('')
+      setIsFirstLineAnimating(false)
+      setIsSecondLineAnimating(false)
+
+      // Use current index and cycle through mantras sequentially
+      const selectedMantra = mantraLines[currentMantraIndex]
+
+      // Start first line after a brief delay
+      setTimeout(() => {
+        setFirstLine(selectedMantra[0])
+        setIsFirstLineAnimating(true)
+        
+        // Start second line after first line animation completes
+        setTimeout(() => {
+          setSecondLine(selectedMantra[1])
+          setIsSecondLineAnimating(true)
+        }, 1000) // Increased wait time for much slower animation
+      }, 300)
+
+      // Move to next mantra in sequence after animation completes
+      setTimeout(() => {
+        setCurrentMantraIndex((prevIndex) => (prevIndex + 1) % mantraLines.length)
+      }, 6000) // Wait longer before switching to next mantra
+    }
+
+    // Initial animation
+    animateMantra()
+
+    // Repeat every 10 seconds (increased time to read mantras)
+    const timer = setInterval(animateMantra, 10000)
+
+    return () => clearInterval(timer)
+  }, [currentMantraIndex])
 
   const handleChange = (e) => {
     setFormData({
@@ -135,10 +210,16 @@ const NewSignUpPage = () => {
 
         {/* Main Ganesha Illustration */}
         <div className="relative z-10 flex flex-col items-center justify-center w-full p-12 text-white">
-          {/* Large Ganesha Icon */}
+          {/* Large Ganesha Image */}
           <div className="mb-8 relative">
-            <div className="w-48 h-48 bg-white/10 rounded-full flex items-center justify-center backdrop-blur-sm border border-white/20 shadow-2xl">
-              <span className="text-8xl">🐘</span>
+            <div className="w-48 h-48 bg-white/10 rounded-full flex items-center justify-center backdrop-blur-sm border border-white/20 shadow-2xl overflow-hidden relative">
+              <img 
+                src={GaneshaImage} 
+                alt="Lord Ganesha" 
+                className="w-full h-full object-cover rounded-full scale-110"
+              />
+              {/* Subtle overlay to blend the image with the design */}
+              <div className="absolute inset-0 bg-gradient-to-t from-orange-500/20 via-transparent to-transparent rounded-full"></div>
             </div>
             {/* Decorative elements around Ganesha */}
             <div className="absolute -top-4 -right-4 w-12 h-12 bg-yellow-400/80 rounded-full flex items-center justify-center animate-bounce">
@@ -159,16 +240,45 @@ const NewSignUpPage = () => {
             <p className="text-white/80 text-lg">श्री गणेशाय नमः</p>
           </div>
 
-          {/* Sacred Mantra */}
-          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20 text-center">
-            <p className="text-lg font-medium mb-2">
-              "वक्रतुण्ड महाकाय सूर्यकोटि समप्रभ"
-            </p>
-            <p className="text-white/80 text-sm">
-              Vakratunda Mahakaya Suryakoti Samaprabha
-            </p>
-            <p className="text-white/70 text-xs mt-2">
-              May Lord Ganesha remove all obstacles from your path
+          {/* Sacred Mantra with Typing Animation */}
+          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20 text-center min-h-[140px] flex flex-col justify-center">
+            <div className="text-lg font-medium mb-2 leading-relaxed min-h-[60px] flex flex-col items-center justify-center space-y-1">
+              {/* First Line */}
+              <div className="w-full flex justify-center">
+                {firstLine && (
+                  <div 
+                    className={`relative overflow-hidden ${isFirstLineAnimating ? 'animate-reveal-text' : ''}`}
+                    style={{ 
+                      animationDuration: '3s',
+                      animationFillMode: 'forwards'
+                    }}
+                  >
+                    <span className="mantra-glow whitespace-nowrap block">
+                      {firstLine}
+                    </span>
+                  </div>
+                )}
+              </div>
+              
+              {/* Second Line */}
+              <div className="w-full flex justify-center">
+                {secondLine && (
+                  <div 
+                    className={`relative overflow-hidden ${isSecondLineAnimating ? 'animate-reveal-text' : ''}`}
+                    style={{ 
+                      animationDuration: '3s',
+                      animationFillMode: 'forwards'
+                    }}
+                  >
+                    <span className="mantra-glow whitespace-nowrap block">
+                      {secondLine}
+                    </span>
+                  </div>
+                )}
+              </div>
+            </div>
+            <p className="text-white/70 text-sm mt-2">
+              {mantraTranslations[currentMantraIndex]?.meaning}
             </p>
           </div>
 
