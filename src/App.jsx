@@ -1,21 +1,23 @@
-import { useState } from 'react'
-import Header from './components/Header'
-import Hero from './components/Hero'
-import Features from './components/Features'
-import About from './components/About'
-import Contact from './components/Contact'
-import Footer from './components/Footer'
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { AuthProvider } from './contexts/AuthContext';
+import HomePage from './pages/HomePage';
+import LoginPage from './pages/LoginPage';
+import SignupPage from './pages/SignupPage';
 
 function App() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-yellow-50">
-      <Header />
-      <Hero />
-      <Features />
-      <About />
-      <Contact />
-      <Footer />
-    </div>
+    <AuthProvider>
+      <Router>
+        <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-yellow-50">
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/signup" element={<SignupPage />} />
+          </Routes>
+        </div>
+      </Router>
+    </AuthProvider>
   )
 }
 
