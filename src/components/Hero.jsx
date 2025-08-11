@@ -155,7 +155,6 @@ const Hero = ({ firstLine, secondLine, isFirstLineAnimating, isSecondLineAnimati
               {slides[currentSlide].subtitle}
             </p>
             
-<<<<<<< HEAD
             {/* Animated Sanskrit Mantra - Same as Signup Page */}
             <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20 text-center min-h-[140px] flex flex-col justify-center max-w-2xl mx-auto shadow-2xl">
               <div className="text-lg font-medium mb-2 leading-relaxed min-h-[60px] flex flex-col items-center justify-center space-y-1">
@@ -192,14 +191,6 @@ const Hero = ({ firstLine, secondLine, isFirstLineAnimating, isSecondLineAnimati
                     </div>
                   )}
                 </div>
-=======
-            {/* Sanskrit Mantra */}
-            <div className="bg-gradient-to-r from-orange-100 via-amber-50 to-red-100 p-4 rounded-2xl border border-orange-200 max-w-2xl mx-auto">
-              <p className="text-base md:text-lg lg:text-xl font-semibold text-orange-700 mb-2">
-                {slides[currentSlide].mantra}
-              </p>
-              <div className="flex items-center justify-center space-x-2 text-orange-600">
->>>>>>> 169d6e49be3c0929d0824efdba7deb418141d156
               </div>
               {mantraTranslations && mantraTranslations[currentMantraIndex] && (
                 <p className="text-orange-500 text-sm mt-2">
