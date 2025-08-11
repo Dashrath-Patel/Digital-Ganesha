@@ -195,12 +195,89 @@ html {
   }
 }
 
+/* Enhanced mantra glow and animation */
+.mantra-glow {
+  font-family: 'Noto Sans Devanagari', sans-serif;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.6), 
+               0 0 20px rgba(255, 255, 255, 0.4),
+               0 0 30px rgba(255, 200, 100, 0.3);
+  filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.5));
+  white-space: nowrap;
+}
+
+/* Left-to-right reveal animation */
+@keyframes reveal-text {
+  0% {
+    max-width: 0;
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  100% {
+    max-width: 100%;
+    opacity: 1;
+  }
+}
+
+.animate-reveal-text {
+  animation: reveal-text 3s ease-out forwards;
+  max-width: 0;
+  overflow: hidden;
+}
+
+/* Left-to-right reveal animation using width */
+@keyframes revealText {
+  0% {
+    width: 0%;
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  100% {
+    width: 100%;
+    opacity: 1;
+  }
+}
+
+.text-reveal {
+  animation: revealText 1.5s ease-out forwards;
+  overflow: hidden;
+  white-space: nowrap;
+  width: 0%;
+}
+
+/* Alternative slide-in animation */
+@keyframes slideInFromLeft {
+  0% {
+    opacity: 0;
+    transform: translateX(-50px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.slide-in-animation {
+  animation: slideInFromLeft 1.5s ease-out forwards;
+}
+
 .animate-spin-slow {
   animation: spin-slow 20s linear infinite;
 }
 
 .animate-spin-reverse {
   animation: spin-reverse 15s linear infinite;
+}
+
+.mantra-glow {
+  font-family: 'Noto Sans Devanagari', sans-serif;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.6), 
+               0 0 20px rgba(255, 255, 255, 0.4),
+               0 0 30px rgba(255, 200, 100, 0.3);
+  filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.5));
 }
 
 /* Mobile optimizations */
