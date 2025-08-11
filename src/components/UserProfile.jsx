@@ -26,10 +26,12 @@ const UserProfile = ({ isOpen, onClose }) => {
           <div className="text-center mb-6">
             <div className="w-20 h-20 bg-gradient-to-br from-orange-500 to-red-500 rounded-full flex items-center justify-center mx-auto mb-4">
               <span className="text-white text-2xl font-bold">
-                {user?.name?.charAt(0)?.toUpperCase() || 'U'}
+                {user?.firstName?.charAt(0)?.toUpperCase() || user?.name?.charAt(0)?.toUpperCase() || 'U'}
               </span>
             </div>
-            <h3 className="text-xl font-semibold text-gray-800">{user?.name}</h3>
+            <h3 className="text-xl font-semibold text-gray-800">
+              {user?.firstName ? `${user.firstName} ${user.lastName}` : user?.name || 'User'}
+            </h3>
             <p className="text-gray-600">{user?.email}</p>
           </div>
 
@@ -45,7 +47,7 @@ const UserProfile = ({ isOpen, onClose }) => {
           <div className="flex space-x-3">
             <button
               onClick={onClose}
-              className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+              className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
             >
               Close
             </button>
@@ -54,7 +56,7 @@ const UserProfile = ({ isOpen, onClose }) => {
                 logout()
                 onClose()
               }}
-              className="flex-1 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+              className="flex-1 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors font-medium shadow-sm hover:shadow-md"
             >
               Logout
             </button>
