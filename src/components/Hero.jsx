@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 
-const Hero = () => {
+const Hero = ({ firstLine, secondLine, isFirstLineAnimating, isSecondLineAnimating, currentMantraIndex, mantraTranslations }) => {
   const [currentSlide, setCurrentSlide] = useState(0)
   
   const slides = [
@@ -77,16 +77,48 @@ const Hero = () => {
               {slides[currentSlide].subtitle}
             </p>
             
-            {/* Sanskrit Mantra */}
-            <div className="bg-gradient-to-r from-orange-100 via-amber-50 to-red-100 p-4 rounded-2xl border border-orange-200 max-w-2xl mx-auto">
-              <p className="text-lg md:text-xl font-semibold text-orange-700 mb-2">
-                {slides[currentSlide].mantra}
-              </p>
-              <div className="flex items-center justify-center space-x-2 text-orange-600">
-                <span>🕉️</span>
-                <span className="text-sm">Sacred Mantra</span>
-                <span>🕉️</span>
+            {/* Animated Sanskrit Mantra - Same as Signup Page */}
+            <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20 text-center min-h-[140px] flex flex-col justify-center max-w-2xl mx-auto shadow-2xl">
+              <div className="text-lg font-medium mb-2 leading-relaxed min-h-[60px] flex flex-col items-center justify-center space-y-1">
+                {/* First Line */}
+                <div className="w-full flex justify-center">
+                  {firstLine && (
+                    <div 
+                      className={`relative overflow-hidden ${isFirstLineAnimating ? 'animate-reveal-text' : ''}`}
+                      style={{ 
+                        animationDuration: '3s',
+                        animationFillMode: 'forwards'
+                      }}
+                    >
+                      <span className="mantra-glow whitespace-nowrap block text-orange-700">
+                        {firstLine}
+                      </span>
+                    </div>
+                  )}
+                </div>
+                
+                {/* Second Line */}
+                <div className="w-full flex justify-center">
+                  {secondLine && (
+                    <div 
+                      className={`relative overflow-hidden ${isSecondLineAnimating ? 'animate-reveal-text' : ''}`}
+                      style={{ 
+                        animationDuration: '3s',
+                        animationFillMode: 'forwards'
+                      }}
+                    >
+                      <span className="mantra-glow whitespace-nowrap block text-orange-700">
+                        {secondLine}
+                      </span>
+                    </div>
+                  )}
+                </div>
               </div>
+              {mantraTranslations && mantraTranslations[currentMantraIndex] && (
+                <p className="text-orange-500 text-sm mt-2">
+                  {mantraTranslations[currentMantraIndex]?.meaning}
+                </p>
+              )}
             </div>
           </div>
 
