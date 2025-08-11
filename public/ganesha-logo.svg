@@ -1,0 +1,35 @@
+<!-- Ganesha SVG placeholder - replace with actual image -->
+<svg viewBox="0 0 200 300" xmlns="http://www.w3.org/2000/svg">
+  <!-- This is a simplified SVG representation -->
+  <!-- In production, you would use the actual image file -->
+  <defs>
+    <style>
+      .ganesha-body { fill: #FF4500; }
+      .ganesha-crown { fill: #DAA520; }
+      .ganesha-text { fill: #DAA520; font-family: Arial, sans-serif; font-size: 16px; }
+    </style>
+  </defs>
+  
+  <!-- Crown -->
+  <path class="ganesha-crown" d="M100 20 L80 50 L120 50 Z"/>
+  
+  <!-- Head -->
+  <ellipse cx="100" cy="80" rx="40" ry="35" class="ganesha-body"/>
+  
+  <!-- Ears -->
+  <ellipse cx="60" cy="80" rx="20" ry="30" class="ganesha-body"/>
+  <ellipse cx="140" cy="80" rx="20" ry="30" class="ganesha-body"/>
+  
+  <!-- Trunk -->
+  <path class="ganesha-body" d="M100 100 Q90 120 110 140 Q85 160 100 180"/>
+  
+  <!-- Body -->
+  <ellipse cx="100" cy="180" rx="35" ry="40" class="ganesha-body"/>
+  
+  <!-- Arms -->
+  <ellipse cx="65" cy="160" rx="15" ry="25" class="ganesha-body"/>
+  <ellipse cx="135" cy="160" rx="15" ry="25" class="ganesha-body"/>
+  
+  <!-- Sanskrit text -->
+  <text x="100" y="250" text-anchor="middle" class="ganesha-text">श्री सिद्धिविनायक</text>
+</svg>
