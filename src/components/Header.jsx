@@ -26,13 +26,29 @@ const Header = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2 hover:opacity-80 transition-opacity">
-            <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-red-500 rounded-full flex items-center justify-center">
-              <span className="text-white text-xl font-bold">🕉️</span>
+          <Link to="/" className="flex items-center space-x-3 hover:opacity-90 transition-all duration-200 group">
+            {/* Ganesha Image */}
+            <div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-orange-300 shadow-lg group-hover:shadow-xl group-hover:scale-105 transition-all duration-200">
+              <div className="w-full h-full bg-gradient-to-br from-orange-100 to-amber-100 flex items-center justify-center">
+                {/* Placeholder until actual image is added */}
+                <img src="../../public/ganesha-navbar.jpg" alt="ganesha" className="text-2xl" />
+              </div>
+              {/* Uncomment when ganesha-logo.png is added to public folder */}
+              {/* <img 
+                src="/ganesha-logo.png" 
+                alt="श्री गणेश" 
+                className="w-full h-full object-cover"
+              /> */}
             </div>
-            <span className="text-2xl font-bold bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">
-              Digital Ganesha
-            </span>
+            <div className="flex flex-col">
+              <span className="text-2xl font-bold tracking-widest bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent group-hover:from-orange-500 group-hover:to-red-500 transition-all duration-200">
+                KTYA
+              </span>
+
+              <span className="text-xs text-black font-medium -mt-1">
+                Krishna Township Youth Assosiation
+              </span>
+            </div>
           </Link>
 
           {/* Desktop Navigation */}
@@ -121,7 +137,7 @@ const Header = () => {
                   {item.name}
                 </a>
               ))}
-              
+
               {/* Mobile Auth Section */}
               {isAuthenticated ? (
                 <div className="border-t border-gray-200 pt-3 mt-3">
