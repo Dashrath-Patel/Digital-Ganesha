@@ -58,16 +58,16 @@ const Header = () => {
                 >
                   <div className="w-8 h-8 bg-gradient-to-br from-orange-500 to-red-500 rounded-full flex items-center justify-center">
                     <span className="text-white text-sm font-bold">
-                      {user?.name?.charAt(0)?.toUpperCase() || 'U'}
+                      {user?.firstName?.charAt(0)?.toUpperCase() || user?.name?.charAt(0)?.toUpperCase() || 'U'}
                     </span>
                   </div>
                   <span className="text-gray-700 font-medium">
-                    Welcome, {user?.name?.split(' ')[0]}
+                    Welcome, {user?.firstName || user?.name?.split(' ')[0] || 'User'}
                   </span>
                 </button>
                 <button
                   onClick={handleLogout}
-                  className="text-gray-600 hover:text-red-600 transition-colors duration-200 font-medium"
+                  className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition-colors duration-200 font-medium shadow-sm hover:shadow-md"
                 >
                   Logout
                 </button>
@@ -134,11 +134,11 @@ const Header = () => {
                   >
                     <div className="w-8 h-8 bg-gradient-to-br from-orange-500 to-red-500 rounded-full flex items-center justify-center">
                       <span className="text-white text-sm font-bold">
-                        {user?.name?.charAt(0)?.toUpperCase() || 'U'}
+                        {user?.firstName?.charAt(0)?.toUpperCase() || user?.name?.charAt(0)?.toUpperCase() || 'U'}
                       </span>
                     </div>
                     <span className="text-gray-700 font-medium">
-                      {user?.name}
+                      {user?.firstName ? `${user.firstName} ${user.lastName}` : user?.name || 'User'}
                     </span>
                   </button>
                   <button
@@ -146,7 +146,7 @@ const Header = () => {
                       handleLogout()
                       setIsMenuOpen(false)
                     }}
-                    className="w-full text-left px-3 py-2 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-md transition-colors duration-200 font-medium mt-2"
+                    className="w-full bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-md transition-colors duration-200 font-medium mt-2 shadow-sm hover:shadow-md"
                   >
                     Logout
                   </button>
