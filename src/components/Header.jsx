@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
 const Header = () => {
@@ -7,6 +7,7 @@ const Header = () => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const { user, logout, isAuthenticated } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const navigation = [
     { name: 'Home', href: '#home' },
@@ -14,6 +15,32 @@ const Header = () => {
     { name: 'About', href: '#about' },
     { name: 'Contact', href: '#contact' },
   ];
+
+  const handleNavClick = (href) => {
+    const sectionId = href.substring(1); // Remove the # symbol
+    
+    // If we're not on the home page, navigate to home page first
+    if (location.pathname !== '/') {
+      navigate('/', { replace: true });
+      // Wait a bit for navigation to complete, then scroll
+      setTimeout(() => {
+        scrollToSection(sectionId);
+      }, 100);
+    } else {
+      // If we're already on home page, just scroll
+      scrollToSection(sectionId);
+    }
+  };
+
+  const scrollToSection = (sectionId) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ 
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
+  };
 
   const handleLogout = () => {
     logout();
@@ -48,14 +75,14 @@ const Header = () => {
           {/* Desktop Navigation */}
           <nav className="hidden md:flex space-x-8">
             {navigation.map((item) => (
-              <a
+              <button
                 key={item.name}
-                href={item.href}
+                onClick={() => handleNavClick(item.href)}
                 className="font-semibold hover:opacity-80 transition-colors duration-200 drop-shadow-lg hover:drop-shadow-xl"
                 style={{ color: 'rgb(255, 215, 0)' }}
               >
                 {item.name}
-              </a>
+              </button>
             ))}
           </nav>
 
@@ -69,11 +96,11 @@ const Header = () => {
                 >
                   <div className="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center">
                     <span className="text-red-900 text-sm font-bold">
-                      {user?.firstName?.charAt(0)?.toUpperCase() || user?.name?.charAt(0)?.toUpperCase() || 'U'}
+                      {user?.firstName?.charAt(0)?.toUpperCase() || (user?.name ? user.name.charAt(0)?.toUpperCase() : 'U')}
                     </span>
                   </div>
                   <span className="font-medium" style={{ color: 'rgb(255, 215, 0)' }}>
-                    Welcome, {user?.firstName || user?.name?.split(' ')[0] || 'User'}
+                    Welcome, {user?.firstName || (user?.name ? user.name.split(' ')[0] : 'User')}
                   </span>
                 </button>
                 <button
@@ -125,15 +152,17 @@ const Header = () => {
           <div className="md:hidden">
             <div className="px-2 pt-2 pb-3 space-y-1 rounded-lg mt-2 shadow-xl border border-red-300/30" style={{ backgroundColor: 'rgba(200, 70, 70, 0.9)' }}>
               {navigation.map((item) => (
-                <a
+                <button
                   key={item.name}
-                  href={item.href}
-                  className="block px-3 py-2 font-semibold hover:opacity-80 hover:bg-white/10 rounded-md transition-colors duration-200 drop-shadow-md"
+                  onClick={() => {
+                    handleNavClick(item.href);
+                    setIsMenuOpen(false);
+                  }}
+                  className="block w-full text-left px-3 py-2 font-semibold hover:opacity-80 hover:bg-white/10 rounded-md transition-colors duration-200 drop-shadow-md"
                   style={{ color: 'rgb(255, 215, 0)' }}
-                  onClick={() => setIsMenuOpen(false)}
                 >
                   {item.name}
-                </a>
+                </button>
               ))}
 
               {/* Mobile Auth Section */}
