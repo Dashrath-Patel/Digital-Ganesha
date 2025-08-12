@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { USER_ROLES } from '../services/AdminService';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -90,6 +91,27 @@ const Header = () => {
           <div className="hidden md:flex items-center space-x-4">
             {isAuthenticated ? (
               <div className="flex items-center space-x-4">
+                {/* Role-based Dashboard Links */}
+                {user?.role === USER_ROLES.ADMIN && (
+                  <Link
+                    to="/admin"
+                    className="flex items-center space-x-1 bg-yellow-600/20 hover:bg-yellow-600/30 text-golden px-3 py-2 rounded-lg transition-colors duration-200 border border-yellow-500/30"
+                  >
+                    <span className="text-sm">🛡️</span>
+                    <span className="font-medium">Admin</span>
+                  </Link>
+                )}
+                
+                {(user?.role === USER_ROLES.COMMITTEE_MEMBER || user?.isCommitteeMember) && (
+                  <Link
+                    to="/committee"
+                    className="flex items-center space-x-1 bg-yellow-600/20 hover:bg-yellow-600/30 text-golden px-3 py-2 rounded-lg transition-colors duration-200 border border-yellow-500/30"
+                  >
+                    <span className="text-sm">🏛️</span>
+                    <span className="font-medium">Committee</span>
+                  </Link>
+                )}
+
                 <button
                   onClick={() => setIsProfileOpen(true)}
                   className="flex items-center space-x-2 hover:bg-white/10 rounded-lg px-3 py-2 transition-colors duration-200"
@@ -168,6 +190,29 @@ const Header = () => {
               {/* Mobile Auth Section */}
               {isAuthenticated ? (
                 <div className="border-t border-red-300/30 pt-3 mt-3">
+                  {/* Role-based Dashboard Links for Mobile */}
+                  {user?.role === USER_ROLES.ADMIN && (
+                    <Link
+                      to="/admin"
+                      onClick={() => setIsMenuOpen(false)}
+                      className="flex items-center space-x-2 px-3 py-2 w-full hover:bg-white/10 rounded-md transition-colors duration-200 mb-2"
+                    >
+                      <span className="text-sm">🛡️</span>
+                      <span className="font-medium text-golden">Admin Dashboard</span>
+                    </Link>
+                  )}
+                  
+                  {(user?.role === USER_ROLES.COMMITTEE_MEMBER || user?.isCommitteeMember) && (
+                    <Link
+                      to="/committee"
+                      onClick={() => setIsMenuOpen(false)}
+                      className="flex items-center space-x-2 px-3 py-2 w-full hover:bg-white/10 rounded-md transition-colors duration-200 mb-2"
+                    >
+                      <span className="text-sm">🏛️</span>
+                      <span className="font-medium text-golden">Committee Dashboard</span>
+                    </Link>
+                  )}
+
                   <button
                     onClick={() => {
                       setIsProfileOpen(true);
