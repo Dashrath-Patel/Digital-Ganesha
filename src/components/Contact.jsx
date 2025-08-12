@@ -49,7 +49,7 @@ const Contact = () => {
     {
       icon: "📍",
       title: "Visit Us",
-      description: "Our headquarters location",
+      description: "KTYA Ground, Krishna Township Vasai (W)",
       contact: "Mumbai, Maharashtra, India",
       action: "#"
     }
