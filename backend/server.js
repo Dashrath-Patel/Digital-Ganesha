@@ -17,6 +17,7 @@ import eventRoutes from './routes/events.js'
 import mediaRoutes from './routes/media.js'
 import notificationRoutes from './routes/notifications.js'
 import analyticsRoutes from './routes/analytics.js'
+import adminRoutes from './routes/admin.js'
 
 // Import middleware
 import { errorHandler } from './middleware/errorHandler.js'
@@ -118,6 +119,7 @@ app.use('/api/events', eventRoutes)
 app.use('/api/media', authenticateToken, mediaRoutes)
 app.use('/api/notifications', authenticateToken, notificationRoutes)
 app.use('/api/analytics', authenticateToken, analyticsRoutes)
+app.use('/api/admin', authenticateToken, adminRoutes)
 
 // Serve uploaded files
 app.use('/uploads', express.static('uploads'))
@@ -175,6 +177,16 @@ app.get('/api/docs', (req, res) => {
         'GET /api/analytics/dashboard': 'Get dashboard analytics',
         'GET /api/analytics/events': 'Get event analytics',
         'GET /api/analytics/users': 'Get user analytics'
+      },
+      admin: {
+        'GET /api/admin/users': 'Get all users (Admin only)',
+        'GET /api/admin/dashboard-stats': 'Get admin dashboard stats',
+        'PUT /api/admin/users/:userId/role': 'Update user role',
+        'PUT /api/admin/users/:userId/committee': 'Assign/remove committee member',
+        'PUT /api/admin/users/:userId/status': 'Toggle user active status',
+        'PUT /api/admin/users/bulk/roles': 'Bulk update user roles',
+        'GET /api/admin/users/:userId/activity': 'Get user activity logs',
+        'GET /api/admin/users/export': 'Export users data'
       }
     }
   })
