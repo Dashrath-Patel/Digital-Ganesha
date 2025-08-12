@@ -123,7 +123,7 @@ const Contact = () => {
               <div className="flex space-x-4">
                 {/* Facebook - Blue Logo */}
                 <a
-                  href="https://facebook.com"
+                  href="https://www.facebook.com/vasaichiambemaa"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="bg-white rounded-full p-3 transition-all duration-300 transform hover:scale-110"
@@ -156,7 +156,7 @@ const Contact = () => {
 
                 {/* YouTube - Red Logo */}
                 <a
-                  href="https://youtu.be/1WMSzYOWI-A?si=88pOTrFtY5_n-G_j"
+                  href="https://www.youtube.com/@ktyautsavmandal"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="bg-white  rounded-full p-3 transition-all duration-300 transform hover:scale-110"
