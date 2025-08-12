@@ -264,15 +264,15 @@ const Contact = () => {
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="bg-gradient-to-br from-red-900/80 to-amber-900/80 backdrop-blur-sm rounded-xl p-6 border border-yellow-500/30 shadow-lg">
-              <h4 className="text-lg font-bold text-golden mb-3">How do I register my mandal?</h4>
+              <h4 className="text-lg font-bold text-golden mb-3">How do I register to KTYA mandal?</h4>
               <p className="text-golden-light">
-                You can register your mandal through our platform by providing basic information about your organization and location. Our team will verify and approve your listing within 24-48 hours.
+                You can register to our mandal by contacting any of our KTYA committe members.
               </p>
             </div>
             <div className="bg-gradient-to-br from-red-900/80 to-amber-900/80 backdrop-blur-sm rounded-xl p-6 border border-yellow-500/30 shadow-lg">
               <h4 className="text-lg font-bold text-golden mb-3">Is the platform free to use?</h4>
               <p className="text-golden-light">
-                Yes! Our basic features are completely free for devotees. We offer premium features for mandal organizers and businesses at affordable rates.
+                Yes! Our basic features are completely free for devotees. We also offer premium features for mandal organizers and businesses.
               </p>
             </div>
             <div className="bg-gradient-to-br from-red-900/80 to-amber-900/80 backdrop-blur-sm rounded-xl p-6 border border-yellow-500/30 shadow-lg">
@@ -284,7 +284,7 @@ const Contact = () => {
             <div className="bg-gradient-to-br from-red-900/80 to-amber-900/80 backdrop-blur-sm rounded-xl p-6 border border-yellow-500/30 shadow-lg">
               <h4 className="text-lg font-bold text-golden mb-3">How do virtual darshan sessions work?</h4>
               <p className="text-golden-light">
-                Our virtual darshan feature uses 360° cameras and live streaming technology to provide immersive experiences. You can participate in real-time aarti and prayers from anywhere in the world.
+                Our virtual darshan feature uses 360° cameras and live streaming linked to our Instagram Channel. You can participate in real-time aarti and prayers from anywhere.
               </p>
             </div>
           </div>
