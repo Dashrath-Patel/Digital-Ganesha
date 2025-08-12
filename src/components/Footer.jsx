@@ -77,7 +77,7 @@ const Footer = () => {
                 />
               </div>
               <span className="text-2xl font-bold text-golden">
-                कृष्णा टाउनशिपचा राजा
+                कृष्णा टाउनशिपचा सम्राट
               </span>
             </div>
 
@@ -85,7 +85,7 @@ const Footer = () => {
               कृष्णा टाउनशिपमधील KTYA मंडळाच्या भक्तीने आणलेला हा देव,
               विश्वासाचा आणि एकतेचा प्रतीक.
               सर्व विघ्ने दूर करून, समृद्धी आणि आनंदाचा आशीर्वाद देणारा,
-              आमच्या गणेशोत्सवाचा गौरवशाली राजा!"
+              आमच्या गणेशोत्सवाचा गौरवशाली सम्राट!"
             </p>
 
             {/* Social Media */}
@@ -162,7 +162,7 @@ const Footer = () => {
         <div className="mt-16 pt-8 border-t border-yellow-500/30">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <div>
-              <div className="text-3xl font-bold text-golden mb-2">1K+</div>
+              <div className="text-3xl font-bold text-golden mb-2">45K+</div>
               <div className="text-golden-light text-sm">Devotees Served</div>
             </div>
             <div>

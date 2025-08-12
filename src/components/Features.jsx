@@ -87,7 +87,7 @@ const Features = () => {
             className="text-4xl md:text-5xl font-bold text-golden mb-6"
           >
             <span className="bg-gradient-to-r from-golden via-golden-light to-golden-dark bg-clip-text text-transparent">
-              Revolutionary Features
+              Our Digital Features
             </span>
           </h2>
           <p className="text-xl text-golden-light max-w-3xl mx-auto leading-relaxed">
