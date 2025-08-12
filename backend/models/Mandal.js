@@ -385,7 +385,7 @@ mandalSchema.virtual('activeEventsCount').get(function() {
 
 // Indexes
 mandalSchema.index({ name: 'text', description: 'text', tagline: 'text' })
-mandalSchema.index({ location: '2dsphere' })
+// Note: location 2dsphere index is automatically created by coordinates field index: '2dsphere'
 mandalSchema.index({ category: 1 })
 mandalSchema.index({ isActive: 1, status: 1 })
 mandalSchema.index({ createdAt: -1 })

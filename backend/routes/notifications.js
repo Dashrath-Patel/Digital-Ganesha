@@ -188,7 +188,7 @@ const notificationSchema = new mongoose.Schema({
     default: 3
   },
   lastRetryAt: Date,
-  errors: [{
+  deliveryErrors: [{
     message: String,
     timestamp: {
       type: Date,
