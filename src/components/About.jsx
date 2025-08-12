@@ -30,8 +30,25 @@ const About = () => {
   ]
 
   return (
-    <section id="about" className="py-20 bg-gradient-to-br from-red-900/10 via-yellow-900/5 to-amber-900/10">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="about" className="py-20 relative" style={{ backgroundColor: 'rgb(21, 21, 21)' }}>
+      {/* Enhanced Spiritual Background - Without Circles */}
+      <div className="absolute inset-0" style={{ backgroundColor: 'rgba(160, 40, 40, 0.3)' }}>
+        {/* Floating Petals */}
+        <div className="absolute inset-0 opacity-40">
+          <div className="absolute top-60 left-10 text-4xl text-golden animate-float">🌺</div>
+          <div className="absolute top-60 right-10 text-3xl text-golden-light animate-float-delay">🌸</div>
+        </div>
+      </div>
+
+      {/* Enhanced Floating Spiritual Elements */}
+      <div className="absolute top-20 left-5 text-6xl opacity-20 animate-pulse">🕉️</div>
+      <div className="absolute top-20 right-5 text-6xl opacity-20 animate-pulse">🕉️</div>
+      <div className="absolute bottom-10 left-10 text-4xl opacity-30 animate-pulse delay-700">📿</div>
+      <div className="absolute bottom-10 right-5 text-5xl opacity-25 animate-bounce delay-500">🌺</div>
+      <div className="absolute top-1/2 left-5 text-3xl opacity-20 animate-pulse delay-1000">🔱</div>
+      <div className="absolute top-1/2 right-5 text-3xl opacity-20 animate-bounce delay-1200">🐚</div>
+      
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold text-golden mb-6">
@@ -49,13 +66,13 @@ const About = () => {
           {/* Left Content */}
           <div className="space-y-6">
             <div className="text-6xl mb-6">🐘</div>
-            <h3 className="text-3xl font-bold text-gray-900 mb-6">
+            <h3 className="text-3xl font-bold text-golden mb-6">
               Our Mission: Digital Devotion for Modern Times
             </h3>
-            <p className="text-lg text-gray-600 leading-relaxed mb-6">
+            <p className="text-lg text-golden-light leading-relaxed mb-6">
               In an increasingly connected world, we believe that spiritual experiences should be accessible to everyone, everywhere. Digital Ganesha transforms how devotees engage with festivals, creating meaningful connections between tradition and technology.
             </p>
-            <p className="text-lg text-gray-600 leading-relaxed mb-8">
+            <p className="text-lg text-golden-light leading-relaxed mb-8">
               Our platform empowers communities to organize better festivals, helps devotees discover and participate in celebrations, and ensures that the beautiful traditions of Ganesh worship continue to thrive in the digital age.
             </p>
             
@@ -67,7 +84,7 @@ const About = () => {
                     <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                   </svg>
                 </div>
-                <span className="text-gray-700 font-medium">Seamless integration of tradition and technology</span>
+                <span className="text-golden font-medium">Seamless integration of tradition and technology</span>
               </div>
               <div className="flex items-center space-x-3">
                 <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
@@ -75,7 +92,7 @@ const About = () => {
                     <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                   </svg>
                 </div>
-                <span className="text-gray-700 font-medium">Global accessibility to local celebrations</span>
+                <span className="text-golden font-medium">Global accessibility to local celebrations</span>
               </div>
               <div className="flex items-center space-x-3">
                 <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
@@ -83,7 +100,7 @@ const About = () => {
                     <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                   </svg>
                 </div>
-                <span className="text-gray-700 font-medium">Eco-friendly and sustainable practices</span>
+                <span className="text-golden font-medium">Eco-friendly and sustainable practices</span>
               </div>
             </div>
           </div>
@@ -105,7 +122,7 @@ const About = () => {
 
         {/* Values Section */}
         <div className="mb-16">
-          <h3 className="text-3xl font-bold text-center text-gray-900 mb-12">
+          <h3 className="text-3xl font-bold text-center text-golden mb-12">
             Our Core Values
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -114,35 +131,17 @@ const About = () => {
                 key={index}
                 className="text-center group"
               >
-                <div className="w-20 h-20 bg-gradient-to-br from-orange-500 to-red-500 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
+                <div className="w-20 h-20 bg-gradient-to-br from-yellow-600 to-yellow-500 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
                   <span className="text-3xl">{value.icon}</span>
                 </div>
-                <h4 className="text-xl font-bold text-gray-900 mb-4 group-hover:text-orange-600 transition-colors duration-300">
+                <h4 className="text-xl font-bold text-golden mb-4 group-hover:text-golden-light transition-colors duration-300">
                   {value.title}
                 </h4>
-                <p className="text-gray-600 leading-relaxed">
+                <p className="text-golden-light leading-relaxed">
                   {value.description}
                 </p>
               </div>
             ))}
-          </div>
-        </div>
-
-        {/* Team Section */}
-        <div className="text-center">
-          <div className="bg-gradient-to-r from-orange-500 to-red-500 rounded-3xl p-8 md:p-12 text-white">
-            <h3 className="text-3xl font-bold mb-4">Join Our Growing Community</h3>
-            <p className="text-xl mb-8 opacity-90 max-w-2xl mx-auto">
-              Be part of a movement that's revolutionizing how we celebrate and connect with our spiritual traditions
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="bg-white text-orange-600 px-8 py-3 rounded-full font-semibold hover:bg-gray-100 transition-all duration-300 transform hover:scale-105">
-                🤝 Become a Partner
-              </button>
-              <button className="border-2 border-white text-white px-8 py-3 rounded-full font-semibold hover:bg-white hover:text-orange-600 transition-all duration-300 transform hover:scale-105">
-                📧 Contact Us
-              </button>
-            </div>
           </div>
         </div>
       </div>
