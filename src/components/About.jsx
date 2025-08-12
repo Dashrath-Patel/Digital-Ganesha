@@ -30,16 +30,16 @@ const About = () => {
   ]
 
   return (
-    <section id="about" className="py-20 bg-gradient-to-br from-orange-50 via-white to-yellow-50">
+    <section id="about" className="py-20 bg-gradient-to-br from-red-900/10 via-yellow-900/5 to-amber-900/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-            <span className="bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">
+          <h2 className="text-4xl md:text-5xl font-bold text-golden mb-6">
+            <span className="bg-gradient-to-r from-golden via-golden-light to-golden-dark bg-clip-text text-transparent">
               About Digital Ganesha
             </span>
           </h2>
-          <p className="text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed">
+          <p className="text-xl text-golden-light max-w-4xl mx-auto leading-relaxed">
             We are bridging the gap between ancient traditions and modern technology, creating a platform that honors Lord Ganesha while serving today's digital devotees.
           </p>
         </div>

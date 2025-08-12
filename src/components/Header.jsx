@@ -1,52 +1,46 @@
-import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import { useAuth } from '../contexts/AuthContext'
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 
 const Header = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [isProfileOpen, setIsProfileOpen] = useState(false)
-  const { user, logout, isAuthenticated } = useAuth()
-  const navigate = useNavigate()
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const { user, logout, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
 
   const navigation = [
     { name: 'Home', href: '#home' },
     { name: 'Features', href: '#features' },
     { name: 'About', href: '#about' },
     { name: 'Contact', href: '#contact' },
-  ]
+  ];
 
   const handleLogout = () => {
-    logout()
-    setIsProfileOpen(false)
-    navigate('/')
-  }
+    logout();
+    setIsProfileOpen(false);
+    navigate('/');
+  };
 
   return (
-    <header className="fixed w-full top-0 z-50 bg-white/80 backdrop-blur-md border-b border-orange-100">
+    <header className="fixed w-full top-0 z-50 backdrop-blur-md border-b border-red-200/30 shadow-sm" style={{ backgroundColor: 'rgba(180, 50, 50, 0.85)' }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-3 hover:opacity-90 transition-all duration-200 group">
             {/* Ganesha Image */}
-            <div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-orange-300 shadow-lg group-hover:shadow-xl group-hover:scale-105 transition-all duration-200">
-              <div className="w-full h-full bg-gradient-to-br from-orange-100 to-amber-100 flex items-center justify-center">
+            <div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-yellow-400 shadow-lg group-hover:shadow-xl group-hover:scale-105 transition-all duration-200">
+              <div className="w-full h-full bg-gradient-to-br from-yellow-400/20 to-yellow-500/20 flex items-center justify-center">
                 {/* Placeholder until actual image is added */}
-                <img src="../../public/ganesha-navbar.jpg" alt="ganesha" className="text-2xl" />
+                <img src="../../public/header-logo.png" alt="ganesha" className="text-2xl" />
               </div>
-              {/* Uncomment when ganesha-logo.png is added to public folder */}
-              {/* <img 
-                src="/ganesha-logo.png" 
-                alt="श्री गणेश" 
-                className="w-full h-full object-cover"
-              /> */}
             </div>
             <div className="flex flex-col">
-              <span className="text-2xl font-bold tracking-widest bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent group-hover:from-orange-500 group-hover:to-red-500 transition-all duration-200">
+              <span className="text-2xl font-bold tracking-widest drop-shadow-lg group-hover:opacity-90 transition-all duration-200" style={{ color: 'rgb(255, 215, 0)' }}>
                 KTYA
               </span>
 
-              <span className="text-xs text-black font-medium -mt-1">
-                Krishna Township Youth Assosiation
+              <span className="text-xs font-medium -mt-1 drop-shadow-md" style={{ color: 'rgb(255, 215, 0)' }}>
+                Krishna Township Youth Association
               </span>
             </div>
           </Link>
@@ -57,7 +51,8 @@ const Header = () => {
               <a
                 key={item.name}
                 href={item.href}
-                className="text-gray-700 hover:text-orange-600 transition-colors duration-200 font-medium"
+                className="font-semibold hover:opacity-80 transition-colors duration-200 drop-shadow-lg hover:drop-shadow-xl"
+                style={{ color: 'rgb(255, 215, 0)' }}
               >
                 {item.name}
               </a>
@@ -70,20 +65,20 @@ const Header = () => {
               <div className="flex items-center space-x-4">
                 <button
                   onClick={() => setIsProfileOpen(true)}
-                  className="flex items-center space-x-2 hover:bg-orange-50 rounded-lg px-3 py-2 transition-colors duration-200"
+                  className="flex items-center space-x-2 hover:bg-white/10 rounded-lg px-3 py-2 transition-colors duration-200"
                 >
-                  <div className="w-8 h-8 bg-gradient-to-br from-orange-500 to-red-500 rounded-full flex items-center justify-center">
-                    <span className="text-white text-sm font-bold">
+                  <div className="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center">
+                    <span className="text-red-900 text-sm font-bold">
                       {user?.firstName?.charAt(0)?.toUpperCase() || user?.name?.charAt(0)?.toUpperCase() || 'U'}
                     </span>
                   </div>
-                  <span className="text-gray-700 font-medium">
+                  <span className="font-medium" style={{ color: 'rgb(255, 215, 0)' }}>
                     Welcome, {user?.firstName || user?.name?.split(' ')[0] || 'User'}
                   </span>
                 </button>
                 <button
                   onClick={handleLogout}
-                  className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition-colors duration-200 font-medium shadow-sm hover:shadow-md"
+                  className="bg-yellow-500 hover:bg-yellow-400 text-red-900 px-4 py-2 rounded-lg transition-colors duration-200 font-medium shadow-sm hover:shadow-md"
                 >
                   Logout
                 </button>
@@ -92,13 +87,14 @@ const Header = () => {
               <div className="flex items-center space-x-3">
                 <Link
                   to="/login"
-                  className="text-gray-700 hover:text-orange-600 transition-colors duration-200 font-medium"
+                  className="font-semibold hover:opacity-80 transition-colors duration-200 drop-shadow-lg"
+                  style={{ color: 'rgb(255, 215, 0)' }}
                 >
                   Login
                 </Link>
                 <Link
                   to="/signup"
-                  className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-6 py-2 rounded-full hover:from-orange-600 hover:to-red-600 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+                  className="bg-yellow-500 hover:bg-yellow-400 text-red-900 px-6 py-2 rounded-full transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 font-semibold"
                 >
                   Sign Up
                 </Link>
@@ -110,9 +106,10 @@ const Header = () => {
           <div className="md:hidden">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="text-gray-700 hover:text-orange-600 transition-colors duration-200"
+              className="hover:opacity-80 transition-colors duration-200 drop-shadow-lg"
+              style={{ color: 'rgb(255, 215, 0)' }}
             >
-              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                 {isMenuOpen ? (
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 ) : (
@@ -126,12 +123,13 @@ const Header = () => {
         {/* Mobile Navigation */}
         {isMenuOpen && (
           <div className="md:hidden">
-            <div className="px-2 pt-2 pb-3 space-y-1 bg-white/90 backdrop-blur-md rounded-lg mt-2 shadow-lg">
+            <div className="px-2 pt-2 pb-3 space-y-1 rounded-lg mt-2 shadow-xl border border-red-300/30" style={{ backgroundColor: 'rgba(200, 70, 70, 0.9)' }}>
               {navigation.map((item) => (
                 <a
                   key={item.name}
                   href={item.href}
-                  className="block px-3 py-2 text-gray-700 hover:text-orange-600 hover:bg-orange-50 rounded-md transition-colors duration-200"
+                  className="block px-3 py-2 font-semibold hover:opacity-80 hover:bg-white/10 rounded-md transition-colors duration-200 drop-shadow-md"
+                  style={{ color: 'rgb(255, 215, 0)' }}
                   onClick={() => setIsMenuOpen(false)}
                 >
                   {item.name}
@@ -140,46 +138,47 @@ const Header = () => {
 
               {/* Mobile Auth Section */}
               {isAuthenticated ? (
-                <div className="border-t border-gray-200 pt-3 mt-3">
+                <div className="border-t border-red-300/30 pt-3 mt-3">
                   <button
                     onClick={() => {
-                      setIsProfileOpen(true)
-                      setIsMenuOpen(false)
+                      setIsProfileOpen(true);
+                      setIsMenuOpen(false);
                     }}
-                    className="flex items-center space-x-3 px-3 py-2 w-full hover:bg-orange-50 rounded-md transition-colors duration-200"
+                    className="flex items-center space-x-3 px-3 py-2 w-full hover:bg-white/10 rounded-md transition-colors duration-200"
                   >
-                    <div className="w-8 h-8 bg-gradient-to-br from-orange-500 to-red-500 rounded-full flex items-center justify-center">
-                      <span className="text-white text-sm font-bold">
+                    <div className="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center">
+                      <span className="text-red-900 text-sm font-bold">
                         {user?.firstName?.charAt(0)?.toUpperCase() || user?.name?.charAt(0)?.toUpperCase() || 'U'}
                       </span>
                     </div>
-                    <span className="text-gray-700 font-medium">
+                    <span className="font-medium" style={{ color: 'rgb(255, 215, 0)' }}>
                       {user?.firstName ? `${user.firstName} ${user.lastName}` : user?.name || 'User'}
                     </span>
                   </button>
                   <button
                     onClick={() => {
-                      handleLogout()
-                      setIsMenuOpen(false)
+                      handleLogout();
+                      setIsMenuOpen(false);
                     }}
-                    className="w-full bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-md transition-colors duration-200 font-medium mt-2 shadow-sm hover:shadow-md"
+                    className="w-full bg-yellow-500 hover:bg-yellow-400 text-red-900 px-3 py-2 rounded-md transition-colors duration-200 font-medium mt-2 shadow-sm hover:shadow-md"
                   >
                     Logout
                   </button>
                 </div>
               ) : (
-                <div className="border-t border-gray-200 pt-3 mt-3 space-y-2">
+                <div className="border-t border-red-300/30 pt-3 mt-3 space-y-2">
                   <Link
                     to="/login"
                     onClick={() => setIsMenuOpen(false)}
-                    className="block w-full text-left px-3 py-2 text-gray-700 hover:text-orange-600 hover:bg-orange-50 rounded-md transition-colors duration-200 font-medium"
+                    className="block w-full text-left px-3 py-2 font-semibold hover:opacity-80 hover:bg-white/10 rounded-md transition-colors duration-200 drop-shadow-md"
+                    style={{ color: 'rgb(255, 215, 0)' }}
                   >
                     Login
                   </Link>
                   <Link
                     to="/signup"
                     onClick={() => setIsMenuOpen(false)}
-                    className="block w-full bg-gradient-to-r from-orange-500 to-red-500 text-white px-4 py-2 rounded-full hover:from-orange-600 hover:to-red-600 transition-all duration-200 text-center"
+                    className="block w-full bg-yellow-500 hover:bg-yellow-400 text-red-900 px-3 py-2 rounded-md transition-all duration-200 font-semibold shadow-lg text-center"
                   >
                     Sign Up
                   </Link>
@@ -190,7 +189,7 @@ const Header = () => {
         )}
       </div>
     </header>
-  )
-}
+  );
+};
 
-export default Header
+export default Header;

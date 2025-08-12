@@ -96,24 +96,24 @@ const Hero = ({ firstLine, secondLine, isFirstLineAnimating, isSecondLineAnimati
   }, [currentSlide])
 
   return (
-    <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20 pb-8 px-4">
+    <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20 pb-8 px-4" style={{  backgroundColor: 'rgba(227, 60, 60, 0.85)' }}>
       {/* Enhanced Spiritual Background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-amber-100 via-orange-50 to-red-100">
+      <div className="absolute inset-0" style={{ backgroundColor: 'rgba(160, 40, 40, 0.3)' }}>
         {/* Mandala Pattern Background */}
-        <div className="absolute inset-0 opacity-10">
+        <div className="absolute inset-0 opacity-30">
           <svg className="w-full h-full" viewBox="0 0 100 100">
-            <circle cx="50" cy="50" r="40" fill="none" stroke="currentColor" strokeWidth="0.3" className="text-orange-500"/>
-            <circle cx="50" cy="50" r="30" fill="none" stroke="currentColor" strokeWidth="0.3" className="text-red-500"/>
-            <circle cx="50" cy="50" r="20" fill="none" stroke="currentColor" strokeWidth="0.3" className="text-amber-500"/>
-            <circle cx="50" cy="50" r="10" fill="none" stroke="currentColor" strokeWidth="0.3" className="text-orange-600"/>
-            <path d="M50 10 L50 90 M10 50 L90 50 M25 25 L75 75 M75 25 L25 75" stroke="currentColor" strokeWidth="0.2" className="text-orange-400"/>
+            <circle cx="50" cy="50" r="40" fill="none" stroke="currentColor" strokeWidth="0.3" className="text-golden"/>
+            <circle cx="50" cy="50" r="30" fill="none" stroke="currentColor" strokeWidth="0.3" className="text-golden-light"/>
+            <circle cx="50" cy="50" r="20" fill="none" stroke="currentColor" strokeWidth="0.3" className="text-golden"/>
+            <circle cx="50" cy="50" r="10" fill="none" stroke="currentColor" strokeWidth="0.3" className="text-golden-dark"/>
+            <path d="M50 10 L50 90 M10 50 L90 50 M25 25 L75 75 M75 25 L25 75" stroke="currentColor" strokeWidth="0.2" className="text-golden"/>
           </svg>
         </div>
         
         {/* Floating Petals */}
-        <div className="absolute inset-0 opacity-20">
-          <div className="absolute top-60 left-10 text-4xl text-red-500 animate-float">🌺</div>
-          <div className="absolute top-60 right-10 text-3xl text-orange-500 animate-float-delay">🌸</div>
+        <div className="absolute inset-0 opacity-40">
+          <div className="absolute top-60 left-10 text-4xl text-golden animate-float">🌺</div>
+          <div className="absolute top-60 right-10 text-3xl text-golden-light animate-float-delay">🌸</div>
         </div>
       </div>
 
@@ -144,19 +144,19 @@ const Hero = ({ firstLine, secondLine, isFirstLineAnimating, isSecondLineAnimati
             
             <h1 
               ref={titleRef}
-              className="text-3xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-gray-900 leading-tight animate-image-reveal px-4"
+              className="text-3xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-golden leading-tight animate-image-reveal px-4"
             >
-              <span className="bg-gradient-to-r from-orange-600 via-red-500 to-amber-600 bg-clip-text text-transparent drop-shadow-sm">
+              <span className="bg-gradient-to-r from-golden via-golden-light to-golden-dark bg-clip-text text-transparent drop-shadow-sm">
                 {slides[currentSlide].title}
               </span>
             </h1>
             
-            <p className="text-lg md:text-xl lg:text-2xl text-gray-700 max-w-3xl mx-auto leading-relaxed px-4">
+            <p className="text-lg md:text-xl lg:text-2xl text-golden-light max-w-3xl mx-auto leading-relaxed px-4">
               {slides[currentSlide].subtitle}
             </p>
             
             {/* Animated Sanskrit Mantra - Same as Signup Page */}
-            <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20 text-center min-h-[140px] flex flex-col justify-center max-w-2xl mx-auto shadow-2xl">
+            <div className="bg-white/20 backdrop-blur-md rounded-2xl p-6 border border-golden/30 text-center min-h-[140px] flex flex-col justify-center max-w-2xl mx-auto shadow-2xl">
               <div className="text-lg font-medium mb-2 leading-relaxed min-h-[60px] flex flex-col items-center justify-center space-y-1">
                 {/* First Line */}
                 <div className="w-full flex justify-center">
@@ -168,7 +168,7 @@ const Hero = ({ firstLine, secondLine, isFirstLineAnimating, isSecondLineAnimati
                         animationFillMode: 'forwards'
                       }}
                     >
-                      <span className="mantra-glow whitespace-nowrap block text-orange-700">
+                      <span className="mantra-glow whitespace-nowrap block" style={{ color: 'rgb(255, 215, 0)' }}>
                         {firstLine}
                       </span>
                     </div>
@@ -185,7 +185,7 @@ const Hero = ({ firstLine, secondLine, isFirstLineAnimating, isSecondLineAnimati
                         animationFillMode: 'forwards'
                       }}
                     >
-                      <span className="mantra-glow whitespace-nowrap block text-orange-700">
+                      <span className="mantra-glow whitespace-nowrap block" style={{ color: 'rgb(255, 215, 0)' }}>
                         {secondLine}
                       </span>
                     </div>
@@ -193,7 +193,7 @@ const Hero = ({ firstLine, secondLine, isFirstLineAnimating, isSecondLineAnimati
                 </div>
               </div>
               {mantraTranslations && mantraTranslations[currentMantraIndex] && (
-                <p className="text-orange-500 text-sm mt-2">
+                <p className="text-golden-light text-sm mt-2">
                   {mantraTranslations[currentMantraIndex]?.meaning}
                 </p>
               )}
@@ -202,12 +202,12 @@ const Hero = ({ firstLine, secondLine, isFirstLineAnimating, isSecondLineAnimati
 
           {/* Divine CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 md:gap-6 justify-center items-center px-4">
-            <button className="bg-gradient-to-r from-orange-500 via-red-500 to-amber-500 text-white px-8 md:px-10 py-3 md:py-4 rounded-full text-base md:text-lg font-semibold hover:from-orange-600 hover:via-red-600 hover:to-amber-600 transition-all duration-300 shadow-2xl hover:shadow-orange-500/30 transform hover:scale-105 hover:-translate-y-1 flex items-center space-x-2">
+            <button className="bg-gradient-to-r from-yellow-600 via-yellow-500 to-amber-500 text-red-900 px-8 md:px-10 py-3 md:py-4 rounded-full text-base md:text-lg font-semibold hover:from-yellow-500 hover:via-yellow-400 hover:to-amber-400 transition-all duration-300 shadow-2xl hover:shadow-yellow-500/30 transform hover:scale-105 hover:-translate-y-1 flex items-center space-x-2">
               <span>🎪</span>
               <span>Sacred Festivals</span>
               <span>🙏</span>
             </button>
-            <button className="border-2 border-orange-500 text-orange-600 px-8 md:px-10 py-3 md:py-4 rounded-full text-base md:text-lg font-semibold hover:bg-orange-500 hover:text-white transition-all duration-300 transform hover:scale-105 flex items-center space-x-2">
+            <button className="border-2 border-golden text-golden px-8 md:px-10 py-3 md:py-4 rounded-full text-base md:text-lg font-semibold hover:bg-golden hover:text-red-900 transition-all duration-300 transform hover:scale-105 flex items-center space-x-2">
               <span>📿</span>
               <span>Gallery</span>
               <span>🪔</span>
@@ -221,8 +221,8 @@ const Hero = ({ firstLine, secondLine, isFirstLineAnimating, isSecondLineAnimati
                 key={index}
                 className={`w-3 h-3 md:w-4 md:h-4 rounded-full transition-all duration-300 border-2 ${
                   index === currentSlide 
-                    ? 'bg-orange-500 border-orange-600 scale-125 shadow-lg' 
-                    : 'bg-orange-100 border-orange-300 hover:bg-orange-200'
+                    ? 'bg-golden border-golden-dark scale-125 shadow-lg' 
+                    : 'bg-golden/30 border-golden/60 hover:bg-golden/50'
                 }`}
                 onClick={() => setCurrentSlide(index)}
               />
