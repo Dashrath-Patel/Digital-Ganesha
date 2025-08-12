@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
-import NewSignUpPage from './pages/NewSignUpPage';
+import SignUpPage from './pages/SignUpPage';
 
 function App() {
   return (
@@ -12,8 +12,8 @@ function App() {
         <div className="min-h-screen">
           <Routes>
             <Route path="/" element={<HomePage />} />
-            <Route path="/login" element={<div className="auth-page min-h-screen"><LoginPage /></div>} />
-            <Route path="/signup" element={<div className="auth-page min-h-screen"><NewSignUpPage /></div>} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/signup" element={<SignUpPage />} />
           </Routes>
         </div>
       </Router>
