@@ -58,15 +58,26 @@ const Features = () => {
   return (
     <section 
       id="features" 
-      className="py-20 bg-gradient-to-br from-red-900/10 via-yellow-900/5 to-amber-900/10 transition-colors duration-300 relative overflow-hidden"
+      className="py-20 relative"
+      style={{ backgroundColor: 'rgb(21, 21, 21)' }}
       aria-labelledby="features-heading"
     >
-      {/* Background decoration */}
-      <div className="absolute inset-0 opacity-20">
-        <div className="absolute top-20 left-20 w-72 h-72 bg-gradient-to-r from-yellow-600/30 to-amber-600/30 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-20 right-20 w-96 h-96 bg-gradient-to-r from-golden/20 to-golden-light/20 rounded-full blur-3xl"></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-gradient-to-r from-amber-700/20 to-yellow-700/20 rounded-full blur-3xl"></div>
+      {/* Enhanced Spiritual Background - Without Circles */}
+      <div className="absolute inset-0" style={{ backgroundColor: 'rgba(160, 40, 40, 0.3)' }}>
+        {/* Floating Petals */}
+        <div className="absolute inset-0 opacity-40">
+          <div className="absolute top-60 left-10 text-4xl text-golden animate-float">🌺</div>
+          <div className="absolute top-60 right-10 text-3xl text-golden-light animate-float-delay">🌸</div>
+        </div>
       </div>
+
+      {/* Enhanced Floating Spiritual Elements */}
+      <div className="absolute top-20 left-5 text-6xl opacity-20 animate-pulse">🕉️</div>
+      <div className="absolute top-20 right-5 text-6xl opacity-20 animate-pulse">🕉️</div>
+      <div className="absolute bottom-10 left-10 text-4xl opacity-30 animate-pulse delay-700">📿</div>
+      <div className="absolute bottom-10 right-5 text-5xl opacity-25 animate-bounce delay-500">🌺</div>
+      <div className="absolute top-1/2 left-5 text-3xl opacity-20 animate-pulse delay-1000">🔱</div>
+      <div className="absolute top-1/2 right-5 text-3xl opacity-20 animate-bounce delay-1200">🐚</div>
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}
@@ -97,10 +108,10 @@ const Features = () => {
             >
               {/* Icon */}
               <div 
-                className={`w-20 h-20 bg-gradient-to-r ${feature.color} rounded-3xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500 shadow-2xl backdrop-blur-sm border border-white/20`}
+                className={`w-20 h-20 bg-gradient-to-r from-yellow-600 to-yellow-500 rounded-3xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500 shadow-2xl backdrop-blur-sm border border-yellow-500/30`}
                 aria-hidden="true"
               >
-                <span className="text-3xl filter drop-shadow-lg">{feature.icon}</span>
+                <span className="text-3xl filter drop-shadow-lg text-red-900">{feature.icon}</span>
               </div>
 
               {/* Content */}
@@ -129,27 +140,6 @@ const Features = () => {
               </div>
             </div>
           ))}
-        </div>
-
-        {/* Call to Action */}
-        <div className="text-center mt-16">
-          <div className="relative bg-white/10 dark:bg-gray-800/10 backdrop-blur-2xl rounded-3xl p-8 md:p-12 border border-white/20 dark:border-gray-700/20 shadow-2xl">
-            <div className="absolute inset-0 bg-gradient-to-r from-golden/10 to-golden-light/10 rounded-3xl"></div>
-            <div className="relative z-10">
-              <h3 className="text-3xl font-bold text-golden mb-4 filter drop-shadow-sm">
-                Ready to Transform Your Festival Experience?
-              </h3>
-              <p className="text-xl text-golden-light mb-8 max-w-2xl mx-auto filter drop-shadow-sm">
-                Join thousands of devotees already using our platform to enhance their spiritual journey
-              </p>
-              <button 
-                className="bg-gradient-to-r from-golden-dark to-golden text-red-900 px-8 py-4 rounded-full text-lg font-semibold hover:from-golden-light hover:to-golden-dark transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-golden focus:ring-offset-2 backdrop-blur-sm filter drop-shadow-lg"
-                aria-label="Get started with Digital Ganesha"
-              >
-                Get Started Today
-              </button>
-            </div>
-          </div>
         </div>
       </div>
     </section>

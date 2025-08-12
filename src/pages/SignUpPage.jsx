@@ -4,7 +4,6 @@ import { useAuth } from '../contexts/AuthContext'
 import GoogleAuthService from '../services/GoogleAuthService'
 import GaneshaImage from '../assets/Ganesh.jpeg'
 import Header from '../components/Header'
-import Footer from '../components/Footer'
 
 const SignUpPage = () => {
   const [formData, setFormData] = useState({
@@ -17,6 +16,12 @@ const SignUpPage = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [agreeToTerms, setAgreeToTerms] = useState(false)
   const [isGoogleConfigured, setIsGoogleConfigured] = useState(false)
+  const [passwordStrength, setPasswordStrength] = useState({
+    score: 0,
+    feedback: '',
+    color: 'bg-gray-300',
+    width: '0%'
+  })
   const [firstLine, setFirstLine] = useState('')
   const [secondLine, setSecondLine] = useState('')
   const [isFirstLineAnimating, setIsFirstLineAnimating] = useState(false)
@@ -101,11 +106,115 @@ const SignUpPage = () => {
     return () => clearInterval(timer)
   }, [currentMantraIndex])
 
+  // Password strength calculation
+  const calculatePasswordStrength = (password) => {
+    if (!password) {
+      return {
+        score: 0,
+        feedback: '',
+        color: 'bg-gray-300',
+        width: '0%'
+      }
+    }
+
+    let score = 0
+    let feedback = []
+    
+    // Length check
+    if (password.length >= 8) {
+      score += 1
+    } else {
+      feedback.push('At least 8 characters')
+    }
+    
+    // Uppercase check
+    if (/[A-Z]/.test(password)) {
+      score += 1
+    } else {
+      feedback.push('One uppercase letter')
+    }
+    
+    // Lowercase check
+    if (/[a-z]/.test(password)) {
+      score += 1
+    } else {
+      feedback.push('One lowercase letter')
+    }
+    
+    // Number check
+    if (/[0-9]/.test(password)) {
+      score += 1
+    } else {
+      feedback.push('One number')
+    }
+    
+    // Special character check
+    if (/[^A-Za-z0-9]/.test(password)) {
+      score += 1
+    } else {
+      feedback.push('One special character')
+    }
+
+    // Determine strength level
+    let strengthText = ''
+    let color = ''
+    let width = ''
+
+    switch (score) {
+      case 0:
+      case 1:
+        strengthText = 'Very Weak'
+        color = 'bg-red-500'
+        width = '20%'
+        break
+      case 2:
+        strengthText = 'Weak'
+        color = 'bg-orange-500'
+        width = '40%'
+        break
+      case 3:
+        strengthText = 'Fair'
+        color = 'bg-yellow-500'
+        width = '60%'
+        break
+      case 4:
+        strengthText = 'Good'
+        color = 'bg-blue-500'
+        width = '80%'
+        break
+      case 5:
+        strengthText = 'Strong'
+        color = 'bg-green-500'
+        width = '100%'
+        break
+      default:
+        strengthText = 'Very Weak'
+        color = 'bg-red-500'
+        width = '20%'
+    }
+
+    return {
+      score,
+      feedback: feedback.length > 0 ? `Missing: ${feedback.join(', ')}` : 'Strong password! 🔒',
+      color,
+      width,
+      strengthText
+    }
+  }
+
   const handleChange = (e) => {
+    const { name, value } = e.target
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [name]: value
     })
+    
+    // Calculate password strength when password field changes
+    if (name === 'password') {
+      const strength = calculatePasswordStrength(value)
+      setPasswordStrength(strength)
+    }
+    
     setError('')
   }
 
@@ -123,6 +232,12 @@ const SignUpPage = () => {
 
     if (formData.password.length < 6) {
       setError('Password must be at least 6 characters long')
+      setIsLoading(false)
+      return
+    }
+
+    if (passwordStrength.score < 3) {
+      setError('Please choose a stronger password. Your password should include uppercase, lowercase, numbers, and special characters.')
       setIsLoading(false)
       return
     }
@@ -165,19 +280,19 @@ const SignUpPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-red-50">
+    <div className="relative">
       <Header />
       
       <div className="pt-16">
         <div className="flex min-h-[calc(100vh-4rem)]">
           {/* Left Side - Spiritual Ganesha Design */}
-          <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-orange-500 via-red-500 to-amber-600 relative overflow-hidden">
+          <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-red-800 via-red-700 to-amber-700 relative overflow-hidden">
             {/* Animated Background Elements */}
             <div className="absolute inset-0">
               {/* Floating Om Symbols */}
-              <div className="absolute top-20 left-20 text-6xl text-white/20 animate-pulse">🕉️</div>
-              <div className="absolute top-40 right-20 text-4xl text-white/15 animate-bounce">🕉️</div>
-              <div className="absolute bottom-40 left-10 text-5xl text-white/10">🕉️</div>
+              <div className="absolute top-20 left-20 text-6xl text-yellow-300/20 animate-pulse">🕉️</div>
+              <div className="absolute top-40 right-20 text-4xl text-yellow-200/15 animate-bounce">🕉️</div>
+              <div className="absolute bottom-40 left-10 text-5xl text-yellow-300/10">🕉️</div>
               
               {/* Floating Diyas */}
               <div className="absolute top-60 left-40 text-3xl text-yellow-200/30 animate-pulse">🪔</div>
@@ -259,7 +374,7 @@ const SignUpPage = () => {
           </div>
 
           {/* Right Side - Sign Up Form */}
-          <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-gray-50">
+          <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-gradient-to-br from-red-950/90 to-amber-900/90 backdrop-blur-sm">
             <div className="w-full max-w-md">
               {/* Header */}
               <div className="text-center mb-8">
@@ -267,18 +382,18 @@ const SignUpPage = () => {
                   <div></div>
                   <Link 
                     to="/login" 
-                    className="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+                    className="bg-yellow-600/20 hover:bg-yellow-500/30 text-yellow-300 border border-yellow-500/30 px-4 py-2 rounded-lg text-sm font-medium transition-colors backdrop-blur-sm"
                   >
                     Sign In
                   </Link>
                 </div>
                 
-                <h2 className="text-3xl font-bold text-gray-900 mb-2">Join the Divine Community</h2>
-                <p className="text-gray-600">Create your account and connect with Ganesha devotees worldwide</p>
+                <h2 className="text-3xl font-bold text-yellow-300 mb-2">Join the Divine Community</h2>
+                <p className="text-yellow-200/80">Create your account and connect with Ganesha devotees worldwide</p>
               </div>
 
               {error && (
-                <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg mb-6 flex items-center">
+                <div className="bg-red-800/50 border border-red-500/50 text-red-300 px-4 py-3 rounded-lg mb-6 flex items-center backdrop-blur-sm">
                   <span className="mr-2">⚠️</span>
                   {error}
                 </div>
@@ -287,7 +402,7 @@ const SignUpPage = () => {
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-1">
+                    <label htmlFor="firstName" className="block text-sm font-medium text-yellow-300 mb-1">
                       First Name
                     </label>
                     <input
@@ -297,12 +412,12 @@ const SignUpPage = () => {
                       value={formData.firstName}
                       onChange={handleChange}
                       required
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                      className="w-full px-3 py-2 bg-red-900/50 border border-yellow-500/30 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 text-yellow-100 placeholder-yellow-300/50 backdrop-blur-sm"
                       placeholder="First name"
                     />
                   </div>
                   <div>
-                    <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-1">
+                    <label htmlFor="lastName" className="block text-sm font-medium text-yellow-300 mb-1">
                       Last Name
                     </label>
                     <input
@@ -312,14 +427,14 @@ const SignUpPage = () => {
                       value={formData.lastName}
                       onChange={handleChange}
                       required
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                      className="w-full px-3 py-2 bg-red-900/50 border border-yellow-500/30 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 text-yellow-100 placeholder-yellow-300/50 backdrop-blur-sm"
                       placeholder="Last name"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="email" className="block text-sm font-medium text-yellow-300 mb-1">
                     Email Address
                   </label>
                   <input
@@ -329,13 +444,13 @@ const SignUpPage = () => {
                     value={formData.email}
                     onChange={handleChange}
                     required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    className="w-full px-3 py-2 bg-red-900/50 border border-yellow-500/30 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 text-yellow-100 placeholder-yellow-300/50 backdrop-blur-sm"
                     placeholder="Enter your email"
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="password" className="block text-sm font-medium text-yellow-300 mb-1">
                     Password
                   </label>
                   <input
@@ -345,9 +460,33 @@ const SignUpPage = () => {
                     value={formData.password}
                     onChange={handleChange}
                     required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    className="w-full px-3 py-2 bg-red-900/50 border border-yellow-500/30 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 text-yellow-100 placeholder-yellow-300/50 backdrop-blur-sm"
                     placeholder="Create a password"
                   />
+                  
+                  {/* Password Strength Meter */}
+                  {formData.password && (
+                    <div className="mt-2">
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-xs text-yellow-200">Password Strength:</span>
+                        <span className={`text-xs font-medium ${
+                          passwordStrength.score <= 2 ? 'text-red-300' :
+                          passwordStrength.score === 3 ? 'text-yellow-300' :
+                          passwordStrength.score === 4 ? 'text-blue-300' :
+                          'text-green-300'
+                        }`}>
+                          {passwordStrength.strengthText}
+                        </span>
+                      </div>
+                      <div className="w-full bg-red-900/30 rounded-full h-2 backdrop-blur-sm">
+                        <div 
+                          className={`h-2 rounded-full transition-all duration-300 ${passwordStrength.color}`}
+                          style={{ width: passwordStrength.width }}
+                        ></div>
+                      </div>
+                      <p className="text-xs text-yellow-200/80 mt-1">{passwordStrength.feedback}</p>
+                    </div>
+                  )}
                 </div>
 
                 <div className="flex items-center">
@@ -356,15 +495,15 @@ const SignUpPage = () => {
                     id="terms"
                     checked={agreeToTerms}
                     onChange={(e) => setAgreeToTerms(e.target.checked)}
-                    className="h-4 w-4 text-orange-600 focus:ring-orange-500 border-gray-300 rounded"
+                    className="h-4 w-4 text-yellow-600 focus:ring-yellow-500 border-yellow-500/30 rounded bg-red-900/50"
                   />
-                  <label htmlFor="terms" className="ml-2 block text-sm text-gray-700">
+                  <label htmlFor="terms" className="ml-2 block text-sm text-yellow-200">
                     I agree to the{' '}
-                    <a href="#" className="text-orange-600 hover:text-orange-700">
+                    <a href="#" className="text-yellow-300 hover:text-yellow-200 underline">
                       Terms of use
                     </a>{' '}
                     and{' '}
-                    <a href="#" className="text-orange-600 hover:text-orange-700">
+                    <a href="#" className="text-yellow-300 hover:text-yellow-200 underline">
                       Privacy Policy
                     </a>
                   </label>
@@ -373,11 +512,11 @@ const SignUpPage = () => {
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white py-3 px-4 rounded-lg hover:from-orange-600 hover:to-red-600 transition-all duration-300 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-gradient-to-r from-yellow-600 to-yellow-500 text-red-900 py-3 px-4 rounded-lg hover:from-yellow-500 hover:to-yellow-400 transition-all duration-300 font-medium disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
                 >
                   {isLoading ? (
                     <>
-                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2 inline-block"></div>
+                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-red-900 mr-2 inline-block"></div>
                       Creating Account...
                     </>
                   ) : (
@@ -387,9 +526,9 @@ const SignUpPage = () => {
               </form>
 
               <div className="mt-6 text-center">
-                <p className="text-gray-600">
+                <p className="text-yellow-200">
                   Already have an account?{' '}
-                  <Link to="/login" className="text-orange-600 hover:text-orange-700 font-medium">
+                  <Link to="/login" className="text-yellow-300 hover:text-yellow-200 font-medium underline">
                     Sign in
                   </Link>
                 </p>
@@ -398,10 +537,10 @@ const SignUpPage = () => {
               <div className="mt-6">
                 <div className="relative">
                   <div className="absolute inset-0 flex items-center">
-                    <div className="w-full border-t border-gray-300" />
+                    <div className="w-full border-t border-yellow-500/30" />
                   </div>
                   <div className="relative flex justify-center text-sm">
-                    <span className="px-2 bg-gray-50 text-gray-500">Or continue with</span>
+                    <span className="px-2 bg-gradient-to-r from-red-950/90 to-amber-900/90 text-yellow-200">Or continue with</span>
                   </div>
                 </div>
 
@@ -409,7 +548,7 @@ const SignUpPage = () => {
                   <button
                     onClick={handleGoogleSignup}
                     disabled={isLoading}
-                    className="mt-4 w-full bg-white border border-gray-300 rounded-lg px-4 py-3 text-gray-700 font-medium hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                    className="mt-4 w-full bg-red-900/50 border border-yellow-500/30 rounded-lg px-4 py-3 text-yellow-200 font-medium hover:bg-red-800/50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center backdrop-blur-sm"
                   >
                     <svg className="w-5 h-5 mr-3" viewBox="0 0 24 24">
                       <path fill="#4285f4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -420,7 +559,7 @@ const SignUpPage = () => {
                     Continue with Google
                   </button>
                 ) : (
-                  <div className="mt-4 w-full bg-gray-100 border border-gray-300 rounded-lg px-4 py-3 text-gray-500 text-center">
+                  <div className="mt-4 w-full bg-red-900/30 border border-yellow-500/20 rounded-lg px-4 py-3 text-yellow-300/70 text-center backdrop-blur-sm">
                     Google Sign-up temporarily unavailable
                   </div>
                 )}
@@ -429,8 +568,6 @@ const SignUpPage = () => {
           </div>
         </div>
       </div>
-      
-      <Footer />
     </div>
   )
 }
