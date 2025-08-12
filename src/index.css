@@ -1,41 +1,55 @@
 @import "tailwindcss";
 
-/* Global color scheme for main app (excluding login/signup) */
+/* Enhanced global spiritual theme */
 body {
-  background-color: rgba(117, 9, 9, 1);
-  color: rgba(218, 165, 32, 1); /* Gold color for better contrast */
+  background: linear-gradient(135deg, #7f1d1d 0%, #7f1d1d 35%, #92400e 100%);
+  color: rgb(255, 215, 0);
+  min-height: 100vh;
 }
 
-/* Specific styles for login and signup pages to override global styles */
-.auth-page {
-  background-color: white !important;
-  color: #374151 !important; /* Gray-700 for login/signup pages */
+/* Spiritual color palette */
+:root {
+  --sacred-gold: rgb(255, 215, 0);
+  --sacred-gold-light: rgb(255, 223, 86);
+  --sacred-gold-dark: rgb(218, 165, 32);
+  --sacred-red-dark: #7f1d1d;
+  --sacred-red: #991b1b;
+  --sacred-amber: #92400e;
 }
 
 /* Enhanced golden text colors for better readability */
 .text-golden {
-  color: rgba(218, 165, 32, 1);
+  color: var(--sacred-gold);
 }
 
 .text-golden-light {
-  color: rgba(255, 215, 0, 1);
+  color: var(--sacred-gold-light);
 }
 
 .text-golden-dark {
-  color: rgba(184, 134, 11, 1);
+  color: var(--sacred-gold-dark);
 }
 
 /* Background color utilities */
 .bg-golden {
-  background-color: rgba(218, 165, 32, 1);
+  background-color: var(--sacred-gold);
 }
 
 .bg-golden-light {
-  background-color: rgba(255, 215, 0, 1);
+  background-color: var(--sacred-gold-light);
 }
 
 .bg-golden-dark {
-  background-color: rgba(184, 134, 11, 1);
+  background-color: var(--sacred-gold-dark);
+}
+
+/* Enhanced spiritual gradients */
+.spiritual-gradient {
+  background: linear-gradient(135deg, var(--sacred-red-dark) 0%, var(--sacred-red) 35%, var(--sacred-amber) 100%);
+}
+
+.spiritual-gradient-reverse {
+  background: linear-gradient(315deg, var(--sacred-red-dark) 0%, var(--sacred-red) 35%, var(--sacred-amber) 100%);
 }
 
 /* Gradient classes for golden theme */

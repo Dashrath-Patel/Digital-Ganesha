@@ -56,8 +56,25 @@ const Contact = () => {
   ]
 
   return (
-    <section id="contact" className="py-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="contact" className="py-20 relative" style={{ backgroundColor: 'rgb(21, 21, 21)' }}>
+      {/* Enhanced Spiritual Background - Without Circles */}
+      <div className="absolute inset-0" style={{ backgroundColor: 'rgba(160, 40, 40, 0.3)' }}>
+        {/* Floating Petals */}
+        <div className="absolute inset-0 opacity-40">
+          <div className="absolute top-60 left-10 text-4xl text-golden animate-float">🌺</div>
+          <div className="absolute top-60 right-10 text-3xl text-golden-light animate-float-delay">🌸</div>
+        </div>
+      </div>
+
+      {/* Enhanced Floating Spiritual Elements */}
+      <div className="absolute top-20 left-5 text-6xl opacity-20 animate-pulse">🕉️</div>
+      <div className="absolute top-20 right-5 text-6xl opacity-20 animate-pulse">🕉️</div>
+      <div className="absolute bottom-10 left-10 text-4xl opacity-30 animate-pulse delay-700">📿</div>
+      <div className="absolute bottom-10 right-5 text-5xl opacity-25 animate-bounce delay-500">🌺</div>
+      <div className="absolute top-1/2 left-5 text-3xl opacity-20 animate-pulse delay-1000">🔱</div>
+      <div className="absolute top-1/2 right-5 text-3xl opacity-20 animate-bounce delay-1200">🐚</div>
+      
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold text-golden mb-6">
@@ -87,20 +104,20 @@ const Contact = () => {
                 <a
                   key={index}
                   href={info.action}
-                  className="block bg-gradient-to-br from-orange-50 to-red-50 rounded-2xl p-6 hover:shadow-lg transition-all duration-300 transform hover:scale-105 group"
+                  className="block bg-gradient-to-br from-red-900/80 to-amber-900/80 backdrop-blur-sm rounded-2xl p-6 hover:shadow-2xl transition-all duration-300 transform hover:scale-105 group border border-yellow-500/30 shadow-lg"
                 >
                   <div className="text-3xl mb-4 group-hover:animate-bounce">{info.icon}</div>
-                  <h4 className="text-lg font-bold text-gray-900 mb-2 group-hover:text-orange-600 transition-colors duration-300">
+                  <h4 className="text-lg font-bold text-golden mb-2 group-hover:text-golden-light transition-colors duration-300">
                     {info.title}
                   </h4>
-                  <p className="text-gray-600 text-sm mb-3">{info.description}</p>
-                  <p className="text-orange-600 font-semibold">{info.contact}</p>
+                  <p className="text-golden-light text-sm mb-3">{info.description}</p>
+                  <p className="text-yellow-300 font-semibold">{info.contact}</p>
                 </a>
               ))}
             </div>
 
             {/* Social Media */}
-            <div className="bg-gradient-to-r from-amber-700 to-rose-800 rounded-2xl p-6 text-white">
+            <div className="bg-gradient-to-r from-yellow-600 to-yellow-500 rounded-2xl p-6 text-red-900 shadow-2xl">
               <h4 className="text-xl font-bold mb-4">Follow Our Journey</h4>
               <p className="mb-6 opacity-90">Stay updated with KTYA's latest events and community highlights.</p>
               <div className="flex space-x-4">
@@ -154,13 +171,13 @@ const Contact = () => {
           </div>
 
           {/* Contact Form */}
-          <div className="bg-gradient-to-br from-gray-50 to-white rounded-2xl p-8 shadow-lg">
-            <h3 className="text-2xl font-bold text-gray-900 mb-6">Send Us a Message</h3>
+          <div className="bg-gradient-to-br from-red-900/80 to-amber-900/80 backdrop-blur-sm rounded-2xl p-8 shadow-2xl border border-yellow-500/30">
+            <h3 className="text-2xl font-bold text-golden mb-6">Send Us a Message</h3>
 
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div>
-                  <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="name" className="block text-sm font-medium text-golden-light mb-2">
                     Full Name *
                   </label>
                   <input
@@ -170,13 +187,13 @@ const Contact = () => {
                     required
                     value={formData.name}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200"
+                    className="w-full px-4 py-3 bg-red-950/50 border border-yellow-500/30 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-golden placeholder-golden/50 backdrop-blur-sm transition-all duration-200"
                     placeholder="Your name"
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="email" className="block text-sm font-medium text-golden-light mb-2">
                     Email Address *
                   </label>
                   <input
@@ -186,14 +203,14 @@ const Contact = () => {
                     required
                     value={formData.email}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200"
+                    className="w-full px-4 py-3 bg-red-950/50 border border-yellow-500/30 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-golden placeholder-golden/50 backdrop-blur-sm transition-all duration-200"
                     placeholder="your@email.com"
                   />
                 </div>
               </div>
 
               <div>
-                <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="subject" className="block text-sm font-medium text-golden-light mb-2">
                   Subject *
                 </label>
                 <input
@@ -203,13 +220,13 @@ const Contact = () => {
                   required
                   value={formData.subject}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200"
+                  className="w-full px-4 py-3 bg-red-950/50 border border-yellow-500/30 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-golden placeholder-golden/50 backdrop-blur-sm transition-all duration-200"
                   placeholder="What's this about?"
                 />
               </div>
 
               <div>
-                <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="message" className="block text-sm font-medium text-golden-light mb-2">
                   Message *
                 </label>
                 <textarea
@@ -219,21 +236,21 @@ const Contact = () => {
                   rows={5}
                   value={formData.message}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200 resize-none"
+                  className="w-full px-4 py-3 bg-red-950/50 border border-yellow-500/30 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-golden placeholder-golden/50 backdrop-blur-sm transition-all duration-200 resize-none"
                   placeholder="Tell us more about your inquiry..."
                 ></textarea>
               </div>
 
               <button
                 type="submit"
-                className="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white px-8 py-4 rounded-lg font-semibold hover:from-orange-600 hover:to-red-600 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
+                className="w-full bg-gradient-to-r from-yellow-600 to-yellow-500 text-red-900 px-8 py-4 rounded-lg font-semibold hover:from-yellow-500 hover:to-yellow-400 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
               >
                 Send Message 🚀
               </button>
             </form>
 
             <div className="mt-6 text-center">
-              <p className="text-sm text-gray-500">
+              <p className="text-golden-light text-sm">
                 We typically respond within 24 hours during business days
               </p>
             </div>
@@ -242,31 +259,31 @@ const Contact = () => {
 
         {/* FAQ Section */}
         <div className="mt-20">
-          <h3 className="text-3xl font-bold text-center text-gray-900 mb-12">
+          <h3 className="text-3xl font-bold text-center text-golden mb-12">
             Frequently Asked Questions
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="bg-gray-50 rounded-xl p-6">
-              <h4 className="text-lg font-bold text-gray-900 mb-3">How do I register my mandal?</h4>
-              <p className="text-gray-600">
+            <div className="bg-gradient-to-br from-red-900/80 to-amber-900/80 backdrop-blur-sm rounded-xl p-6 border border-yellow-500/30 shadow-lg">
+              <h4 className="text-lg font-bold text-golden mb-3">How do I register my mandal?</h4>
+              <p className="text-golden-light">
                 You can register your mandal through our platform by providing basic information about your organization and location. Our team will verify and approve your listing within 24-48 hours.
               </p>
             </div>
-            <div className="bg-gray-50 rounded-xl p-6">
-              <h4 className="text-lg font-bold text-gray-900 mb-3">Is the platform free to use?</h4>
-              <p className="text-gray-600">
+            <div className="bg-gradient-to-br from-red-900/80 to-amber-900/80 backdrop-blur-sm rounded-xl p-6 border border-yellow-500/30 shadow-lg">
+              <h4 className="text-lg font-bold text-golden mb-3">Is the platform free to use?</h4>
+              <p className="text-golden-light">
                 Yes! Our basic features are completely free for devotees. We offer premium features for mandal organizers and businesses at affordable rates.
               </p>
             </div>
-            <div className="bg-gray-50 rounded-xl p-6">
-              <h4 className="text-lg font-bold text-gray-900 mb-3">Can I sell my Ganesha idols here?</h4>
-              <p className="text-gray-600">
+            <div className="bg-gradient-to-br from-red-900/80 to-amber-900/80 backdrop-blur-sm rounded-xl p-6 border border-yellow-500/30 shadow-lg">
+              <h4 className="text-lg font-bold text-golden mb-3">Can I sell my Ganesha idols here?</h4>
+              <p className="text-golden-light">
                 Absolutely! We support local artisans and craftspeople. You can create a seller profile and showcase your beautiful handcrafted Ganesha idols to our community.
               </p>
             </div>
-            <div className="bg-gray-50 rounded-xl p-6">
-              <h4 className="text-lg font-bold text-gray-900 mb-3">How do virtual darshan sessions work?</h4>
-              <p className="text-gray-600">
+            <div className="bg-gradient-to-br from-red-900/80 to-amber-900/80 backdrop-blur-sm rounded-xl p-6 border border-yellow-500/30 shadow-lg">
+              <h4 className="text-lg font-bold text-golden mb-3">How do virtual darshan sessions work?</h4>
+              <p className="text-golden-light">
                 Our virtual darshan feature uses 360° cameras and live streaming technology to provide immersive experiences. You can participate in real-time aarti and prayers from anywhere in the world.
               </p>
             </div>
