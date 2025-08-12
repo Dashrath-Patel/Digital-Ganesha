@@ -1,42 +1,59 @@
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+
 const Features = () => {
+  const navigate = useNavigate();
+
   const features = [
     {
       icon: "🗺️",
       title: "Smart Mandal Locator",
       description: "Find nearby Ganesh mandals with real-time updates, crowd density, and navigation support.",
-      color: "from-blue-500 to-cyan-500"
+      color: "from-blue-500 to-cyan-500",
+      path: null
     },
     {
       icon: "📱",
       title: "Virtual Darshan",
       description: "Experience 360° virtual tours and participate in live aarti ceremonies from anywhere.",
-      color: "from-purple-500 to-pink-500"
+      color: "from-purple-500 to-pink-500",
+      path: null
     },
     {
       icon: "🌱",
       title: "Eco-Friendly Tracker",
       description: "Promote sustainable celebrations with eco-friendly mandal recommendations and tips.",
-      color: "from-green-500 to-emerald-500"
+      color: "from-green-500 to-emerald-500",
+      path: null
     },
     {
       icon: "📚",
       title: "Cultural Learning",
       description: "Explore interactive stories, traditional recipes, and learn about Ganesha's significance.",
-      color: "from-orange-500 to-red-500"
+      color: "from-orange-500 to-red-500",
+      path: "/cultural-learning"
     },
     {
       icon: "👥",
       title: "Community Hub",
       description: "Connect with devotees, organize events, coordinate volunteers, and share experiences.",
-      color: "from-indigo-500 to-purple-500"
+      color: "from-indigo-500 to-purple-500",
+      path: null
     },
     {
       icon: "🎨",
       title: "Artisan Marketplace",
       description: "Support local artisans and discover authentic handcrafted Ganesha idols and decorations.",
-      color: "from-yellow-500 to-orange-500"
+      color: "from-yellow-500 to-orange-500",
+      path: null
     }
   ]
+
+  const handleFeatureClick = (path) => {
+    if (path) {
+      navigate(path);
+    }
+  };
 
   return (
     <section 
@@ -84,6 +101,11 @@ const Features = () => {
             <div
               key={index}
               role="listitem"
+              className={`group relative bg-white/20 dark:bg-gray-800/20 backdrop-blur-xl rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-3 border border-white/30 dark:border-gray-700/30 hover:border-white/50 dark:hover:border-gray-600/50 hover:bg-white/30 dark:hover:bg-gray-800/30 ${
+                feature.path ? 'cursor-pointer' : ''
+              }`}
+              onClick={() => handleFeatureClick(feature.path)}
+
               className="group relative bg-gradient-to-br from-red-900/80 to-amber-900/80 backdrop-blur-sm rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-3 border border-yellow-500/30 hover:border-yellow-500/50"
             >
               {/* Icon */}
@@ -107,8 +129,12 @@ const Features = () => {
                 <button 
                   className="text-golden-dark font-semibold hover:text-golden-light transition-colors duration-300 group-hover:translate-x-2 transform inline-flex items-center filter drop-shadow-sm"
                   aria-label={`Learn more about ${feature.title}`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleFeatureClick(feature.path);
+                  }}
                 >
-                  Learn More
+                  {feature.path ? 'Explore Now' : 'Learn More'}
                   <svg className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
