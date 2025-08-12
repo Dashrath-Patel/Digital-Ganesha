@@ -1,9 +1,11 @@
+const currentYear = new Date().getFullYear();
+const yearsActive = currentYear - 1995;
 const About = () => {
   const stats = [
-    { number: "10M+", label: "Devotees Connected", icon: "👥" },
-    { number: "50+", label: "Cities Covered", icon: "🏙️" },
-    { number: "1000+", label: "Active Mandals", icon: "🏛️" },
-    { number: "24/7", label: "Virtual Access", icon: "⏰" }
+    { number: "1K+", label: "Devotees Connected", icon: "🙏" },
+    { number: `${yearsActive}+`, label: "Years of Blessings", icon: "🏙️" },
+    { number: "100+", label: "Active Members", icon: "👥" },
+    { number: "24/7", label: "Access Available", icon: "⏰" }
   ]
 
   const values = [
@@ -47,13 +49,13 @@ const About = () => {
       <div className="absolute bottom-10 right-5 text-5xl opacity-25 animate-bounce delay-500">🌺</div>
       <div className="absolute top-1/2 left-5 text-3xl opacity-20 animate-pulse delay-1000">🔱</div>
       <div className="absolute top-1/2 right-5 text-3xl opacity-20 animate-bounce delay-1200">🐚</div>
-      
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold text-golden mb-6">
             <span className="bg-gradient-to-r from-golden via-golden-light to-golden-dark bg-clip-text text-transparent">
-              About Digital Ganesha
+              About KTYA
             </span>
           </h2>
           <p className="text-xl text-golden-light max-w-4xl mx-auto leading-relaxed">
@@ -70,12 +72,14 @@ const About = () => {
               Our Mission: Digital Devotion for Modern Times
             </h3>
             <p className="text-lg text-golden-light leading-relaxed mb-6">
-              In an increasingly connected world, we believe that spiritual experiences should be accessible to everyone, everywhere. Digital Ganesha transforms how devotees engage with festivals, creating meaningful connections between tradition and technology.
+              In our connected world, we make spiritual experiences available to all—
+              anywhere, anytime. Tradition meets technology,
+              creating meaningful connections during festivals and beyond.
             </p>
             <p className="text-lg text-golden-light leading-relaxed mb-8">
               Our platform empowers communities to organize better festivals, helps devotees discover and participate in celebrations, and ensures that the beautiful traditions of Ganesh worship continue to thrive in the digital age.
             </p>
-            
+
             {/* Key Benefits */}
             <div className="space-y-4">
               <div className="flex items-center space-x-3">
