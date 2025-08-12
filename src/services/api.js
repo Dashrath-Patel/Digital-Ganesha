@@ -31,8 +31,8 @@ export const authAPI = {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        firstName: userData.name.split(' ')[0],
-        lastName: userData.name.split(' ').slice(1).join(' ') || userData.name.split(' ')[0],
+        firstName: userData.firstName,
+        lastName: userData.lastName,
         email: userData.email,
         password: userData.password
       })
