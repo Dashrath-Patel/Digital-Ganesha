@@ -3,6 +3,7 @@ import Header from '../components/Header';
 
 const CulturalLearningPage = () => {
   const [activeCategory, setActiveCategory] = useState('mantras');
+  const [expandedMantra, setExpandedMantra] = useState(null);
 
   const categories = [
     { id: 'mantras', name: 'Mantras & Shlokas', icon: '🕉️' },
@@ -13,25 +14,123 @@ const CulturalLearningPage = () => {
 
   const mantrasContent = [
     {
-      title: "गणपति आरती",
-      sanskrit: "जय गणेश जय गणेश जय गणेश देवा। माता जाकी पार्वती पिता महादेवा।",
-      translation: "Glory to Lord Ganesha, whose mother is Parvati and father is Mahadeva (Shiva).",
-      significance: "This is the most popular aarti sung during Ganesha worship.",
-      audio: null
+      id: 1,
+      title: "Ganesha Atharvashirsha (Opening Verses)",
+      sanskrit: `ॐ नमस्ते गणपतये॥
+त्वमेव प्रत्यक्षं तत्त्वमसि॥
+त्वमेव केवलं कर्ताऽसि॥
+त्वमेव केवलं धर्ताऽसि॥
+त्वमेव केवलं हर्ताऽसि॥
+त्वमेव सर्वं खल्विदं ब्रह्मासि॥
+त्वं साक्षादात्माऽसि नित्यम्॥`,
+      translation: "Om Namaste Ganapataye || You are the visible Supreme Truth. You alone are the Creator, Sustainer, and Destroyer. You are the eternal Brahman and the Soul of all.",
+      significance: "This is from the sacred Ganesha Atharvashirsha, one of the most powerful Vedic hymns to Lord Ganesha."
     },
     {
-      title: "गणेश मंत्र",
-      sanskrit: "ॐ गं गणपतये नमः",
-      translation: "Om Gam Ganapataye Namaha - I bow to Lord Ganesha",
-      significance: "This is the most powerful and commonly chanted Ganesha mantra for removing obstacles.",
-      audio: null
+      id: 2,
+      title: "Ganesha Dwadasanama Stotra (12 Names of Ganesha)",
+      sanskrit: `सुमुखश्चैकदन्तश्च कपिलो गजकर्णकः॥
+लम्बोदरश्च विकटो विघ्ननाशो विनायकः॥
+धूम्रकेतुर्गणाध्यक्षो भालचन्द्रो गजाननः॥
+द्वादशैतानि नामानि यः पठेच्छृणुयादपि॥
+विद्यारम्भे विवाहे च प्रवेशे निर्गमे तथा॥
+संग्रामे संकटे चैव विघ्नस्तस्य न जायते॥`,
+      translation: "Sumukhah, Ekadantah, Kapilo, Gajakarnakah, Lambodarah, Vikato, Vighnanasho, Vinayakah, Dhoomraketuh, Ganadhyaksho, Bhalachandro, Gajanana. Whoever recites these 12 names avoids obstacles in education, marriage, and battles.",
+      significance: "These twelve sacred names of Ganesha provide protection and success in all endeavors."
     },
     {
-      title: "वक्रतुंड महाकाय",
-      sanskrit: "वक्रतुंड महाकाय सूर्यकोटि समप्रभ। निर्विघ्नं कुरु मे देव सर्वकार्येषु सर्वदा।",
-      translation: "O Lord with the curved trunk and massive body, whose brilliance is equal to millions of suns, please make all my endeavors free of obstacles always.",
-      significance: "This shloka is traditionally recited before beginning any important work or ceremony.",
-      audio: null
+      id: 3,
+      title: "Ganesha Pancharatnam (Adi Shankaracharya's Hymn)",
+      sanskrit: `मुदाकरात्तमोदकं सदा विमुक्तिसाधकं॥
+कलाधरावतंसकं विलासिलोकरक्षकम्॥
+अनायकैकनायकं विनाशितेभदैत्यकम्॥
+नताशुभाशु नाशकं नमामि तं विनायकम्॥`,
+      translation: "I bow to Vinayaka, who holds the modak, grants liberation, wears the moon, destroys demons, and removes sorrows.",
+      significance: "Composed by Adi Shankaracharya, this hymn is considered one of the most beautiful poems dedicated to Lord Ganesha."
+    },
+    {
+      id: 4,
+      title: "Ganesha Sahasranama (Selected 8 Lines)",
+      sanskrit: `ॐ गणाधिपाय नमः॥ ॐ गणेश्वराय नमः॥
+ॐ गजाननाय नमः॥ ॐ एकदन्ताय नमः॥
+ॐ हेरम्बाय नमः॥ ॐ लम्बोदराय नमः॥
+ॐ सिद्धिदात्रे नमः॥ ॐ विघ्नहन्त्रे नमः॥`,
+      translation: "Salutations to Ganesha as Ganadhipa, Gajanana, Lambodara, and the bestower of Siddhi.",
+      significance: "These are sacred names from the thousand names of Ganesha, each carrying special spiritual power."
+    },
+    {
+      id: 5,
+      title: "Ganesha Mangala Aarti",
+      sanskrit: `जय गणेश जय गणेश जय गणेश देवा॥
+माता जाकी पार्वती पिता महादेवा॥
+एक दन्त दयावन्त चार भुजाधारी॥
+मस्तक पर सिन्दूर सोहे मूषक वाहन साजे॥`,
+      translation: "Victory to Ganesha! Son of Parvati and Shiva, with one tusk, four arms, and a mouse as His vehicle.",
+      significance: "This is the most popular aarti sung during Ganesha worship ceremonies and festivals."
+    },
+    {
+      id: 6,
+      title: "Ganesha Vedic Mantra (From Rigveda)",
+      sanskrit: `गणानां त्वा गणपतिं हवामहे॥
+कविं कवीनामुपमश्रवस्तमम्॥
+ज्येष्ठराजं ब्रह्मणां ब्रह्मणस्पत॥
+आ नः शृण्वन्नूतिभिः सीद सादनम्॥`,
+      translation: "We invoke You, Lord of all beings, the wisest among sages, the Supreme Brahman. Hear us and bless us with prosperity.",
+      significance: "This ancient Vedic hymn from the Rigveda is one of the earliest references to Lord Ganesha in Sanskrit literature."
+    },
+    {
+      id: 7,
+      title: "Ganesha Shodashopachara Puja Mantra",
+      sanskrit: `ॐ गं गणपतये नमः आवाहयामि॥
+ॐ गं गणपतये नमः आसनं समर्पयामि॥
+ॐ गं गणपतये नमः पाद्यं समर्पयामि॥`,
+      translation: "Invoking Ganesha, offering seat, water for feet, and other rituals in 16 steps.",
+      significance: "These mantras are used during the traditional 16-step worship ritual of Lord Ganesha."
+    },
+    {
+      id: 8,
+      title: "Ganesha Kavacham (Armor Hymn)",
+      sanskrit: `ॐ गणपतये अस्त्राय फट्॥
+हृदयं पातु मे शम्भोः सुतो गणपतिर्हरिः॥
+शिरो मे पातु विघ्नेशः कर्णौ पातु गजाननः॥`,
+      translation: "May Ganesha protect my heart, head, and ears like divine armor.",
+      significance: "This protective hymn is recited to invoke Ganesha's divine protection for the devotee's body and mind."
+    },
+    {
+      id: 9,
+      title: "Ganesha Suktam (From Yajurveda)",
+      sanskrit: `त्वं नो अग्ने वरुणस्त्वं मित्रस्त्वमिन्द्र ओजसा॥
+त्वं विष्णुरुतो रुद्रस्त्वं ब्रह्मा विभुर्भवः॥
+त्वं त्वष्टा त्वं पूषासि त्वं गणेश्वरो विभुः॥`,
+      translation: "You are Agni, Varuna, Vishnu, and Brahma—all gods united in Ganesha.",
+      significance: "This Yajurveda hymn establishes Ganesha as the supreme deity encompassing all divine powers."
+    },
+    {
+      id: 10,
+      title: "Ganesha Bhujanga Stotra",
+      sanskrit: `यो दूर्वांकुरैर्यजति स नित्यं सिद्धिमाप्नुयात्॥
+यः पूजयेत् सुमनसा स विज्ञानी भवेन्नरः॥
+यो मन्त्रमेतं पठते स गच्छेत् परमां गतिम्॥`,
+      translation: "Whoever worships Ganesha with durva grass attains eternal wisdom and liberation.",
+      significance: "This stotra emphasizes the importance of sincere devotion and proper offerings in Ganesha worship."
+    },
+    {
+      id: 11,
+      title: "Ganesha Purana Mantra",
+      sanskrit: `नमस्ते स्तुत गणेश्वर सिद्धिं ददस्व मे सदा॥
+त्वमेव शरणं देव त्वमेव शरणं मम॥
+त्वमेव रक्षको नाथ त्वमेव विघ्ननाशनः॥`,
+      translation: "O Ganesha, grant me success. You are my protector and destroyer of obstacles.",
+      significance: "This prayer from the Ganesha Purana is a complete surrender to Lord Ganesha seeking his divine grace."
+    },
+    {
+      id: 12,
+      title: "Ganesha Mahimna Stotra",
+      sanskrit: `विघ्नेश्वराय वरदाय सुरप्रियाय॥
+सिद्धिप्रदाय सकलाय नमो नमस्ते॥
+गौरीसुताय गणनाथ नमोऽस्तु तुभ्यम्॥`,
+      translation: "Salutations to Ganesha, granter of boons, beloved of gods, and son of Gauri.",
+      significance: "This stotra glorifies the various divine qualities and powers of Lord Ganesha."
     }
   ];
 
@@ -153,27 +252,51 @@ const CulturalLearningPage = () => {
     switch (activeCategory) {
       case 'mantras':
         return (
-          <div className="space-y-8">
+          <div className="space-y-6">
             <h3 className="text-3xl font-bold text-golden mb-6">Sacred Mantras & Shlokas</h3>
-            {mantrasContent.map((mantra, index) => (
-              <div key={index} className="bg-white/20 backdrop-blur-md rounded-2xl p-6 border border-golden/30 shadow-xl">
-                <h4 className="text-xl font-bold text-golden mb-4">{mantra.title}</h4>
-                <div className="space-y-4">
-                  <div className="bg-golden/10 rounded-lg p-4">
-                    <p className="text-lg font-medium text-golden mb-2">Sanskrit:</p>
-                    <p className="text-golden-light text-lg leading-relaxed">{mantra.sanskrit}</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {mantrasContent.map((mantra) => (
+                <div 
+                  key={mantra.id} 
+                  className="bg-white/20 backdrop-blur-md rounded-2xl p-6 border border-golden/30 shadow-xl hover:shadow-2xl transition-all duration-300 cursor-pointer hover:scale-105"
+                  onClick={() => setExpandedMantra(expandedMantra === mantra.id ? null : mantra.id)}
+                >
+                  <div className="flex justify-between items-start mb-4">
+                    <h4 className="text-lg font-bold text-golden leading-tight">{mantra.title}</h4>
+                    <div className="ml-2 flex-shrink-0">
+                      <span className="text-golden text-xl">
+                        {expandedMantra === mantra.id ? '🔼' : '🔽'}
+                      </span>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-md font-medium text-golden mb-2">Translation:</p>
-                    <p className="text-golden-light">{mantra.translation}</p>
-                  </div>
-                  <div>
-                    <p className="text-md font-medium text-golden mb-2">Significance:</p>
-                    <p className="text-golden-light">{mantra.significance}</p>
-                  </div>
+                  
+                  {expandedMantra === mantra.id && (
+                    <div className="space-y-4 animate-fadeIn">
+                      <div className="bg-golden/10 rounded-lg p-4">
+                        <p className="text-md font-medium text-golden mb-2">Sanskrit:</p>
+                        <p className="text-golden-light text-sm leading-relaxed whitespace-pre-line font-mono">
+                          {mantra.sanskrit}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-md font-medium text-golden mb-2">Translation:</p>
+                        <p className="text-golden-light text-sm leading-relaxed">{mantra.translation}</p>
+                      </div>
+                      <div>
+                        <p className="text-md font-medium text-golden mb-2">Significance:</p>
+                        <p className="text-golden-light text-sm leading-relaxed">{mantra.significance}</p>
+                      </div>
+                    </div>
+                  )}
+                  
+                  {expandedMantra !== mantra.id && (
+                    <p className="text-golden-light/70 text-sm">
+                      Click to read the full mantra and its significance
+                    </p>
+                  )}
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         );
       
