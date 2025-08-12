@@ -105,8 +105,6 @@ const Features = () => {
                 feature.path ? 'cursor-pointer' : ''
               }`}
               onClick={() => handleFeatureClick(feature.path)}
-
-              className="group relative bg-gradient-to-br from-red-900/80 to-amber-900/80 backdrop-blur-sm rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-3 border border-yellow-500/30 hover:border-yellow-500/50"
             >
               {/* Icon */}
               <div 
