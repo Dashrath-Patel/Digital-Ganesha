@@ -7,6 +7,9 @@ const CulturalLearningPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [bhajanSearchTerm, setBhajanSearchTerm] = useState('');
   const [currentRecipeStart, setCurrentRecipeStart] = useState(0);
+  
+  // Ref for the expanded mantra section
+  const expandedMantraRef = React.useRef(null);
 
   const categories = [
     { id: 'mantras', name: 'Mantras & Shlokas', icon: '🕉️' },
@@ -758,6 +761,37 @@ const CulturalLearningPage = () => {
     }
   }, [bhajanSearchTerm]);
 
+  // Smooth scroll to expanded mantra function with animation
+  const smoothScrollToExpandedMantra = () => {
+    if (expandedMantraRef.current) {
+      // Calculate offset to show the card with some padding from top
+      const offsetTop = expandedMantraRef.current.offsetTop - 120; // 120px padding from top
+      
+      window.scrollTo({
+        top: Math.max(0, offsetTop),
+        behavior: 'smooth'
+      });
+    }
+  };
+
+  // Effect to scroll when mantra is expanded
+  React.useEffect(() => {
+    if (expandedMantra) {
+      // Wait for the expansion animation to complete before scrolling
+      const timer = setTimeout(() => {
+        smoothScrollToExpandedMantra();
+      }, 300); // Wait for expansion animation
+      
+      return () => clearTimeout(timer);
+    }
+  }, [expandedMantra]);
+
+  // Handle mantra card click
+  const handleMantraCardClick = (mantraId) => {
+    const newExpandedMantra = expandedMantra === mantraId ? null : mantraId;
+    setExpandedMantra(newExpandedMantra);
+  };
+
   const renderContent = () => {
     switch (activeCategory) {
       case 'mantras':
@@ -773,6 +807,7 @@ const CulturalLearningPage = () => {
                   .map((mantra) => (
                     <div 
                       key={`expanded-${mantra.id}`}
+                      ref={expandedMantraRef}
                       className="relative overflow-hidden rounded-3xl shadow-2xl"
                       style={{ backgroundColor: 'rgb(21, 21, 21)' }}
                     >
@@ -849,7 +884,7 @@ const CulturalLearningPage = () => {
                     backgroundColor: 'rgb(21, 21, 21)',
                     minHeight: '200px' 
                   }}
-                  onClick={() => setExpandedMantra(expandedMantra === mantra.id ? null : mantra.id)}
+                  onClick={() => handleMantraCardClick(mantra.id)}
                 >
                   {/* Background overlay matching homepage */}
                   <div className="absolute inset-0" style={{ backgroundColor: 'rgba(160, 40, 40, 0.2)' }}>
