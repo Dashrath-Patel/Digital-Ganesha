@@ -97,7 +97,7 @@ const Hero = ({ firstLine, secondLine, isFirstLineAnimating, isSecondLineAnimati
 
   return (
     <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20 pb-8 px-4" style={{ backgroundColor: 'rgb(21, 21, 21)'  }}>
-      {/* Enhanced Spiritual Background */}
+      {/* Enhanced Spiritual Background - With Circles */}
       <div className="absolute inset-0" style={{ backgroundColor: 'rgba(160, 40, 40, 0.3)' }}>
         {/* Mandala Pattern Background */}
         <div className="absolute inset-0 opacity-30">
@@ -116,6 +116,14 @@ const Hero = ({ firstLine, secondLine, isFirstLineAnimating, isSecondLineAnimati
           <div className="absolute top-60 right-10 text-3xl text-golden-light animate-float-delay">🌸</div>
         </div>
       </div>
+
+      {/* Enhanced Floating Spiritual Elements */}
+      <div className="absolute top-20 left-5 text-6xl opacity-20 animate-pulse">🕉️</div>
+      <div className="absolute top-20 right-5 text-6xl opacity-20 animate-pulse">🕉️</div>
+      <div className="absolute bottom-10 left-10 text-4xl opacity-30 animate-pulse delay-700">📿</div>
+      <div className="absolute bottom-10 right-5 text-5xl opacity-25 animate-bounce delay-500">🌺</div>
+      <div className="absolute top-1/2 left-5 text-3xl opacity-20 animate-pulse delay-1000">🔱</div>
+      <div className="absolute top-1/2 right-5 text-3xl opacity-20 animate-bounce delay-1200">🐚</div>
 
       <div className="relative z-10 max-w-7xl mx-auto text-center">
         <div className="space-y-8">
