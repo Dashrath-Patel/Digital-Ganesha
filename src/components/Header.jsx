@@ -22,7 +22,7 @@ const Header = () => {
   };
 
   return (
-    <header className="fixed w-full top-0 z-50 backdrop-blur-md border-b border-red-200/30 shadow-sm" style={{ backgroundColor: 'rgba(180, 50, 50, 0.85)' }}>
+    <header className="fixed w-full top-0 z-50 backdrop-blur-md border-b border-red-200/30 shadow-sm bg-gradient-to-br from-red-950 via-red-900 to-red-950">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}

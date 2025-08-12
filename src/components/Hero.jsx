@@ -96,7 +96,7 @@ const Hero = ({ firstLine, secondLine, isFirstLineAnimating, isSecondLineAnimati
   }, [currentSlide])
 
   return (
-    <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20 pb-8 px-4" style={{  backgroundColor: 'rgba(227, 60, 60, 0.85)' }}>
+    <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20 pb-8 px-4" style={{ backgroundColor: 'rgb(21, 21, 21)'  }}>
       {/* Enhanced Spiritual Background */}
       <div className="absolute inset-0" style={{ backgroundColor: 'rgba(160, 40, 40, 0.3)' }}>
         {/* Mandala Pattern Background */}
