@@ -188,6 +188,7 @@ const SignUpPage = () => {
               <div className="absolute bottom-20 left-32 text-3xl text-pink-200/20">🌺</div>
             </div>
 
+
             {/* Central Ganesha Content */}
             <div className="relative z-10 flex flex-col items-center justify-center w-full p-12 text-white">
               {/* Ganesha Image Container */}

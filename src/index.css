@@ -1,21 +1,106 @@
 @import "tailwindcss";
 
-/* Custom scrollbar */
+/* Global color scheme for main app (excluding login/signup) */
+body {
+  background-color: rgba(117, 9, 9, 1);
+  color: rgba(218, 165, 32, 1); /* Gold color for better contrast */
+}
+
+/* Specific styles for login and signup pages to override global styles */
+.auth-page {
+  background-color: white !important;
+  color: #374151 !important; /* Gray-700 for login/signup pages */
+}
+
+/* Enhanced golden text colors for better readability */
+.text-golden {
+  color: rgba(218, 165, 32, 1);
+}
+
+.text-golden-light {
+  color: rgba(255, 215, 0, 1);
+}
+
+.text-golden-dark {
+  color: rgba(184, 134, 11, 1);
+}
+
+/* Background color utilities */
+.bg-golden {
+  background-color: rgba(218, 165, 32, 1);
+}
+
+.bg-golden-light {
+  background-color: rgba(255, 215, 0, 1);
+}
+
+.bg-golden-dark {
+  background-color: rgba(184, 134, 11, 1);
+}
+
+/* Gradient classes for golden theme */
+.from-golden {
+  --tw-gradient-from: rgba(218, 165, 32, 1);
+  --tw-gradient-to: rgba(218, 165, 32, 0);
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
+
+.via-golden {
+  --tw-gradient-to: rgba(218, 165, 32, 0);
+  --tw-gradient-stops: var(--tw-gradient-from), rgba(218, 165, 32, 1), var(--tw-gradient-to);
+}
+
+.to-golden {
+  --tw-gradient-to: rgba(218, 165, 32, 1);
+}
+
+.from-golden-light {
+  --tw-gradient-from: rgba(255, 215, 0, 1);
+  --tw-gradient-to: rgba(255, 215, 0, 0);
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
+
+.via-golden-light {
+  --tw-gradient-to: rgba(255, 215, 0, 0);
+  --tw-gradient-stops: var(--tw-gradient-from), rgba(255, 215, 0, 1), var(--tw-gradient-to);
+}
+
+.to-golden-light {
+  --tw-gradient-to: rgba(255, 215, 0, 1);
+}
+
+.from-golden-dark {
+  --tw-gradient-from: rgba(184, 134, 11, 1);
+  --tw-gradient-to: rgba(184, 134, 11, 0);
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
+
+.via-golden-dark {
+  --tw-gradient-to: rgba(184, 134, 11, 0);
+  --tw-gradient-stops: var(--tw-gradient-from), rgba(184, 134, 11, 1), var(--tw-gradient-to);
+}
+
+.to-golden-dark {
+  --tw-gradient-to: rgba(184, 134, 11, 1);
+}
+
+/* Custom scrollbar with new color scheme */
+/* Custom scrollbar with new color scheme */
 ::-webkit-scrollbar {
   width: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: rgba(117, 9, 9, 0.3);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #f97316, #dc2626);
+  background: linear-gradient(180deg, rgba(218, 165, 32, 0.8), rgba(184, 134, 11, 0.8));
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, #ea580c, #b91c1c);
+  background: linear-gradient(180deg, rgba(255, 215, 0, 0.9), rgba(218, 165, 32, 0.9));
 }
 
 /* Custom spiritual animations */
