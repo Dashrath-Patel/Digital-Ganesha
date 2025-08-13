@@ -5,6 +5,7 @@ import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import SignUpPage from './pages/SignUpPage';
 import CulturalLearningPage from './pages/CulturalLearningPage';
+import CommunityPage from './pages/CommunityPage';
 import AdminDashboard from './pages/AdminDashboard';
 import CommitteeDashboard from './pages/CommitteeDashboard';
 
@@ -38,6 +39,7 @@ function App() {
               <Route path="/login" element={<LoginPage />} />
               <Route path="/signup" element={<SignUpPage />} />
               <Route path="/cultural-learning" element={<CulturalLearningPage />} />
+              <Route path="/community" element={<CommunityPage />} />
               <Route path="/admin" element={<AdminDashboard />} />
               <Route path="/committee" element={<CommitteeDashboard />} />
             </Routes>

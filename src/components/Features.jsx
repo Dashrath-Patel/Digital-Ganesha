@@ -38,7 +38,7 @@ const Features = () => {
       title: "Community Hub",
       description: "Connect with devotees, organize events, coordinate volunteers, and share experiences.",
       color: "from-indigo-500 to-purple-500",
-      path: null
+      path: "/community"
     },
     {
       icon: "🎨",

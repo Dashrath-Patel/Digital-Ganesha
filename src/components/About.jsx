@@ -2,7 +2,7 @@ const currentYear = new Date().getFullYear();
 const yearsActive = currentYear - 1995;
 const About = () => {
   const stats = [
-    { number: "45K+", label: "Devotees Connected", icon: "🙏" },
+    { number: "4.5K+", label: "Devotees Connected", icon: "🙏" },
     { number: `${yearsActive}+`, label: "Years of Blessings", icon: "🏙️" },
     { number: "100+", label: "Active Members", icon: "👥" },
     { number: "24/7", label: "Access Available", icon: "⏰" }
