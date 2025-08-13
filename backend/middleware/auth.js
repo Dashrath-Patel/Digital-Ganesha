@@ -156,8 +156,8 @@ export const requireOwnershipOrAdmin = (getResourceUserId) => {
 
     const { userId, role } = req.user
 
-    // Allow admins and super-admins
-    if (['admin', 'super-admin'].includes(role)) {
+    // Allow admins
+    if (role === 'admin') {
       return next()
     }
 

@@ -229,12 +229,28 @@ const userSchema = new mongoose.Schema({
   // Admin fields
   role: {
     type: String,
-    enum: ['user', 'moderator', 'admin', 'super-admin'],
+    enum: ['user', 'committee_member', 'admin'],
     default: 'user'
   },
   permissions: [{
     type: String
   }],
+  
+  // Committee fields
+  isCommitteeMember: {
+    type: Boolean,
+    default: false
+  },
+  committeeRole: {
+    type: String,
+    enum: ['president', 'vice_president', 'secretary', 'treasurer', 'coordinator', 'volunteer'],
+    default: null
+  },
+  mandal: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Mandal',
+    default: null
+  },
   
   // Push notification tokens
   fcmTokens: [{
