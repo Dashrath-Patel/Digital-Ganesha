@@ -11,24 +11,31 @@ const Header = () => {
 
   const navigation = [
     { name: 'Home', href: '/' },
+    { name: 'Community', href: '/community' },
     { name: 'Features', href: '#features' },
     { name: 'About', href: '#about' },
     { name: 'Contact', href: '#contact' },
   ];
 
   const handleNavClick = (href) => {
-    const sectionId = href.substring(1); // Remove the # symbol
-    
-    // If we're not on the home page, navigate to home page first
-    if (location.pathname !== '/') {
-      navigate('/', { replace: true });
-      // Wait a bit for navigation to complete, then scroll
-      setTimeout(() => {
+    // Check if it's a hash link (internal section) or a route
+    if (href.startsWith('#')) {
+      const sectionId = href.substring(1); // Remove the # symbol
+      
+      // If we're not on the home page, navigate to home page first
+      if (location.pathname !== '/') {
+        navigate('/', { replace: true });
+        // Wait a bit for navigation to complete, then scroll
+        setTimeout(() => {
+          scrollToSection(sectionId);
+        }, 100);
+      } else {
+        // If we're already on home page, just scroll
         scrollToSection(sectionId);
-      }, 100);
+      }
     } else {
-      // If we're already on home page, just scroll
-      scrollToSection(sectionId);
+      // It's a route, navigate directly
+      navigate(href);
     }
   };
 
@@ -58,7 +65,7 @@ const Header = () => {
             <div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-yellow-400 shadow-lg group-hover:shadow-xl group-hover:scale-105 transition-all duration-200">
               <div className="w-full h-full bg-gradient-to-br from-yellow-400/20 to-yellow-500/20 flex items-center justify-center">
                 {/* Placeholder until actual image is added */}
-                <img src="../../public/header-logo.png" alt="ganesha" className="text-2xl" />
+                <img src="/header-logo.png" alt="ganesha" className="text-2xl" />
               </div>
             </div>
             <div className="flex flex-col">
