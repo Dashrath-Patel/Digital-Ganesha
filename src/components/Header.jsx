@@ -70,6 +70,9 @@ const Header = () => {
               <span className="text-xs font-medium -mt-1 drop-shadow-md" style={{ color: 'rgb(255, 215, 0)' }}>
                 Krishna Township Youth Association
               </span>
+              <span className="text-xs font-small -mt-1 drop-shadow-md" style={{ color: 'rgb(255, 215, 0)' }}>
+                (Regn. No: MH/890/03/Thane)
+              </span>
             </div>
           </Link>
 
