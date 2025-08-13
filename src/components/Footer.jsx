@@ -162,7 +162,7 @@ const Footer = () => {
         <div className="mt-16 pt-8 border-t border-yellow-500/30">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <div>
-              <div className="text-3xl font-bold text-golden mb-2">45K+</div>
+              <div className="text-3xl font-bold text-golden mb-2">4.5K+</div>
               <div className="text-golden-light text-sm">Devotees Served</div>
             </div>
             <div>
