@@ -7,6 +7,9 @@ export const authenticateToken = async (req, res, next) => {
     const authHeader = req.headers.authorization
     const token = authHeader && authHeader.split(' ')[1] // Bearer TOKEN
 
+    console.log('Auth header:', authHeader);
+    console.log('Extracted token:', token ? 'Token present' : 'No token');
+
     if (!token) {
       return res.status(401).json({
         success: false,
