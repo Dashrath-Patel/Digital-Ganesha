@@ -10,7 +10,7 @@ const Features = () => {
       title: "Smart Mandal Locator",
       description: "Find nearby Ganesh mandals with real-time updates, crowd density, and navigation support.",
       color: "from-blue-500 to-cyan-500",
-      path: null
+      path: "/mandal-locator"
     },
     {
       icon: "📱",

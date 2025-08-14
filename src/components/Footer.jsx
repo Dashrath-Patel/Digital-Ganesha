@@ -7,7 +7,7 @@ const Footer = () => {
       links: [
         { name: "Features", href: "#features" },
         { name: "Virtual Darshan", href: "#" },
-        { name: "Mandal Locator", href: "#" },
+        { name: "Mandal Locator", href: "/mandal-locator" },
         { name: "Community Hub", href: "#" },
         { name: "Marketplace", href: "#" }
       ]
