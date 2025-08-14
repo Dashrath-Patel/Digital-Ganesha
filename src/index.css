@@ -1,5 +1,4 @@
 @import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@300;400;500;600;700&display=swap');
 
 /* Enhanced global spiritual theme */
 body {
@@ -481,6 +480,26 @@ html {
                0 0 20px rgba(255, 255, 255, 0.4),
                0 0 30px rgba(255, 200, 100, 0.3);
   filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.5));
+}
+
+/* Custom scrollbar for mandal list */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(255, 215, 0, 0.1);
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 215, 0, 0.3);
+  border-radius: 10px;
+  border: 2px solid rgba(255, 215, 0, 0.1);
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 215, 0, 0.5);
 }
 
 /* Mobile optimizations */

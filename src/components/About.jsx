@@ -127,6 +127,61 @@ const values = [
                 <div className="text-gray-600 font-medium text-sm">{stat.label}</div>
               </div>
             ))}
+            
+            {/* Download Brochure Button - Full Width Row */}
+            <div className="col-span-2">
+              <button
+                onClick={() => {
+                  const brochureUrl = import.meta.env.VITE_KTYA_BROCHURE_URL;
+                  if (brochureUrl && brochureUrl !== 'https://drive.google.com/uc?export=download&id=YOUR_FILE_ID_HERE') {
+                    try {
+                      // Create invisible iframe for seamless download
+                      const iframe = document.createElement('iframe');
+                      iframe.style.position = 'absolute';
+                      iframe.style.left = '-9999px';
+                      iframe.style.width = '1px';
+                      iframe.style.height = '1px';
+                      iframe.style.opacity = '0';
+                      iframe.src = brochureUrl;
+                      
+                      document.body.appendChild(iframe);
+                      
+                      // Clean up iframe after download initiates
+                      setTimeout(() => {
+                        if (document.body.contains(iframe)) {
+                          document.body.removeChild(iframe);
+                        }
+                      }, 3000);
+                      
+                      console.log('Brochure download initiated');
+                    } catch (error) {
+                      console.error('Download failed:', error);
+                      // Simple fallback without opening new tab
+                      const link = document.createElement('a');
+                      link.href = brochureUrl;
+                      link.download = 'KTYA_brochure.pdf';
+                      document.body.appendChild(link);
+                      link.click();
+                      document.body.removeChild(link);
+                    }
+                  } else {
+                    alert('Brochure download link is not configured. Please contact administrator.');
+                  }
+                }}
+                className="w-full bg-gradient-to-r from-golden to-golden-light hover:from-golden-light hover:to-golden rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all duration-300 text-center group cursor-pointer border-2 border-golden/30 hover:border-golden"
+              >
+                <div className="flex items-center justify-center space-x-4">
+                  <div className="text-3xl">📋</div>
+                  <div>
+                    <div className="text-xl font-bold text-red-900 mb-1">Download Our Brochure</div>
+                    <div className="text-red-800/80 font-medium text-sm">Get detailed information about KTYA</div>
+                  </div>
+                  <svg className="w-6 h-6 text-red-900 group-hover:text-red-800 transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                </div>
+              </button>
+            </div>
           </div>
         </div>
 
