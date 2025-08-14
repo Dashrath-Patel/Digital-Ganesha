@@ -8,7 +8,7 @@ const router = express.Router()
 // @desc    Get user profile
 // @route   GET /api/users/profile
 // @access  Private
-router.get('/profile', async (req, res) => {
+router.get('/profile', authenticateToken, async (req, res) => {
   try {
     const user = await User.findById(req.user.userId)
       .populate('mandals.mandalId', 'name logo category address')
