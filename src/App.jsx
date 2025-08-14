@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
+import ProtectedRoute from './components/ProtectedRoute';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import SignUpPage from './pages/SignUpPage';
@@ -42,8 +43,16 @@ function App() {
               <Route path="/cultural-learning" element={<CulturalLearningPage />} />
               <Route path="/community" element={<CommunityPage />} />
               <Route path="/virtual-darshan" element={<VirtualDarshanPage />} />
-              <Route path="/admin" element={<AdminDashboard />} />
-              <Route path="/committee" element={<CommitteeDashboard />} />
+              <Route path="/admin" element={
+                <ProtectedRoute requireAdmin={true}>
+                  <AdminDashboard />
+                </ProtectedRoute>
+              } />
+              <Route path="/committee" element={
+                <ProtectedRoute>
+                  <CommitteeDashboard />
+                </ProtectedRoute>
+              } />
             </Routes>
           </div>
         </div>
