@@ -19,6 +19,7 @@ import notificationRoutes from './routes/notifications.js'
 import analyticsRoutes from './routes/analytics.js'
 import adminRoutes from './routes/admin.js'
 import culturalRoutes from './routes/cultural.js'
+import messageRoutes from './routes/messages.js'
 
 // Import middleware
 import { errorHandler } from './middleware/errorHandler.js'
@@ -122,6 +123,7 @@ app.use('/api/notifications', authenticateToken, notificationRoutes)
 app.use('/api/analytics', authenticateToken, analyticsRoutes)
 app.use('/api/admin', authenticateToken, adminRoutes)
 app.use('/api/cultural', culturalRoutes)
+app.use('/api/messages', messageRoutes)
 
 // Serve uploaded files
 app.use('/uploads', express.static('uploads'))
