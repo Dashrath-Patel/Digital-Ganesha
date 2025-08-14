@@ -13,6 +13,7 @@ const Header = () => {
   const navigation = [
     { name: 'Home', href: '/' },
     { name: 'Community', href: '/community' },
+    { name: 'Mandal Locator', href: '/mandal-locator' },
     { name: 'Features', href: '#features' },
     { name: 'About', href: '#about' },
     { name: 'Contact', href: '#contact' },
@@ -59,25 +60,25 @@ const Header = () => {
   return (
     <header className="fixed w-full top-0 z-50 backdrop-blur-md border-b border-red-200/30 shadow-sm bg-gradient-to-br from-red-950 via-red-900 to-red-950">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
+        <div className="flex justify-between items-center h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-3 hover:opacity-90 transition-all duration-200 group">
             {/* Ganesha Image */}
-            <div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-yellow-400 shadow-lg group-hover:shadow-xl group-hover:scale-105 transition-all duration-200">
+            <div className="relative w-14 h-14 rounded-full overflow-hidden border-2 border-yellow-400 shadow-lg group-hover:shadow-xl group-hover:scale-105 transition-all duration-200">
               <div className="w-full h-full bg-gradient-to-br from-yellow-400/20 to-yellow-500/20 flex items-center justify-center">
                 {/* Placeholder until actual image is added */}
                 <img src="/header-logo.png" alt="ganesha" className="text-2xl" />
               </div>
             </div>
             <div className="flex flex-col">
-              <span className="text-2xl font-bold tracking-widest drop-shadow-lg group-hover:opacity-90 transition-all duration-200" style={{ color: 'rgb(255, 215, 0)' }}>
+              <span className="text-2xl md:text-3xl font-bold tracking-widest drop-shadow-lg group-hover:opacity-90 transition-all duration-200" style={{ color: 'rgb(255, 215, 0)' }}>
                 KTYA
               </span>
 
-              <span className="text-xs font-medium -mt-1 drop-shadow-md" style={{ color: 'rgb(255, 215, 0)' }}>
+              <span className="text-xs md:text-sm font-medium -mt-1 drop-shadow-md" style={{ color: 'rgb(255, 215, 0)' }}>
                 Krishna Township Youth Association
               </span>
-              <span className="text-xs font-small -mt-1 drop-shadow-md" style={{ color: 'rgb(255, 215, 0)' }}>
+              <span className="text-xs md:text-sm font-small -mt-1 drop-shadow-md" style={{ color: 'rgb(255, 215, 0)' }}>
                 (Regn. No: MH/890/03/Thane)
               </span>
             </div>
@@ -89,7 +90,7 @@ const Header = () => {
               <button
                 key={item.name}
                 onClick={() => handleNavClick(item.href)}
-                className="font-semibold hover:opacity-80 transition-colors duration-200 drop-shadow-lg hover:drop-shadow-xl cursor-pointer"
+                className="text-base font-semibold hover:opacity-80 transition-colors duration-200 drop-shadow-lg hover:drop-shadow-xl"
                 style={{ color: 'rgb(255, 215, 0)' }}
               >
                 {item.name}
