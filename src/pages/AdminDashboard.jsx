@@ -117,35 +117,31 @@ const AdminDashboard = () => {
     <div className="relative">
       <Header />
       
-      <div className="min-h-screen pt-20 px-4" style={{ backgroundColor: 'rgb(21, 21, 21)' }}>
-        {/* Enhanced Spiritual Background */}
-        <div className="absolute inset-0 z-0" style={{ backgroundColor: 'rgba(160, 40, 40, 0.3)' }}>
-          <div className="absolute inset-0 opacity-40">
-            <div className="absolute top-60 left-10 text-4xl text-golden animate-float">🌺</div>
-            <div className="absolute top-60 right-10 text-3xl text-golden-light animate-float-delay">🌸</div>
-            <div className="absolute top-1/2 left-5 text-3xl text-golden opacity-20 animate-pulse delay-700">🕉️</div>
-            <div className="absolute bottom-20 right-10 text-4xl text-golden-light opacity-30 animate-bounce delay-1000">🪔</div>
+      <div className="min-h-screen pt-16 px-4" style={{ backgroundColor: 'rgb(21, 21, 21)' }}>
+        {/* Subtle Spiritual Background */}
+        <div className="absolute inset-0 z-0" style={{ backgroundColor: 'rgba(160, 40, 40, 0.2)' }}>
+          <div className="absolute inset-0 opacity-20">
+            <div className="absolute top-32 left-10 text-2xl text-golden animate-float">🌺</div>
+            <div className="absolute top-32 right-10 text-2xl text-golden-light animate-float-delay">🌸</div>
+            <div className="absolute bottom-20 right-10 text-2xl text-golden-light opacity-30 animate-bounce delay-1000">🪔</div>
           </div>
         </div>
 
-        <div className="relative z-10 max-w-7xl mx-auto">
-          {/* Enhanced Header */}
-          <div className="mb-8 text-center">
-            <div className="flex items-center justify-center mb-4">
-              <div className="text-6xl mr-4">🛡️</div>
-              <div>
-                <h1 className="text-5xl font-bold text-golden mb-2 bg-gradient-to-r from-yellow-400 to-yellow-200 bg-clip-text text-transparent">
-                  Admin Dashboard
-                </h1>
-                <p className="text-golden-light text-lg">Manage users and committee assignments with divine authority</p>
-              </div>
+        <div className="relative z-10 max-w-6xl mx-auto">
+          {/* Compact Header */}
+          <div className="mb-6 text-center">
+            <div className="flex items-center justify-center mb-2">
+              <div className="text-4xl mr-3">🛡️</div>
+              <h1 className="text-3xl font-bold text-golden bg-gradient-to-r from-yellow-400 to-yellow-200 bg-clip-text text-transparent">
+                Admin Dashboard
+              </h1>
             </div>
-            <div className="w-32 h-1 bg-gradient-to-r from-yellow-600 to-yellow-400 rounded-full mx-auto"></div>
+            <p className="text-golden-light">Manage users and committee assignments</p>
           </div>
 
-          {/* Enhanced Tab Navigation */}
-          <div className="bg-gradient-to-br from-red-900/90 to-amber-900/90 backdrop-blur-sm rounded-2xl p-2 border border-yellow-500/40 mb-8 shadow-xl">
-            <div className="flex space-x-2">
+          {/* Compact Tab Navigation */}
+          <div className="bg-gradient-to-br from-red-900/90 to-amber-900/90 backdrop-blur-sm rounded-xl p-1 border border-yellow-500/40 mb-6 shadow-lg">
+            <div className="flex space-x-1">
               {[
                 { id: 'users', label: 'Users', icon: '👥' },
                 { id: 'analytics', label: 'Analytics', icon: '📊' },
@@ -154,14 +150,14 @@ const AdminDashboard = () => {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`flex-1 flex items-center justify-center space-x-2 py-3 px-6 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 ${
+                  className={`flex-1 flex items-center justify-center space-x-1 py-2 px-4 rounded-lg font-medium transition-all duration-300 ${
                     activeTab === tab.id
-                      ? 'bg-gradient-to-r from-yellow-600 to-yellow-500 text-red-900 shadow-lg'
+                      ? 'bg-gradient-to-r from-yellow-600 to-yellow-500 text-red-900 shadow-md'
                       : 'text-golden hover:bg-red-800/40'
                   }`}
                 >
-                  <span className="text-xl">{tab.icon}</span>
-                  <span>{tab.label}</span>
+                  <span className="text-lg">{tab.icon}</span>
+                  <span className="text-sm">{tab.label}</span>
                 </button>
               ))}
             </div>
@@ -170,137 +166,135 @@ const AdminDashboard = () => {
           {/* Tab Content */}
           <div className="flex-1">
             {activeTab === 'users' && (
-              <div className="space-y-6">
-                {/* Stats Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                  <div className="bg-gradient-to-br from-red-900/80 to-amber-900/80 backdrop-blur-sm rounded-xl p-6 border border-yellow-500/30 transform hover:scale-105 transition-all duration-300">
+              <div className="space-y-4">
+                {/* Compact Stats Cards */}
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                  <div className="bg-gradient-to-br from-red-900/80 to-amber-900/80 backdrop-blur-sm rounded-lg p-4 border border-yellow-500/30">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-golden-light text-sm">Total Users</p>
-                        <p className="text-2xl font-bold text-golden">{stats.totalUsers || 0}</p>
+                        <p className="text-golden-light text-xs">Total Users</p>
+                        <p className="text-lg font-bold text-golden">{stats.totalUsers || 0}</p>
                       </div>
-                      <div className="text-3xl">👥</div>
+                      <div className="text-2xl">👥</div>
                     </div>
                   </div>
                   
-                  <div className="bg-gradient-to-br from-red-900/80 to-amber-900/80 backdrop-blur-sm rounded-xl p-6 border border-yellow-500/30 transform hover:scale-105 transition-all duration-300">
+                  <div className="bg-gradient-to-br from-red-900/80 to-amber-900/80 backdrop-blur-sm rounded-lg p-4 border border-yellow-500/30">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-golden-light text-sm">Committee Members</p>
-                        <p className="text-2xl font-bold text-golden">{stats.committeeMembers || 0}</p>
+                        <p className="text-golden-light text-xs">Committee</p>
+                        <p className="text-lg font-bold text-golden">{stats.committeeMembers || 0}</p>
                       </div>
-                      <div className="text-3xl">🏛️</div>
+                      <div className="text-2xl">🏛️</div>
                     </div>
                   </div>
                   
-                  <div className="bg-gradient-to-br from-red-900/80 to-amber-900/80 backdrop-blur-sm rounded-xl p-6 border border-yellow-500/30 transform hover:scale-105 transition-all duration-300">
+                  <div className="bg-gradient-to-br from-red-900/80 to-amber-900/80 backdrop-blur-sm rounded-lg p-4 border border-yellow-500/30">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-golden-light text-sm">Active Mandals</p>
-                        <p className="text-2xl font-bold text-golden">{stats.activeMandals || 0}</p>
+                        <p className="text-golden-light text-xs">Mandals</p>
+                        <p className="text-lg font-bold text-golden">{stats.activeMandals || 0}</p>
                       </div>
-                      <div className="text-3xl">🏺</div>
+                      <div className="text-2xl">🏺</div>
                     </div>
                   </div>
                   
-                  <div className="bg-gradient-to-br from-red-900/80 to-amber-900/80 backdrop-blur-sm rounded-xl p-6 border border-yellow-500/30 transform hover:scale-105 transition-all duration-300">
+                  <div className="bg-gradient-to-br from-red-900/80 to-amber-900/80 backdrop-blur-sm rounded-lg p-4 border border-yellow-500/30">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-golden-light text-sm">New This Month</p>
-                        <p className="text-2xl font-bold text-golden">{stats.newUsersThisMonth || 0}</p>
+                        <p className="text-golden-light text-xs">New Users</p>
+                        <p className="text-lg font-bold text-golden">{stats.newUsersThisMonth || 0}</p>
                       </div>
-                      <div className="text-3xl">📈</div>
+                      <div className="text-2xl">📈</div>
                     </div>
                   </div>
                 </div>
 
-                {/* Enhanced Search Section */}
-                <div className="bg-gradient-to-br from-red-900/80 to-amber-900/80 backdrop-blur-sm rounded-2xl p-6 border border-yellow-500/40 shadow-xl">
-                  <div className="flex flex-col md:flex-row gap-4 items-center">
-                    <div className="flex-1 max-w-md">
-                      <input
-                        type="text"
-                        placeholder="Search users by name or email..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full px-4 py-2 bg-red-950/50 border border-yellow-500/30 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-golden placeholder-golden/50"
-                      />
-                    </div>
+                {/* Compact Search Section */}
+                <div className="bg-gradient-to-br from-red-900/80 to-amber-900/80 backdrop-blur-sm rounded-lg p-4 border border-yellow-500/40">
+                  <div className="flex gap-3 items-center">
+                    <input
+                      type="text"
+                      placeholder="Search users..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="flex-1 px-3 py-2 bg-red-950/50 border border-yellow-500/30 rounded-lg focus:ring-2 focus:ring-yellow-500 text-golden placeholder-golden/50 text-sm"
+                    />
                     <button
                       onClick={() => fetchUsers()}
-                      className="bg-gradient-to-r from-yellow-600 to-yellow-500 text-red-900 px-6 py-2 rounded-lg font-semibold hover:from-yellow-500 hover:to-yellow-400 transition-all duration-300"
+                      className="bg-gradient-to-r from-yellow-600 to-yellow-500 text-red-900 px-4 py-2 rounded-lg font-medium hover:from-yellow-500 hover:to-yellow-400 transition-all duration-300 text-sm"
                     >
-                      🔍 Search
+                      🔍
                     </button>
                   </div>
                 </div>
 
                 {/* Error Message */}
                 {error && (
-                  <div className="bg-red-800/50 border border-red-500/50 text-red-300 px-4 py-3 rounded-lg">
+                  <div className="bg-red-800/50 border border-red-500/50 text-red-300 px-3 py-2 rounded-lg text-sm">
                     <span className="mr-2">⚠️</span>
                     {error}
                   </div>
                 )}
 
-                {/* Users Table */}
-                <div className="bg-gradient-to-br from-red-900/80 to-amber-900/80 backdrop-blur-sm rounded-xl border border-yellow-500/30 overflow-hidden">
+                {/* Compact Users Table */}
+                <div className="bg-gradient-to-br from-red-900/80 to-amber-900/80 backdrop-blur-sm rounded-lg border border-yellow-500/30 overflow-hidden">
                   <div className="overflow-x-auto">
-                    <table className="w-full">
+                    <table className="w-full text-sm">
                       <thead className="bg-red-950/50 border-b border-yellow-500/30">
                         <tr>
-                          <th className="px-6 py-4 text-left text-sm font-semibold text-golden">User</th>
-                          <th className="px-6 py-4 text-left text-sm font-semibold text-golden">Role</th>
-                          <th className="px-6 py-4 text-left text-sm font-semibold text-golden">Committee</th>
-                          <th className="px-6 py-4 text-left text-sm font-semibold text-golden">Status</th>
-                          <th className="px-6 py-4 text-left text-sm font-semibold text-golden">Actions</th>
+                          <th className="px-4 py-2 text-left text-golden font-medium">User</th>
+                          <th className="px-4 py-2 text-left text-golden font-medium">Role</th>
+                          <th className="px-4 py-2 text-left text-golden font-medium">Committee</th>
+                          <th className="px-4 py-2 text-left text-golden font-medium">Status</th>
+                          <th className="px-4 py-2 text-left text-golden font-medium">Actions</th>
                         </tr>
                       </thead>
                       <tbody>
                         {loading ? (
                           <tr>
-                            <td colSpan="5" className="px-6 py-8 text-center text-golden-light">
-                              <div className="flex items-center justify-center">
-                                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-golden"></div>
-                                <span className="ml-2">Loading users...</span>
+                            <td colSpan="5" className="px-4 py-6 text-center text-golden-light">
+                              <div className="flex items-center justify-center text-sm">
+                                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-golden"></div>
+                                <span className="ml-2">Loading...</span>
                               </div>
                             </td>
                           </tr>
                         ) : users.length === 0 ? (
                           <tr>
-                            <td colSpan="5" className="px-6 py-8 text-center text-golden-light">
+                            <td colSpan="5" className="px-4 py-6 text-center text-golden-light text-sm">
                               No users found
                             </td>
                           </tr>
                         ) : (
                           users.map((user) => (
                             <tr key={user._id} className="border-b border-yellow-500/20 hover:bg-red-950/30">
-                              <td className="px-6 py-4">
+                              <td className="px-4 py-3">
                                 <div className="flex items-center">
-                                  <div className="w-10 h-10 bg-gradient-to-br from-yellow-600 to-yellow-500 rounded-full flex items-center justify-center text-red-900 font-bold text-sm mr-3">
+                                  <div className="w-8 h-8 bg-gradient-to-br from-yellow-600 to-yellow-500 rounded-full flex items-center justify-center text-red-900 font-bold text-xs mr-2">
                                     {user.firstName?.[0]}{user.lastName?.[0]}
                                   </div>
                                   <div>
-                                    <div className="text-golden font-medium">{user.firstName} {user.lastName}</div>
-                                    <div className="text-golden-light text-sm">{user.email}</div>
+                                    <div className="text-golden font-medium text-sm">{user.firstName} {user.lastName}</div>
+                                    <div className="text-golden-light text-xs">{user.email}</div>
                                   </div>
                                 </div>
                               </td>
-                              <td className="px-6 py-4">
-                                <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                              <td className="px-4 py-3">
+                                <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-md ${
                                   user.role === USER_ROLES.ADMIN
-                                    ? 'bg-purple-900/50 text-purple-300 border border-purple-500/30'
+                                    ? 'bg-purple-900/50 text-purple-300'
                                     : user.role === USER_ROLES.COMMITTEE_MEMBER
-                                    ? 'bg-blue-900/50 text-blue-300 border border-blue-500/30'
-                                    : 'bg-gray-900/50 text-gray-300 border border-gray-500/30'
+                                    ? 'bg-blue-900/50 text-blue-300'
+                                    : 'bg-gray-900/50 text-gray-300'
                                 }`}>
                                   {user.role?.replace('_', ' ').toUpperCase()}
                                 </span>
                               </td>
-                              <td className="px-6 py-4">
+                              <td className="px-4 py-3">
                                 {user.isCommitteeMember ? (
                                   <div>
-                                    <div className="text-golden text-sm font-medium">
+                                    <div className="text-golden text-xs font-medium">
                                       {user.committeeRole?.replace('_', ' ').toUpperCase()}
                                     </div>
                                     {user.mandal && (
@@ -308,38 +302,40 @@ const AdminDashboard = () => {
                                     )}
                                   </div>
                                 ) : (
-                                  <span className="text-golden-light text-sm">Not a member</span>
+                                  <span className="text-golden-light text-xs">Not a member</span>
                                 )}
                               </td>
-                              <td className="px-6 py-4">
-                                <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                              <td className="px-4 py-3">
+                                <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-md ${
                                   user.isActive
-                                    ? 'bg-green-900/50 text-green-300 border border-green-500/30'
-                                    : 'bg-red-900/50 text-red-300 border border-red-500/30'
+                                    ? 'bg-green-900/50 text-green-300'
+                                    : 'bg-red-900/50 text-red-300'
                                 }`}>
                                   {user.isActive ? 'Active' : 'Inactive'}
                                 </span>
                               </td>
-                              <td className="px-6 py-4">
-                                <div className="flex space-x-2">
+                              <td className="px-4 py-3">
+                                <div className="flex space-x-1">
                                   <button
                                     onClick={() => {
                                       setSelectedUser(user)
                                       setShowModal(true)
                                     }}
-                                    className="bg-blue-600/20 hover:bg-blue-500/30 text-blue-300 border border-blue-500/30 px-3 py-1 rounded text-xs font-medium transition-colors"
+                                    className="bg-blue-600/20 hover:bg-blue-500/30 text-blue-300 px-2 py-1 rounded text-xs transition-colors"
+                                    title="Edit User"
                                   >
-                                    Edit
+                                    ✏️
                                   </button>
                                   <button
                                     onClick={() => handleToggleUserStatus(user._id, user.isActive)}
-                                    className={`px-3 py-1 rounded text-xs font-medium transition-colors ${
+                                    className={`px-2 py-1 rounded text-xs transition-colors ${
                                       user.isActive
-                                        ? 'bg-red-600/20 hover:bg-red-500/30 text-red-300 border border-red-500/30'
-                                        : 'bg-green-600/20 hover:bg-green-500/30 text-green-300 border border-green-500/30'
+                                        ? 'bg-red-600/20 hover:bg-red-500/30 text-red-300'
+                                        : 'bg-green-600/20 hover:bg-green-500/30 text-green-300'
                                     }`}
+                                    title={user.isActive ? 'Block User' : 'Activate User'}
                                   >
-                                    {user.isActive ? 'Block' : 'Activate'}
+                                    {user.isActive ? '🚫' : '✅'}
                                   </button>
                                 </div>
                               </td>
@@ -350,27 +346,27 @@ const AdminDashboard = () => {
                     </table>
                   </div>
 
-                  {/* Pagination */}
+                  {/* Compact Pagination */}
                   {totalPages > 1 && (
-                    <div className="px-6 py-4 border-t border-yellow-500/30">
-                      <div className="flex items-center justify-between">
-                        <div className="text-sm text-golden-light">
+                    <div className="px-4 py-3 border-t border-yellow-500/30">
+                      <div className="flex items-center justify-between text-sm">
+                        <div className="text-golden-light">
                           Page {currentPage} of {totalPages}
                         </div>
-                        <div className="flex space-x-2">
+                        <div className="flex space-x-1">
                           <button
                             onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
                             disabled={currentPage === 1}
-                            className="px-3 py-1 bg-yellow-600/20 text-yellow-300 border border-yellow-500/30 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="px-2 py-1 bg-yellow-600/20 text-yellow-300 border border-yellow-500/30 rounded text-xs disabled:opacity-50 disabled:cursor-not-allowed"
                           >
-                            Previous
+                            ← Prev
                           </button>
                           <button
                             onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
                             disabled={currentPage === totalPages}
-                            className="px-3 py-1 bg-yellow-600/20 text-yellow-300 border border-yellow-500/30 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="px-2 py-1 bg-yellow-600/20 text-yellow-300 border border-yellow-500/30 rounded text-xs disabled:opacity-50 disabled:cursor-not-allowed"
                           >
-                            Next
+                            Next →
                           </button>
                         </div>
                       </div>
@@ -380,73 +376,69 @@ const AdminDashboard = () => {
               </div>
             )}
 
-            {/* Analytics Tab */}
+            {/* Compact Analytics Tab */}
             {activeTab === 'analytics' && (
-              <div className="space-y-6">
-                <div className="bg-gradient-to-br from-red-900/80 to-amber-900/80 backdrop-blur-sm rounded-xl p-8 border border-yellow-500/30">
-                  <div className="text-center">
-                    <div className="text-6xl mb-4">📊</div>
-                    <h3 className="text-2xl font-bold text-golden mb-2">Analytics Dashboard</h3>
-                    <p className="text-golden-light">Advanced analytics and reporting features coming soon...</p>
-                  </div>
+              <div className="space-y-4">
+                <div className="bg-gradient-to-br from-red-900/80 to-amber-900/80 backdrop-blur-sm rounded-lg p-6 border border-yellow-500/30 text-center">
+                  <div className="text-4xl mb-2">📊</div>
+                  <h3 className="text-lg font-bold text-golden mb-1">Analytics Dashboard</h3>
+                  <p className="text-golden-light text-sm">Advanced analytics coming soon...</p>
                 </div>
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="bg-gradient-to-br from-red-900/80 to-amber-900/80 backdrop-blur-sm rounded-xl p-6 border border-yellow-500/30">
-                    <h4 className="text-lg font-semibold text-golden mb-4 flex items-center">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="bg-gradient-to-br from-red-900/80 to-amber-900/80 backdrop-blur-sm rounded-lg p-4 border border-yellow-500/30">
+                    <h4 className="text-sm font-semibold text-golden mb-2 flex items-center">
                       📈 User Growth
                     </h4>
-                    <p className="text-golden-light">Track user registration trends over time</p>
+                    <p className="text-golden-light text-xs">Track user registration trends</p>
                   </div>
                   
-                  <div className="bg-gradient-to-br from-red-900/80 to-amber-900/80 backdrop-blur-sm rounded-xl p-6 border border-yellow-500/30">
-                    <h4 className="text-lg font-semibold text-golden mb-4 flex items-center">
+                  <div className="bg-gradient-to-br from-red-900/80 to-amber-900/80 backdrop-blur-sm rounded-lg p-4 border border-yellow-500/30">
+                    <h4 className="text-sm font-semibold text-golden mb-2 flex items-center">
                       🏛️ Committee Activity
                     </h4>
-                    <p className="text-golden-light">Monitor committee member engagement</p>
+                    <p className="text-golden-light text-xs">Monitor member engagement</p>
                   </div>
                 </div>
               </div>
             )}
 
-            {/* Settings Tab */}
+            {/* Compact Settings Tab */}
             {activeTab === 'settings' && (
-              <div className="space-y-6">
-                <div className="bg-gradient-to-br from-red-900/80 to-amber-900/80 backdrop-blur-sm rounded-xl p-8 border border-yellow-500/30">
-                  <div className="text-center">
-                    <div className="text-6xl mb-4">⚙️</div>
-                    <h3 className="text-2xl font-bold text-golden mb-2">System Settings</h3>
-                    <p className="text-golden-light">Configure system preferences and permissions</p>
-                  </div>
+              <div className="space-y-4">
+                <div className="bg-gradient-to-br from-red-900/80 to-amber-900/80 backdrop-blur-sm rounded-lg p-6 border border-yellow-500/30 text-center">
+                  <div className="text-4xl mb-2">⚙️</div>
+                  <h3 className="text-lg font-bold text-golden mb-1">System Settings</h3>
+                  <p className="text-golden-light text-sm">Configure system preferences</p>
                 </div>
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="bg-gradient-to-br from-red-900/80 to-amber-900/80 backdrop-blur-sm rounded-xl p-6 border border-yellow-500/30">
-                    <h4 className="text-lg font-semibold text-golden mb-4 flex items-center">
-                      🔒 Security Settings
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <div className="bg-gradient-to-br from-red-900/80 to-amber-900/80 backdrop-blur-sm rounded-lg p-4 border border-yellow-500/30">
+                    <h4 className="text-sm font-semibold text-golden mb-2 flex items-center">
+                      🔒 Security
                     </h4>
-                    <p className="text-golden-light mb-4">Manage authentication and access controls</p>
-                    <button className="bg-yellow-600/20 hover:bg-yellow-500/30 text-yellow-300 border border-yellow-500/30 px-4 py-2 rounded">
+                    <p className="text-golden-light text-xs mb-3">Authentication & access controls</p>
+                    <button className="bg-yellow-600/20 hover:bg-yellow-500/30 text-yellow-300 px-3 py-1 rounded text-xs">
                       Configure
                     </button>
                   </div>
                   
-                  <div className="bg-gradient-to-br from-red-900/80 to-amber-900/80 backdrop-blur-sm rounded-xl p-6 border border-yellow-500/30">
-                    <h4 className="text-lg font-semibold text-golden mb-4 flex items-center">
-                      📧 Email Settings
+                  <div className="bg-gradient-to-br from-red-900/80 to-amber-900/80 backdrop-blur-sm rounded-lg p-4 border border-yellow-500/30">
+                    <h4 className="text-sm font-semibold text-golden mb-2 flex items-center">
+                      📧 Email
                     </h4>
-                    <p className="text-golden-light mb-4">Configure email notifications and templates</p>
-                    <button className="bg-yellow-600/20 hover:bg-yellow-500/30 text-yellow-300 border border-yellow-500/30 px-4 py-2 rounded">
+                    <p className="text-golden-light text-xs mb-3">Notifications & templates</p>
+                    <button className="bg-yellow-600/20 hover:bg-yellow-500/30 text-yellow-300 px-3 py-1 rounded text-xs">
                       Configure
                     </button>
                   </div>
                   
-                  <div className="bg-gradient-to-br from-red-900/80 to-amber-900/80 backdrop-blur-sm rounded-xl p-6 border border-yellow-500/30">
-                    <h4 className="text-lg font-semibold text-golden mb-4 flex items-center">
-                      🏛️ Mandal Management
+                  <div className="bg-gradient-to-br from-red-900/80 to-amber-900/80 backdrop-blur-sm rounded-lg p-4 border border-yellow-500/30">
+                    <h4 className="text-sm font-semibold text-golden mb-2 flex items-center">
+                      🏛️ Mandals
                     </h4>
-                    <p className="text-golden-light mb-4">Add, edit, or remove mandal organizations</p>
-                    <button className="bg-yellow-600/20 hover:bg-yellow-500/30 text-yellow-300 border border-yellow-500/30 px-4 py-2 rounded">
+                    <p className="text-golden-light text-xs mb-3">Manage organizations</p>
+                    <button className="bg-yellow-600/20 hover:bg-yellow-500/30 text-yellow-300 px-3 py-1 rounded text-xs">
                       Manage
                     </button>
                   </div>
@@ -512,36 +504,36 @@ const UserEditModal = ({ user, mandals, onClose, onRoleChange, onCommitteeAssign
 
   return (
     <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-gradient-to-br from-red-900/95 to-amber-900/95 backdrop-blur-lg rounded-3xl w-full max-w-2xl border border-yellow-500/40 shadow-2xl">
-        <div className="p-8">
-          <div className="flex items-center justify-between mb-6">
+      <div className="bg-gradient-to-br from-red-900/95 to-amber-900/95 backdrop-blur-lg rounded-2xl w-full max-w-xl border border-yellow-500/40 shadow-xl">
+        <div className="p-6">
+          <div className="flex items-center justify-between mb-4">
             <div className="flex items-center">
-              <div className="text-4xl mr-4">✨</div>
+              <div className="text-2xl mr-3">✨</div>
               <div>
-                <h3 className="text-2xl font-bold text-golden">Edit User</h3>
-                <p className="text-golden-light">Manage user roles and permissions</p>
+                <h3 className="text-lg font-bold text-golden">Edit User</h3>
+                <p className="text-golden-light text-sm">Manage roles & permissions</p>
               </div>
             </div>
             <button
               onClick={onClose}
-              className="text-golden-light hover:text-golden transition-colors duration-300 text-2xl"
+              className="text-golden-light hover:text-golden transition-colors text-xl"
             >
               ❌
             </button>
           </div>
 
-          <div className="space-y-6">
-            {/* User Info */}
-            <div className="bg-red-800/30 rounded-2xl p-6 border border-yellow-500/20">
+          <div className="space-y-4">
+            {/* Compact User Info */}
+            <div className="bg-red-800/30 rounded-lg p-4 border border-yellow-500/20">
               <div className="flex items-center">
-                <div className="w-16 h-16 bg-gradient-to-br from-yellow-600 to-yellow-500 rounded-full flex items-center justify-center mr-4 text-red-900 font-bold text-xl shadow-lg">
+                <div className="w-12 h-12 bg-gradient-to-br from-yellow-600 to-yellow-500 rounded-full flex items-center justify-center mr-3 text-red-900 font-bold text-sm">
                   {user.firstName?.charAt(0)?.toUpperCase()}{user.lastName?.charAt(0)?.toUpperCase()}
                 </div>
                 <div>
-                  <h4 className="text-xl font-bold text-golden">
+                  <h4 className="text-lg font-bold text-golden">
                     {user.firstName} {user.lastName}
                   </h4>
-                  <p className="text-golden-light">{user.email}</p>
+                  <p className="text-golden-light text-sm">{user.email}</p>
                 </div>
               </div>
             </div>
