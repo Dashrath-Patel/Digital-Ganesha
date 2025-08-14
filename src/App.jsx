@@ -43,8 +43,18 @@ function App() {
               <Route path="/signup" element={<SignUpPage />} />
               <Route path="/cultural-learning" element={<CulturalLearningPage />} />
               <Route path="/community" element={<CommunityPage />} />
-              <Route path="/admin" element={<AdminDashboard />} />
-              <Route path="/committee" element={<CommitteeDashboard />} />
+              <Route path="/mandal-locator" element={<MandalLocatorPage />} />
+              <Route path="/virtual-darshan" element={<VirtualDarshanPage />} />
+              <Route path="/admin" element={
+                <ProtectedRoute requireAdmin={true}>
+                  <AdminDashboard />
+                </ProtectedRoute>
+              } />
+              <Route path="/committee" element={
+                <ProtectedRoute>
+                  <CommitteeDashboard />
+                </ProtectedRoute>
+              } />
             </Routes>
           </div>
         </div>
