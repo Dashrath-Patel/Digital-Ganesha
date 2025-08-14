@@ -7,6 +7,23 @@ body {
   min-height: 100vh;
 }
 
+/* Line clamp utilities */
+.line-clamp-2 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+}
+
+.line-clamp-3 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+}
+
 /* Spiritual color palette */
 :root {
   --sacred-gold: rgb(255, 215, 0);
@@ -63,6 +80,86 @@ body {
 
 .spiritual-gradient-reverse {
   background: linear-gradient(315deg, var(--sacred-red-dark) 0%, var(--sacred-red) 35%, var(--sacred-amber) 100%);
+}
+
+/* Community Hub Specific Animations */
+@keyframes float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-10px) rotate(5deg); }
+}
+
+@keyframes glow {
+  0%, 100% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.3); }
+  50% { box-shadow: 0 0 40px rgba(255, 215, 0, 0.6); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-glow {
+  animation: glow 3s ease-in-out infinite;
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.2), transparent);
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+/* Enhanced hover effects for Community Hub */
+.community-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.community-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 0 0 30px rgba(255, 215, 0, 0.2);
+}
+
+.tab-button {
+  position: relative;
+  overflow: hidden;
+}
+
+.tab-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.1), transparent);
+  transition: left 0.5s;
+}
+
+.tab-button:hover::before {
+  left: 100%;
+}
+
+/* Scrollbar styling for Community Hub */
+.community-scroll::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.community-scroll::-webkit-scrollbar-track {
+  background: rgba(255, 215, 0, 0.1);
+  border-radius: 4px;
+}
+
+.community-scroll::-webkit-scrollbar-thumb {
+  background: rgba(255, 215, 0, 0.5);
+  border-radius: 4px;
+}
+
+.community-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 215, 0, 0.7);
 }
 
 /* Gradient classes for golden theme */
@@ -128,6 +225,19 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
   background: linear-gradient(180deg, rgba(255, 215, 0, 0.9), rgba(218, 165, 32, 0.9));
+}
+
+/* Hide scrollbar utility */
+.scrollbar-hide {
+  /* IE and Edge */
+  -ms-overflow-style: none;
+  /* Firefox */
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  /* Chrome, Safari and Opera */
+  display: none;
 }
 
 /* Custom spiritual animations */
@@ -508,4 +618,55 @@ html {
     padding-left: 1rem;
     padding-right: 1rem;
   }
+}
+
+/* Clean section backgrounds */
+.section-background {
+  background: rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 215, 0, 0.1);
+}
+
+.section-separator {
+  background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.3), transparent);
+  height: 1px;
+  margin: 2rem 0;
+}
+
+/* Enhanced content container */
+.content-container {
+  background: rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 215, 0, 0.15);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+/* Fixed background elements */
+.fixed-bg-element {
+  position: fixed;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Clean scroll container */
+.clean-scroll {
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.clean-scroll::-webkit-scrollbar {
+  width: 0;
+  background: transparent;
+}
+
+/* Section spacing utilities */
+.section-spacing {
+  margin-bottom: 4rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid rgba(255, 215, 0, 0.1);
+}
+
+.last-section {
+  border-bottom: none;
+  margin-bottom: 0;
 }

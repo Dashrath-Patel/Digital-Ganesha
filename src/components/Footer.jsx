@@ -71,7 +71,7 @@ const Footer = () => {
             <div className="flex items-center space-x-3 mb-6">
               <div className="w-12 h-12 bg-gradient-to-br from-yellow-600 to-yellow-500 rounded-full flex items-center justify-center overflow-hidden">
                 <img
-                  src="../../public/ganesha-navbar.jpg"  // Replace with your image path
+                  src="/ganesha-navbar.jpg"
                   alt="Sacred Symbol"
                   className="w-full h-full object-cover rounded-full"  // Fills the container perfectly
                 />

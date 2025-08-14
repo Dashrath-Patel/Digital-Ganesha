@@ -15,4 +15,6 @@ const config = {
   isProduction: import.meta.env.PROD,
 }
 
-export default config
+// Export both default config and named export for backward compatibility
+export default config;
+export const API_BASE_URL = config.apiUrl;

@@ -17,7 +17,7 @@ const Features = () => {
       title: "Virtual Darshan",
       description: "Experience 360° virtual tours and participate in live aarti ceremonies from anywhere.",
       color: "from-purple-500 to-pink-500",
-      path: null
+      path: "/virtual-darshan"
     },
     {
       icon: "🌱",

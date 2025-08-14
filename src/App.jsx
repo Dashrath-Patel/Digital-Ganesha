@@ -1,11 +1,13 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
+import ProtectedRoute from './components/ProtectedRoute';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import SignUpPage from './pages/SignUpPage';
 import CulturalLearningPage from './pages/CulturalLearningPage';
 import CommunityPage from './pages/CommunityPage';
+import VirtualDarshanPage from './pages/VirtualDarshanPage';
 import MandalLocatorPage from './pages/MandalLocatorPage';
 import AdminDashboard from './pages/AdminDashboard';
 import CommitteeDashboard from './pages/CommitteeDashboard';
@@ -41,7 +43,6 @@ function App() {
               <Route path="/signup" element={<SignUpPage />} />
               <Route path="/cultural-learning" element={<CulturalLearningPage />} />
               <Route path="/community" element={<CommunityPage />} />
-              <Route path="/mandal-locator" element={<MandalLocatorPage />} />
               <Route path="/admin" element={<AdminDashboard />} />
               <Route path="/committee" element={<CommitteeDashboard />} />
             </Routes>

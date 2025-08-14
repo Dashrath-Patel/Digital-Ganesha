@@ -114,6 +114,11 @@ export const adminAPI = {
     return data.data
   },
 
+  // Alias for getDashboardStats for backward compatibility
+  getStats: async () => {
+    return adminAPI.getDashboardStats()
+  },
+
   // Get user activity logs
   getUserActivityLogs: async (userId, page = 1, limit = 10) => {
     const params = new URLSearchParams({

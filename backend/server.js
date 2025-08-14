@@ -18,6 +18,8 @@ import mediaRoutes from './routes/media.js'
 import notificationRoutes from './routes/notifications.js'
 import analyticsRoutes from './routes/analytics.js'
 import adminRoutes from './routes/admin.js'
+import culturalRoutes from './routes/cultural.js'
+import messageRoutes from './routes/messages.js'
 
 // Import middleware
 import { errorHandler } from './middleware/errorHandler.js'
@@ -120,6 +122,8 @@ app.use('/api/media', authenticateToken, mediaRoutes)
 app.use('/api/notifications', authenticateToken, notificationRoutes)
 app.use('/api/analytics', authenticateToken, analyticsRoutes)
 app.use('/api/admin', authenticateToken, adminRoutes)
+app.use('/api/cultural', culturalRoutes)
+app.use('/api/messages', messageRoutes)
 
 // Serve uploaded files
 app.use('/uploads', express.static('uploads'))
@@ -187,6 +191,13 @@ app.get('/api/docs', (req, res) => {
         'PUT /api/admin/users/bulk/roles': 'Bulk update user roles',
         'GET /api/admin/users/:userId/activity': 'Get user activity logs',
         'GET /api/admin/users/export': 'Export users data'
+      },
+      cultural: {
+        'GET /api/cultural/:category': 'Get cultural content by category',
+        'GET /api/cultural/item/:id': 'Get single cultural content by ID',
+        'GET /api/cultural/search/:searchTerm': 'Search cultural content',
+        'GET /api/cultural/featured/all': 'Get featured content',
+        'GET /api/cultural/stats/overview': 'Get content statistics'
       }
     }
   })
