@@ -131,6 +131,19 @@ body {
   background: linear-gradient(180deg, rgba(255, 215, 0, 0.9), rgba(218, 165, 32, 0.9));
 }
 
+/* Hide scrollbar utility */
+.scrollbar-hide {
+  /* IE and Edge */
+  -ms-overflow-style: none;
+  /* Firefox */
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  /* Chrome, Safari and Opera */
+  display: none;
+}
+
 /* Custom spiritual animations */
 @keyframes float {
   0%, 100% {
@@ -489,4 +502,55 @@ html {
     padding-left: 1rem;
     padding-right: 1rem;
   }
+}
+
+/* Clean section backgrounds */
+.section-background {
+  background: rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 215, 0, 0.1);
+}
+
+.section-separator {
+  background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.3), transparent);
+  height: 1px;
+  margin: 2rem 0;
+}
+
+/* Enhanced content container */
+.content-container {
+  background: rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 215, 0, 0.15);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+/* Fixed background elements */
+.fixed-bg-element {
+  position: fixed;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Clean scroll container */
+.clean-scroll {
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.clean-scroll::-webkit-scrollbar {
+  width: 0;
+  background: transparent;
+}
+
+/* Section spacing utilities */
+.section-spacing {
+  margin-bottom: 4rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid rgba(255, 215, 0, 0.1);
+}
+
+.last-section {
+  border-bottom: none;
+  margin-bottom: 0;
 }
