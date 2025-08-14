@@ -1,15 +1,43 @@
 import React, { useState, useEffect } from 'react';
 import Header from '../components/Header';
+import CulturalService from '../services/CulturalService';
 
 const CulturalLearningPage = () => {
   const [activeCategory, setActiveCategory] = useState('mantras');
   const [expandedMantra, setExpandedMantra] = useState(null);
+  const [expandedRecipe, setExpandedRecipe] = useState(null);
+  const [expandedTradition, setExpandedTradition] = useState(null);
+  const [expandedBook, setExpandedBook] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [bhajanSearchTerm, setBhajanSearchTerm] = useState('');
   const [currentRecipeStart, setCurrentRecipeStart] = useState(0);
   
-  // Ref for the expanded mantra section
-  const expandedMantraRef = React.useRef(null);
+  // Dynamic data state
+  const [mantrasContent, setMantrasContent] = useState([]);
+  const [recipesContent, setRecipesContent] = useState([]);
+  const [traditionsContent, setTraditionsContent] = useState([]);
+  const [booksContent, setBooksContent] = useState([]);
+  const [bhajansContent, setBhajansContent] = useState([]);
+  const [displayedRecipes, setDisplayedRecipes] = useState([]);
+  const [displayedBhajans, setDisplayedBhajans] = useState([]);
+  const [displayedBooks, setDisplayedBooks] = useState([]);
+  
+  // Loading states
+  const [loading, setLoading] = useState(true);
+  const [categoryLoading, setCategoryLoading] = useState({});
+  const [error, setError] = useState(null);
+
+  // Utility function to get YouTube thumbnail URL
+  const getYoutubeThumbnail = (videoId, quality = 'maxresdefault') => {
+    if (!videoId) return null;
+    return `https://img.youtube.com/vi/${videoId}/${quality}.jpg`;
+  };
+
+  // Utility function to get YouTube video URL
+  const getYoutubeUrl = (videoId) => {
+    if (!videoId) return null;
+    return `https://youtube.com/watch?v=${videoId}`;
+  };
 
   const categories = [
     { id: 'mantras', name: 'Mantras & Shlokas', icon: '🕉️' },
@@ -19,1369 +47,1105 @@ const CulturalLearningPage = () => {
     { id: 'bhajans', name: 'Bhajans', icon: '🎵' }
   ];
 
-  const mantrasContent = [
-    {
-      id: 1,
-      title: "Ganesha Atharvashirsha (Opening Verses)",
-      sanskrit: `ॐ नमस्ते गणपतये॥
-त्वमेव प्रत्यक्षं तत्त्वमसि॥
-त्वमेव केवलं कर्ताऽसि॥
-त्वमेव केवलं धर्ताऽसि॥
-त्वमेव केवलं हर्ताऽसि॥
-त्वमेव सर्वं खल्विदं ब्रह्मासि॥
-त्वं साक्षादात्माऽसि नित्यम्॥`,
-      translation: "Om Namaste Ganapataye || You are the visible Supreme Truth. You alone are the Creator, Sustainer, and Destroyer. You are the eternal Brahman and the Soul of all.",
-      significance: "This is from the sacred Ganesha Atharvashirsha, one of the most powerful Vedic hymns to Lord Ganesha.",
-      image: "Hero/ganesh.svg",
-      source: "Atharva Veda"
-    },
-    {
-      id: 2,
-      title: "Ganesha Dwadasanama Stotra (12 Names of Ganesha)",
-      sanskrit: `सुमुखश्चैकदन्तश्च कपिलो गजकर्णकः॥
-लम्बोदरश्च विकटो विघ्ननाशो विनायकः॥
-धूम्रकेतुर्गणाध्यक्षो भालचन्द्रो गजाननः॥
-द्वादशैतानि नामानि यः पठेच्छृणुयादपि॥
-विद्यारम्भे विवाहे च प्रवेशे निर्गमे तथा॥
-संग्रामे संकटे चैव विघ्नस्तस्य न जायते॥`,
-      translation: "Sumukhah, Ekadantah, Kapilo, Gajakarnakah, Lambodarah, Vikato, Vighnanasho, Vinayakah, Dhoomraketuh, Ganadhyaksho, Bhalachandro, Gajanana. Whoever recites these 12 names avoids obstacles in education, marriage, and battles.",
-      significance: "These twelve sacred names of Ganesha provide protection and success in all endeavors.",
-      image: "Hero/om.svg",
-      source: "Ganesha Purana"
-    },
-    {
-      id: 3,
-      title: "Ganesha Pancharatnam (Adi Shankaracharya's Hymn)",
-      sanskrit: `मुदाकरात्तमोदकं सदा विमुक्तिसाधकं॥
-कलाधरावतंसकं विलासिलोकरक्षकम्॥
-अनायकैकनायकं विनाशितेभदैत्यकम्॥
-नताशुभाशु नाशकं नमामि तं विनायकम्॥`,
-      translation: "I bow to Vinayaka, who holds the modak, grants liberation, wears the moon, destroys demons, and removes sorrows.",
-      significance: "Composed by Adi Shankaracharya, this hymn is considered one of the most beautiful poems dedicated to Lord Ganesha.",
-      image: "Hero/modak.png",
-      source: "Adi Shankaracharya"
-    },
-    {
-      id: 4,
-      title: "Ganesha Sahasranama (Selected 8 Lines)",
-      sanskrit: `ॐ गणाधिपाय नमः॥ ॐ गणेश्वराय नमः॥
-ॐ गजाननाय नमः॥ ॐ एकदन्ताय नमः॥
-ॐ हेरम्बाय नमः॥ ॐ लम्बोदराय नमः॥
-ॐ सिद्धिदात्रे नमः॥ ॐ विघ्नहन्त्रे नमः॥`,
-      translation: "Salutations to Ganesha as Ganadhipa, Gajanana, Lambodara, and the bestower of Siddhi.",
-      significance: "These are sacred names from the thousand names of Ganesha, each carrying special spiritual power.",
-      image: "Hero/diya.png",
-      source: "Various Puranas"
-    },
-    {
-      id: 5,
-      title: "Ganesha Mangala Aarti",
-      sanskrit: `जय गणेश जय गणेश जय गणेश देवा॥
-माता जाकी पार्वती पिता महादेवा॥
-एक दन्त दयावन्त चार भुजाधारी॥
-मस्तक पर सिन्दूर सोहे मूषक वाहन साजे॥`,
-      translation: "Victory to Ganesha! Son of Parvati and Shiva, with one tusk, four arms, and a mouse as His vehicle.",
-      significance: "This is the most popular aarti sung during Ganesha worship ceremonies and festivals.",
-      image: "Hero/flower.png",
-      source: "Traditional Aarti"
-    },
-    {
-      id: 6,
-      title: "Ganesha Vedic Mantra (From Rigveda)",
-      sanskrit: `गणानां त्वा गणपतिं हवामहे॥
-कविं कवीनामुपमश्रवस्तमम्॥
-ज्येष्ठराजं ब्रह्मणां ब्रह्मणस्पत॥
-आ नः शृण्वन्नूतिभिः सीद सादनम्॥`,
-      translation: "We invoke You, Lord of all beings, the wisest among sages, the Supreme Brahman. Hear us and bless us with prosperity.",
-      significance: "This ancient Vedic hymn from the Rigveda is one of the earliest references to Lord Ganesha in Sanskrit literature.",
-      image: "Hero/ganesh.svg",
-      source: "Rigveda"
-    },
-    {
-      id: 7,
-      title: "Ganesha Shodashopachara Puja Mantra",
-      sanskrit: `ॐ गं गणपतये नमः आवाहयामि॥
-ॐ गं गणपतये नमः आसनं समर्पयामि॥
-ॐ गं गणपतये नमः पाद्यं समर्पयामि॥`,
-      translation: "Invoking Ganesha, offering seat, water for feet, and other rituals in 16 steps.",
-      significance: "These mantras are used during the traditional 16-step worship ritual of Lord Ganesha.",
-      image: "Hero/diya.png",
-      source: "Tantric Traditions"
-    },
-    {
-      id: 8,
-      title: "Ganesha Kavacham (Armor Hymn)",
-      sanskrit: `ॐ गणपतये अस्त्राय फट्॥
-हृदयं पातु मे शम्भोः सुतो गणपतिर्हरिः॥
-शिरो मे पातु विघ्नेशः कर्णौ पातु गजाननः॥`,
-      translation: "May Ganesha protect my heart, head, and ears like divine armor.",
-      significance: "This protective hymn is recited to invoke Ganesha's divine protection for the devotee's body and mind.",
-      image: "Hero/om.svg",
-      source: "Tantric Literature"
-    },
-    {
-      id: 9,
-      title: "Ganesha Suktam (From Yajurveda)",
-      sanskrit: `त्वं नो अग्ने वरुणस्त्वं मित्रस्त्वमिन्द्र ओजसा॥
-त्वं विष्णुरुतो रुद्रस्त्वं ब्रह्मा विभुर्भवः॥
-त्वं त्वष्टा त्वं पूषासि त्वं गणेश्वरो विभुः॥`,
-      translation: "You are Agni, Varuna, Vishnu, and Brahma—all gods united in Ganesha.",
-      significance: "This Yajurveda hymn establishes Ganesha as the supreme deity encompassing all divine powers.",
-      image: "Hero/flower.png",
-      source: "Yajurveda"
-    },
-    {
-      id: 10,
-      title: "Ganesha Bhujanga Stotra",
-      sanskrit: `यो दूर्वांकुरैर्यजति स नित्यं सिद्धिमाप्नुयात्॥
-यः पूजयेत् सुमनसा स विज्ञानी भवेन्नरः॥
-यो मन्त्रमेतं पठते स गच्छेत् परमां गतिम्॥`,
-      translation: "Whoever worships Ganesha with durva grass attains eternal wisdom and liberation.",
-      significance: "This stotra emphasizes the importance of sincere devotion and proper offerings in Ganesha worship.",
-      image: "Hero/modak.png",
-      source: "Classical Stotra"
-    },
-    {
-      id: 11,
-      title: "Ganesha Purana Mantra",
-      sanskrit: `नमस्ते स्तुत गणेश्वर सिद्धिं ददस्व मे सदा॥
-त्वमेव शरणं देव त्वमेव शरणं मम॥
-त्वमेव रक्षको नाथ त्वमेव विघ्ननाशनः॥`,
-      translation: "O Ganesha, grant me success. You are my protector and destroyer of obstacles.",
-      significance: "This prayer from the Ganesha Purana is a complete surrender to Lord Ganesha seeking his divine grace.",
-      image: "Hero/ganesh.svg",
-      source: "Ganesha Purana"
-    },
-    {
-      id: 12,
-      title: "Ganesha Mahimna Stotra",
-      sanskrit: `विघ्नेश्वराय वरदाय सुरप्रियाय॥
-सिद्धिप्रदाय सकलाय नमो नमस्ते॥
-गौरीसुताय गणनाथ नमोऽस्तु तुभ्यम्॥`,
-      translation: "Salutations to Ganesha, granter of boons, beloved of gods, and son of Gauri.",
-      significance: "This stotra glorifies the various divine qualities and powers of Lord Ganesha.",
-      image: "Hero/diya.png",
-      source: "Devotional Literature"
-    }
-  ];
+  // Load all cultural content on component mount
+  useEffect(() => {
+    const loadAllContent = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        
+        // Load all categories in parallel
+        const [mantras, recipes, traditions, books, bhajans] = await Promise.all([
+          CulturalService.getMantras(),
+          CulturalService.getRecipes({ limit: 12 }), // Get 12 recipes
+          CulturalService.getTraditions(),
+          CulturalService.getBooks(),
+          CulturalService.getBhajans()
+        ]);
 
-  const recipesContent = [
-    {
-      title: "Modak (Traditional)",
-      ingredients: [
-        "2 cups rice flour",
-        "1 cup jaggery (gur)",
-        "1 cup fresh grated coconut",
-        "1/2 tsp cardamom powder",
-        "Ghee for greasing"
-      ],
-      instructions: [
-        "Heat water in a heavy-bottomed pan and add a pinch of salt and 1 tsp ghee.",
-        "When water boils, gradually add rice flour while stirring continuously.",
-        "Cook until mixture forms a soft dough. Cover and let it cool.",
-        "For filling: Heat jaggery until it melts, add coconut and cardamom.",
-        "Cook until mixture thickens. Let it cool.",
-        "Make small portions of dough, flatten, add filling, and shape into modaks.",
-        "Steam for 10-12 minutes. Serve warm."
-      ],
-      significance: "Modak is Lord Ganesha's favorite sweet and is essential for Ganesh Chaturthi celebrations.",
-      videoId: "0tJTqOaaZII"
-    },
-    {
-      title: "Puran Poli",
-      ingredients: [
-        "2 cups chana dal (split chickpeas)",
-        "1 cup jaggery",
-        "2 cups wheat flour",
-        "1/2 tsp turmeric",
-        "Ghee as needed"
-      ],
-      instructions: [
-        "Cook chana dal with turmeric until soft.",
-        "Mash the dal and cook with jaggery until thick.",
-        "Make dough with wheat flour, salt, and ghee.",
-        "Roll dough, add filling, and cook on tawa with ghee.",
-        "Serve hot with ghee."
-      ],
-      significance: "A traditional Maharashtrian sweet bread offered to Lord Ganesha.",
-      videoId: "oTl_DYNAP0o",
-    },
-    {
-      title: "Besan Laddu",
-      ingredients: [
-        "2 cups besan (gram flour)",
-        "1 cup powdered sugar",
-        "1/2 cup ghee",
-        "1 tsp cardamom powder",
-        "Chopped almonds and pistachios",
-        "Raisins for garnish"
-      ],
-      instructions: [
-        "Dry roast besan in a heavy pan until aromatic and golden.",
-        "Add ghee and mix well, cook for 5 more minutes.",
-        "Let it cool completely, then add powdered sugar and cardamom.",
-        "Mix well and shape into round laddus while the mixture is warm.",
-        "Garnish with chopped nuts and raisins.",
-        "Store in airtight container."
-      ],
-      significance: "Laddu is considered auspicious and is commonly offered to Lord Ganesha during prayers.",
-      videoId: "u50h9LRhVB4",
-    },
-    {
-      title: "Dry Fruits Meva",
-      ingredients: [
-        "1 cup mixed dry fruits (almonds, cashews, dates)",
-        "1/2 cup khoya (mawa)",
-        "1/4 cup sugar",
-        "1/2 tsp cardamom powder",
-        "Silver foil for decoration",
-        "Ghee for binding"
-      ],
-      instructions: [
-        "Chop all dry fruits into small pieces.",
-        "Heat ghee in a pan and lightly fry the dry fruits.",
-        "Add khoya and cook until it melts and combines.",
-        "Add sugar and cardamom powder, mix well.",
-        "Cook until mixture thickens and leaves the pan.",
-        "Shape into small balls and decorate with silver foil."
-      ],
-      significance: "Meva represents prosperity and abundance, making it a perfect offering for Ganesha.",
-      videoId: "_2pgPggIVbk",
-    },
-    {
-      title: "Rice Kheer",
-      ingredients: [
-        "1/2 cup basmati rice",
-        "1 liter full-fat milk",
-        "1/2 cup sugar",
-        "1/4 tsp cardamom powder",
-        "Chopped almonds and pistachios",
-        "A pinch of saffron"
-      ],
-      instructions: [
-        "Wash and soak rice for 30 minutes, then drain.",
-        "Boil milk in a heavy-bottomed pan.",
-        "Add rice to boiling milk and cook on low heat, stirring frequently.",
-        "Cook until rice is completely soft and kheer thickens (45 minutes).",
-        "Add sugar, cardamom, and saffron. Cook for 5 more minutes.",
-        "Garnish with chopped nuts and serve warm or chilled."
-      ],
-      significance: "Kheer is a traditional dessert offered during festivals and symbolizes sweetness in life.",
-      videoId: "k6i2t2OPO-8"
-    },
-    {
-      title: "Coconut Barfi",
-      ingredients: [
-        "2 cups fresh grated coconut",
-        "1 cup sugar",
-        "1/2 cup milk",
-        "1/4 tsp cardamom powder",
-        "1 tbsp ghee",
-        "Chopped pistachios for garnish"
-      ],
-      instructions: [
-        "Heat ghee in a heavy-bottomed pan.",
-        "Add grated coconut and sauté for 3-4 minutes.",
-        "Add milk and cook until coconut absorbs the milk.",
-        "Add sugar and cook while stirring continuously.",
-        "Add cardamom powder and cook until mixture thickens.",
-        "Pour into greased tray, garnish with pistachios, and cut into squares."
-      ],
-      significance: "Coconut barfi is a pure and sattvic sweet ideal for offering to Lord Ganesha.",
-      videoId: "lZP2ydT3hQw",
-    },
-    {
-      title: "Rava Sheera",
-      ingredients: [
-        "1 cup semolina (rava)",
-        "1 cup sugar",
-        "2 cups water",
-        "1/4 cup ghee",
-        "1/4 tsp cardamom powder",
-        "10-12 cashews and raisins"
-      ],
-      instructions: [
-        "Dry roast rava in a pan until light golden.",
-        "Heat ghee in another pan, fry cashews and raisins.",
-        "Add roasted rava to ghee and mix well.",
-        "Boil water with sugar, add to rava mixture carefully.",
-        "Stir continuously to avoid lumps.",
-        "Add cardamom powder and cook until thick."
-      ],
-      significance: "Sheera is considered a blessed prasadam and is commonly offered during Ganesha festivals.",
-      videoId: "meyqEbT_HkQ"
-    },
-    {
-      title: "Til Gur Laddu",
-      ingredients: [
-        "1 cup sesame seeds (til)",
-        "1 cup jaggery (gur)",
-        "1/4 tsp cardamom powder",
-        "2 tbsp ghee",
-        "1 tbsp chopped almonds",
-        "Pinch of salt"
-      ],
-      instructions: [
-        "Dry roast sesame seeds until they splutter.",
-        "Heat jaggery in a pan until it melts completely.",
-        "Add roasted sesame seeds and mix well.",
-        "Add cardamom powder and chopped almonds.",
-        "Let it cool slightly and shape into laddus while warm.",
-        "Store in airtight container once cooled."
-      ],
-      significance: "Til Gur laddus are especially offered during Makar Sankranti and symbolize prosperity.",
-      videoId: "b5bd57OPBZA"
-    },
-    {
-      title: "Banana Halwa",
-      ingredients: [
-        "4 ripe bananas",
-        "1/2 cup sugar",
-        "1/4 cup ghee",
-        "1/4 cup milk",
-        "1/4 tsp cardamom powder",
-        "Chopped dry fruits for garnish"
-      ],
-      instructions: [
-        "Mash bananas into a smooth paste.",
-        "Heat ghee in a heavy-bottomed pan.",
-        "Add mashed bananas and cook on medium heat.",
-        "Add milk and sugar, mix well.",
-        "Cook until mixture thickens and leaves the pan.",
-        "Garnish with dry fruits and serve warm."
-      ],
-      significance: "Banana halwa is a simple and nutritious offering that pleases Lord Ganesha.",
-      videoId: "z2k6jKaevWc"
-    },
-    {
-      title: "Shrikhand",
-      ingredients: [
-        "2 cups hung curd (chakka)",
-        "1/2 cup powdered sugar",
-        "1/4 tsp cardamom powder",
-        "Pinch of saffron",
-        "2 tbsp warm milk",
-        "Chopped pistachios and almonds"
-      ],
-      instructions: [
-        "Soak saffron in warm milk for 10 minutes.",
-        "Mix hung curd with powdered sugar until smooth.",
-        "Add cardamom powder and saffron milk.",
-        "Whisk until creamy and well combined.",
-        "Chill in refrigerator for 2 hours.",
-        "Garnish with chopped nuts before serving."
-      ],
-      significance: "Shrikhand is a cooling and divine dessert perfect for summer offerings to Ganesha.",
-      videoId: "kp9XGxxPvB8"
-    },
-    {
-      title: "Peda",
-      ingredients: [
-        "2 cups khoya (mawa)",
-        "1/2 cup powdered sugar",
-        "1/4 tsp cardamom powder",
-        "1 tbsp ghee",
-        "Chopped pistachios",
-        "Silver varq for decoration"
-      ],
-      instructions: [
-        "Heat ghee in a heavy-bottomed pan.",
-        "Add khoya and cook on low heat, stirring continuously.",
-        "Cook until khoya becomes slightly brown and aromatic.",
-        "Add powdered sugar and cardamom powder.",
-        "Mix well and cook until mixture thickens.",
-        "Shape into pedas and decorate with nuts and silver varq."
-      ],
-      significance: "Peda is a traditional milk sweet that symbolizes purity and devotion to Lord Ganesha.",
-      videoId: "QDUdY_HKRsU"
-    },
-    {
-      title: "Malpua",
-      ingredients: [
-        "1 cup all-purpose flour",
-        "1/2 cup milk",
-        "1/4 cup sugar",
-        "1/4 tsp cardamom powder",
-        "Ghee for frying",
-        "Sugar syrup for soaking"
-      ],
-      instructions: [
-        "Mix flour, milk, and sugar to make smooth batter.",
-        "Add cardamom powder and let batter rest for 30 minutes.",
-        "Heat ghee in a pan for deep frying.",
-        "Pour batter to make small pancakes.",
-        "Fry until golden brown on both sides.",
-        "Soak in sugar syrup and serve warm."
-      ],
-      significance: "Malpua is a festive sweet that brings joy and is loved by Lord Ganesha during celebrations.",
-      videoId: "l4Qxt51Uvk4"
-    }
-  ];
+        setMantrasContent(mantras.data || []);
+        setRecipesContent(recipes.data || []);
+        setTraditionsContent(traditions.data || []);
+        setBooksContent(books.data || []);
+        setBhajansContent(bhajans.data || []);
+        
+        // Set initial displayed content
+        setDisplayedRecipes(getRandomItems(recipes.data || [], 4));
+        setDisplayedBhajans(getRandomItems(bhajans.data || [], 9));
+        setDisplayedBooks(getRandomItems(books.data || [], 12));
+        
+      } catch (err) {
+        console.error('Error loading cultural content:', err);
+        setError('Failed to load cultural content. Please try again later.');
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const traditionsContent = [
-    {
-      title: "Ganesh Chaturthi Celebration",
-      description: "The 11-day festival celebrating Lord Ganesha's birth.",
-      rituals: [
-        "Pranapratishtha - Installation of Ganesha idol with proper rituals",
-        "Daily Aarti - Morning and evening prayers with offerings",
-        "Modak Offering - Daily offering of Ganesha's favorite sweets",
-        "Visarjan - Immersion ceremony on the final day"
-      ],
-      significance: "This festival symbolizes the cycle of creation and dissolution in Hindu philosophy.",
-      videoId: "xeXcq1SWgLw",
-      image: "Hero/ganesh.svg"
-    },
-    {
-      title: "Sankashti Chaturthi",
-      description: "Monthly fasting day dedicated to Lord Ganesha.",
-      rituals: [
-        "Observe fast from sunrise to moonrise",
-        "Perform special puja in the evening",
-        "Offer durva grass and red flowers",
-        "Break fast only after sighting the moon"
-      ],
-      significance: "This monthly observance helps devotees overcome obstacles and gain Ganesha's blessings.",
-      videoId: "4ncAlDhIfTw",
-      image: "Hero/diya.png"
-    },
-    {
-      title: "First Worship Tradition",
-      description: "Lord Ganesha is always worshipped first in any Hindu ceremony.",
-      rituals: [
-        "Begin any puja with Ganesha invocation",
-        "Offer red flowers and durva grass",
-        "Chant 'Vighneshwaraya Namaha'",
-        "Seek blessings for obstacle-free completion"
-      ],
-      significance: "As the remover of obstacles, Ganesha's blessings ensure successful completion of any endeavor.",
-      videoId: "On8RhqLwLvw",
-      image: "Hero/om.svg"
-    }
-  ];
+    loadAllContent();
+  }, []);
 
-  const booksContent = [
-    {
-      title: "Ganesha Purana",
-      author: "Sage Vyasa",
-      description: "One of the two major Puranas dedicated entirely to Lord Ganesha, narrating his origin, forms, and stories.",
-      chapters: [
-        "Upasana Khanda - Methods of worship",
-        "Krida Khanda - Divine plays and stories",
-        "Uttara Khanda - Advanced spiritual teachings"
-      ],
-      significance: "One of the most comprehensive texts about Lord Ganesha's divine nature and worship methods.",
-      videoId: "kxxhO92X8ro",
-      image: "Hero/ganesh.svg"
-    },
-    {
-      title: "Mudgala Purana",
-      author: "Unknown",
-      description: "The second major Ganesha Purana, detailing eight incarnations of Lord Ganesha.",
-      chapters: [
-        "Vakratunda incarnation",
-        "Ekadanta incarnation", 
-        "Mahodara incarnation",
-        "Gajanana incarnation"
-      ],
-      significance: "Describes various forms of Ganesha and their specific powers to overcome different types of obstacles.",
-      videoId: "AQRzNBNIJEk",
-      image: "Hero/modak.png"
-    },
-    {
-      title: "Ganapati Atharvashirsha",
-      author: "Atharva Veda",
-      description: "A Vedic text (part of Atharvaveda) that praises Ganesha as the Supreme Brahman.",
-      chapters: [
-        "Om Namaste Ganapataye - Opening invocation",
-        "Tvameva Pratyaksham Tattvamasi - Truth declarations",
-        "Ekadantaya Vidmahe - Meditation verses"
-      ],
-      significance: "One of the most powerful Vedic hymns establishing Ganesha as the ultimate reality.",
-      videoId: "RYqJ5w-GrfM",
-      image: "Hero/om.svg"
-    },
-    {
-      title: "Skanda Purana (Ganesha Khanda)",
-      author: "Sage Vyasa",
-      description: "Contains the Ganesha Khanda, describing his birth and role among the gods.",
-      chapters: [
-        "Birth of Ganesha - Divine creation story",
-        "Elephant head incarnation - Transformation narrative",
-        "Lord of Obstacles - Divine appointment"
-      ],
-      significance: "Provides detailed accounts of Ganesha's origin and his appointment as the remover of obstacles.",
-      videoId: "8jff2wz3Hpk",
-      image: "Hero/flower.png"
-    },
-    {
-      title: "Brahma Vaivarta Purana",
-      author: "Various sages",
-      description: "Includes stories of Ganesha's origin and blessings in the cosmic order.",
-      chapters: [
-        "Ganesha Janma Katha - Birth stories",
-        "Divine blessings and powers",
-        "Cosmic role and significance"
-      ],
-      significance: "Establishes Ganesha's role in creation and his divine powers in the cosmic hierarchy.",
-      videoId: "ym4o5F8ncY0",
-      image: "Hero/diya.png"
-    },
-    {
-      title: "Shiva Purana",
-      author: "Sage Vyasa",
-      description: "Narrates Ganesha's birth, beheading, and revival by Lord Shiva.",
-      chapters: [
-        "Creation by Goddess Parvati",
-        "Encounter with Lord Shiva",
-        "Elephant head transformation"
-      ],
-      significance: "The most popular and widely known account of how Ganesha received his elephant head.",
-      videoId: "nLUmRxc6140",
-      image: "Hero/ganesh.svg"
-    },
-    {
-      title: "Narada Purana",
-      author: "Sage Narada",
-      description: "Contains hymns and stories dedicated to Ganesha with devotional practices.",
-      chapters: [
-        "Ganesha Sahasranama - Thousand names",
-        "Devotional hymns and prayers",
-        "Worship rituals and practices"
-      ],
-      significance: "Provides comprehensive devotional literature and worship guidelines for Ganesha devotees.",
-      videoId: "xeXcq1SWgLw",
-      image: "Hero/modak.png"
-    },
-    {
-      title: "Rigveda Hymns to Ganapati",
-      author: "Ancient Vedic Rishis",
-      description: "Early references to Ganapati as the lord of hosts in the oldest Vedic text.",
-      chapters: [
-        "Gananam Tva Ganapatim - Primary hymn",
-        "Invocation as lord of assemblies",
-        "Vedic worship traditions"
-      ],
-      significance: "Contains the earliest known references to Ganesha in Sanskrit literature dating back thousands of years.",
-      videoId: "4ncAlDhIfTw",
-      image: "Hero/om.svg"
-    },
-    {
-      title: "Modaka Upanishad",
-      author: "Unknown sage",
-      description: "A minor Upanishad devoted to Lord Ganesha's spiritual symbolism and philosophical teachings.",
-      chapters: [
-        "Modaka as divine knowledge",
-        "Spiritual symbolism of Ganesha",
-        "Path to self-realization"
-      ],
-      significance: "Explores the deeper philosophical and spiritual aspects of Ganesha worship and symbolism.",
-      videoId: "On8RhqLwLvw",
-      image: "Hero/flower.png"
-    },
-    {
-      title: "Uddhava Samhita",
-      author: "Various spiritual masters",
-      description: "Contains devotional guidance and mentions of Ganesha worship in spiritual practice.",
-      chapters: [
-        "Devotional practices and guidelines",
-        "Ganesha worship in spiritual path",
-        "Integration with other deities"
-      ],
-      significance: "Provides practical guidance for incorporating Ganesha worship into daily spiritual practice.",
-      videoId: "kxxhO92X8ro",
-      image: "Hero/diya.png"
-    },
-    {
-      title: "Ganesha Sahasranama",
-      author: "Various sources",
-      description: "Collection of 1000 names of Lord Ganesha with their meanings and significance.",
-      chapters: [
-        "Mudgala Sahasranama",
-        "Ganesha Purana Sahasranama",
-        "Narada Purana Sahasranama"
-      ],
-      significance: "Chanting these sacred names is believed to grant all wishes and remove all obstacles.",
-      videoId: "AQRzNBNIJEk",
-      image: "Hero/ganesh.svg"
-    },
-    {
-      title: "Ganesha Rahasya",
-      author: "Tantric tradition",
-      description: "Esoteric text revealing the mystical aspects and hidden powers of Lord Ganesha.",
-      chapters: [
-        "Secret mantras and yantras",
-        "Tantric worship methods",
-        "Mystical powers and siddhis"
-      ],
-      significance: "Reveals advanced spiritual practices and the esoteric dimensions of Ganesha worship.",
-      videoId: "RYqJ5w-GrfM",
-      image: "Hero/modak.png"
-    }
-  ];
-
-  const bhajansContent = [
-    {
-      title: "Ganpati Bappa Morya",
-      artist: "Shankar Mahadevan",
-      videoId: "xeXcq1SWgLw", // Replace with actual YouTube video ID
-      description: "Classic Ganesh Chaturthi celebration song"
-    },
-    {
-      title: "Sukh Karta Dukh Harta",
-      artist: "Sadhana Sargam",
-      videoId: "4ncAlDhIfTw", // Replace with actual YouTube video ID
-      description: "Beautiful devotional song praising Lord Ganesha"
-    },
-    {
-      title: "Om Gan Ganpataye Namo Namah",
-      artist: "Suresh Wadkar",
-      videoId: "On8RhqLwLvw", // Replace with actual YouTube video ID
-      description: "Powerful mantra chanting for Lord Ganesha"
-    },
-    {
-      title: "Vakratunda Mahakaya",
-      artist: "Anup Jalota ",
-      videoId: "kxxhO92X8ro", // Replace with actual YouTube video ID
-      description: "Sacred shloka sung melodiously"
-    },
-    {
-      title: "Gajanana Shri Ganaraya",
-      artist: "Shreya Goshal",
-      videoId: "AQRzNBNIJEk", // Replace with actual YouTube video ID
-      description: "Energetic bhajan for Ganesha festivities"
-    },
-    {
-      title: "Deva Shree Ganesha",
-      artist: "Ajay Gogavale",
-      videoId: "RYqJ5w-GrfM", // Replace with actual YouTube video ID
-      description: "Modern Bollywood tribute to Lord Ganesha"
-    },
-    {
-      title: "Morya Re",
-      artist: "Shankar Mahadevan",
-      videoId: "8jff2wz3Hpk", // Replace with actual YouTube video ID
-      description: "Emotional Ganesha bhajan"
-    },
-    {
-      title: "Gananayakaya",
-      artist: "Suprabha KV",
-      videoId: "ym4o5F8ncY0", // Replace with actual YouTube video ID
-      description: "Sanskrit classical rendition"
-    },
-    {
-      title: "Ghar Mein Padharo Gajanan Ji",
-      artist: "Sohini Mishra",
-      videoId: "nLUmRxc6140", // Replace with actual YouTube video ID
-      description: "Welcoming Song"
-    }
-  ];
-
-  // Filter function for search
-  const filteredRecipes = recipesContent.filter(recipe =>
-    recipe.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    recipe.ingredients.some(ingredient => 
-      ingredient.toLowerCase().includes(searchTerm.toLowerCase())
-    )
-  );
-
-  // Get 4 random recipes or filtered recipes
-  const getDisplayedRecipes = () => {
-    if (searchTerm) {
-      return filteredRecipes; // Show all filtered results when searching
-    }
+  // Load content for specific category when switching
+  const loadCategoryContent = async (category) => {
+    if (categoryLoading[category]) return;
     
-    // Shuffle and get 4 random recipes
-    const shuffled = [...recipesContent];
-    for (let i = shuffled.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    try {
+      setCategoryLoading(prev => ({ ...prev, [category]: true }));
+      
+      let content;
+      switch (category) {
+        case 'mantras':
+          if (mantrasContent.length === 0) {
+            content = await CulturalService.getMantras();
+            setMantrasContent(content.data || []);
+          }
+          break;
+        case 'recipes':
+          if (recipesContent.length === 0) {
+            content = await CulturalService.getRecipes();
+            setRecipesContent(content.data || []);
+            setDisplayedRecipes(getRandomItems(content.data || [], 4));
+          }
+          break;
+        case 'traditions':
+          if (traditionsContent.length === 0) {
+            content = await CulturalService.getTraditions();
+            setTraditionsContent(content.data || []);
+          }
+          break;
+        case 'books':
+          if (booksContent.length === 0) {
+            content = await CulturalService.getBooks();
+            setBooksContent(content.data || []);
+            setDisplayedBooks(getRandomItems(content.data || [], 12));
+          }
+          break;
+        case 'bhajans':
+          if (bhajansContent.length === 0) {
+            content = await CulturalService.getBhajans();
+            setBhajansContent(content.data || []);
+            setDisplayedBhajans(getRandomItems(content.data || [], 9));
+          }
+          break;
+      }
+    } catch (err) {
+      console.error(`Error loading ${category} content:`, err);
+    } finally {
+      setCategoryLoading(prev => ({ ...prev, [category]: false }));
     }
-    return shuffled.slice(0, 4);
   };
 
-  const [displayedRecipes, setDisplayedRecipes] = useState(getDisplayedRecipes());
-
-  // Refresh recipes function
-  const refreshRecipes = () => {
-    if (!searchTerm) {
-      setDisplayedRecipes(getDisplayedRecipes());
-    }
-  };
-
-  // Update displayed recipes when search term changes
-  React.useEffect(() => {
-    if (searchTerm) {
-      setDisplayedRecipes(filteredRecipes);
-    } else {
-      setDisplayedRecipes(getDisplayedRecipes());
-    }
-  }, [searchTerm]);
-
-  // Shuffle function for arrays
-  const shuffleArray = (array) => {
+  // Utility function to get random items from array - wrapped in useCallback
+  const getRandomItems = React.useCallback((array, count) => {
+    if (!array || array.length === 0) return [];
     const shuffled = [...array];
     for (let i = shuffled.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
     }
-    return shuffled;
-  };
+    return shuffled.slice(0, count);
+  }, []);
 
-  // Filter function for bhajans search
-  const filteredBhajans = bhajansContent.filter(bhajan =>
-    bhajan.title.toLowerCase().includes(bhajanSearchTerm.toLowerCase()) ||
-    bhajan.artist.toLowerCase().includes(bhajanSearchTerm.toLowerCase()) ||
-    bhajan.description.toLowerCase().includes(bhajanSearchTerm.toLowerCase())
-  );
+  // Filter function for search using useMemo to prevent infinite loops
+  const filteredRecipes = React.useMemo(() => {
+    return recipesContent.filter(recipe =>
+      recipe.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (recipe.ingredients && recipe.ingredients.some(ingredient => 
+        ingredient.toLowerCase().includes(searchTerm.toLowerCase())
+      ))
+    );
+  }, [recipesContent, searchTerm]);
 
-  // Get displayed bhajans (shuffled or filtered)
-  const getDisplayedBhajans = () => {
-    if (bhajanSearchTerm) {
-      return filteredBhajans;
+  // Get 4 random recipes or filtered recipes - wrapped in useCallback
+  const getDisplayedRecipes = React.useCallback(() => {
+    if (searchTerm) {
+      return filteredRecipes; // Show all filtered results when searching
     }
-    return shuffleArray(bhajansContent);
-  };
+    return displayedRecipes;
+  }, [searchTerm, filteredRecipes, displayedRecipes]);
 
-  // Get displayed books (shuffled)
-  const getDisplayedBooks = () => {
-    return shuffleArray(booksContent);
-  };
+  // Refresh recipes function - wrapped in useCallback
+  const refreshRecipes = React.useCallback(() => {
+    if (!searchTerm && recipesContent.length > 0) {
+      setDisplayedRecipes(getRandomItems(recipesContent, 4));
+    }
+  }, [searchTerm, recipesContent, getRandomItems]);
 
-  // State for displayed content - automatically shuffled on load
-  const [displayedBhajans, setDisplayedBhajans] = useState(() => shuffleArray(bhajansContent));
-  const [displayedBooks, setDisplayedBooks] = useState(() => shuffleArray(booksContent));
+  // Refresh traditions function - wrapped in useCallback
+  const refreshTraditions = React.useCallback(() => {
+    if (!searchTerm && traditionsContent.length > 0) {
+      setTraditionsContent([...getRandomItems(traditionsContent, traditionsContent.length)]);
+    }
+  }, [searchTerm, traditionsContent, getRandomItems]);
+
+  // Refresh books function - wrapped in useCallback
+  const refreshBooks = React.useCallback(() => {
+    if (!searchTerm && displayedBooks.length > 0) {
+      setDisplayedBooks(getRandomItems(displayedBooks, displayedBooks.length));
+    }
+  }, [searchTerm, displayedBooks, getRandomItems]);
+
+  // Refresh bhajans function - wrapped in useCallback
+  const refreshBhajans = React.useCallback(() => {
+    if (!bhajanSearchTerm && displayedBhajans.length > 0) {
+      setDisplayedBhajans(getRandomItems(displayedBhajans, displayedBhajans.length));
+    }
+  }, [bhajanSearchTerm, displayedBhajans, getRandomItems]);
+
+  // Update displayed recipes when search term changes
+  useEffect(() => {
+    if (searchTerm && filteredRecipes.length >= 0) {
+      setDisplayedRecipes(filteredRecipes);
+    } else if (!searchTerm && recipesContent.length > 0) {
+      setDisplayedRecipes(getRandomItems(recipesContent, 4));
+    }
+  }, [searchTerm, recipesContent, filteredRecipes, getRandomItems]);
+
+  // Filter function for bhajans search using useMemo
+  const filteredBhajans = React.useMemo(() => {
+    return bhajansContent.filter(bhajan =>
+      bhajan.title.toLowerCase().includes(bhajanSearchTerm.toLowerCase()) ||
+      (bhajan.artist && bhajan.artist.toLowerCase().includes(bhajanSearchTerm.toLowerCase())) ||
+      (bhajan.description && bhajan.description.toLowerCase().includes(bhajanSearchTerm.toLowerCase()))
+    );
+  }, [bhajansContent, bhajanSearchTerm]);
 
   // Update displayed bhajans when search term changes
-  React.useEffect(() => {
-    if (bhajanSearchTerm) {
+  useEffect(() => {
+    if (bhajanSearchTerm && filteredBhajans.length >= 0) {
       setDisplayedBhajans(filteredBhajans);
-    } else {
-      setDisplayedBhajans(shuffleArray(bhajansContent));
+    } else if (!bhajanSearchTerm && bhajansContent.length > 0) {
+      setDisplayedBhajans(getRandomItems(bhajansContent, 9));
     }
-  }, [bhajanSearchTerm]);
+  }, [bhajanSearchTerm, bhajansContent, filteredBhajans, getRandomItems]);
 
-  // Smooth scroll to expanded mantra function with animation
-  const smoothScrollToExpandedMantra = () => {
-    if (expandedMantraRef.current) {
-      // Calculate offset to show the card with some padding from top
-      const offsetTop = expandedMantraRef.current.offsetTop - 120; // 120px padding from top
-      
-      window.scrollTo({
-        top: Math.max(0, offsetTop),
-        behavior: 'smooth'
-      });
+  // Removed auto-scroll functionality to prevent unwanted page jumps
+  // Users can manually scroll to see the expanded content if needed
+
+  // Handle mantra card click
+  const handleMantraCardClick = async (mantraId) => {
+    const newExpandedMantra = expandedMantra === mantraId ? null : mantraId;
+    setExpandedMantra(newExpandedMantra);
+    
+    // Track view if expanding
+    if (newExpandedMantra) {
+      try {
+        await CulturalService.getContentById(mantraId);
+      } catch (err) {
+        console.error('Error tracking mantra view:', err);
+      }
     }
   };
 
-  // Effect to scroll when mantra is expanded
-  React.useEffect(() => {
-    if (expandedMantra) {
-      // Wait for the expansion animation to complete before scrolling
-      const timer = setTimeout(() => {
-        smoothScrollToExpandedMantra();
-      }, 300); // Wait for expansion animation
-      
-      return () => clearTimeout(timer);
-    }
-  }, [expandedMantra]);
-
-  // Handle mantra card click
-  const handleMantraCardClick = (mantraId) => {
-    const newExpandedMantra = expandedMantra === mantraId ? null : mantraId;
-    setExpandedMantra(newExpandedMantra);
+  // Handle category change
+  const handleCategoryChange = (category) => {
+    setActiveCategory(category);
+    loadCategoryContent(category);
   };
 
   const renderContent = () => {
+    if (loading) {
+      return (
+        <div className="flex justify-center items-center py-20">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-golden mx-auto mb-4"></div>
+            <p className="text-golden-light">Loading cultural content...</p>
+          </div>
+        </div>
+      );
+    }
+
+    if (error) {
+      return (
+        <div className="text-center py-20">
+          <p className="text-red-400 mb-4">{error}</p>
+          <button 
+            onClick={() => window.location.reload()} 
+            className="bg-golden text-red-900 px-6 py-2 rounded-full font-semibold hover:bg-golden-light transition-colors"
+          >
+            Try Again
+          </button>
+        </div>
+      );
+    }
+
     switch (activeCategory) {
       case 'mantras':
         return (
-          <div className="space-y-6">
-            <h3 className="text-3xl font-bold text-golden mb-6">Sacred Mantras & Shlokas</h3>
+          <div className="space-y-8 p-6 bg-black/5 backdrop-blur-sm rounded-2xl border border-golden/10">
+            <div className="text-center mb-8">
+              <h3 className="text-4xl font-bold text-golden mb-4 drop-shadow-lg">Sacred Mantras & Shlokas</h3>
+              <div className="w-24 h-1 bg-gradient-to-r from-transparent via-golden to-transparent mx-auto"></div>
+            </div>
             
-            {/* Expanded Card Display */}
-            {expandedMantra && (
-              <div className="mb-8">
-                {mantrasContent
-                  .filter(mantra => mantra.id === expandedMantra)
-                  .map((mantra) => (
-                    <div 
-                      key={`expanded-${mantra.id}`}
-                      ref={expandedMantraRef}
-                      className="relative overflow-hidden rounded-3xl shadow-2xl"
-                      style={{ backgroundColor: 'rgb(21, 21, 21)' }}
-                    >
-                      {/* Background overlay matching homepage */}
-                      <div className="absolute inset-0" style={{ backgroundColor: 'rgba(160, 40, 40, 0.3)' }}>
-                        {/* Mandala Pattern Background */}
-                        <div className="absolute inset-0 opacity-20">
-                          <svg className="w-full h-full" viewBox="0 0 100 100">
-                            <circle cx="50" cy="50" r="40" fill="none" stroke="currentColor" strokeWidth="0.3" className="text-golden"/>
-                            <circle cx="50" cy="50" r="30" fill="none" stroke="currentColor" strokeWidth="0.3" className="text-golden-light"/>
-                            <circle cx="50" cy="50" r="20" fill="none" stroke="currentColor" strokeWidth="0.3" className="text-golden"/>
-                            <circle cx="50" cy="50" r="10" fill="none" stroke="currentColor" strokeWidth="0.3" className="text-golden-dark"/>
-                            <path d="M50 10 L50 90 M10 50 L90 50 M25 25 L75 75 M75 25 L25 75" stroke="currentColor" strokeWidth="0.2" className="text-golden"/>
-                          </svg>
-                        </div>
-                      </div>
-                      
-                      <div className="relative z-10 p-8">
-                        <div className="flex justify-between items-start mb-6">
-                          <div className="flex items-center space-x-4">
-                            <div className="w-16 h-16 flex-shrink-0">
-                              <img 
-                                src={`/${mantra.image}`} 
-                                alt="Sacred Symbol" 
-                                className="w-full h-full object-contain rounded-lg filter drop-shadow-lg"
-                              />
+            {categoryLoading.mantras ? (
+              <div className="flex justify-center py-16">
+                <div className="animate-spin rounded-full h-16 w-16 border-4 border-golden border-t-transparent"></div>
+              </div>
+            ) : (
+              <div className="space-y-6">
+                {/* Expanded Card Display */}
+                {expandedMantra && (
+                  <div className="mb-12 section-spacing">
+                    {mantrasContent
+                      .filter(mantra => mantra._id === expandedMantra)
+                      .map((mantra) => (
+                        <div 
+                          key={`expanded-${mantra._id}`}
+                          className="relative overflow-hidden rounded-3xl shadow-2xl content-container"
+                          style={{ backgroundColor: 'rgba(21, 21, 21, 0.8)' }}
+                        >
+                          {/* Clean background overlay - minimal design */}
+                          <div className="absolute inset-0 bg-gradient-to-br from-black/20 via-red-900/10 to-black/30"></div>
+                          
+                          <div className="relative z-10 p-8">
+                            <div className="flex justify-between items-start mb-8">
+                              <div className="flex items-center space-x-4">
+                                <div className="w-16 h-16 flex-shrink-0">
+                                  <img 
+                                    src={`/${mantra.image}`} 
+                                    alt="Sacred Symbol" 
+                                    className="w-full h-full object-contain rounded-lg filter drop-shadow-lg"
+                                  />
+                                </div>
+                                <div>
+                                  <h4 className="text-3xl font-bold text-golden leading-tight">{mantra.title}</h4>
+                                  <p className="text-golden-light/80 text-base mt-2">Source: {mantra.source}</p>
+                                </div>
+                              </div>
+                              <button 
+                                onClick={() => setExpandedMantra(null)}
+                                className="ml-4 flex-shrink-0 p-2 rounded-full bg-golden/20 hover:bg-golden/30 transition-all duration-200"
+                              >
+                                <svg className="w-6 h-6 text-golden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                              </button>
                             </div>
-                            <div>
-                              <h4 className="text-2xl font-bold text-golden leading-tight">{mantra.title}</h4>
-                              <p className="text-golden-light/80 text-sm mt-1">Source: {mantra.source}</p>
+                            
+                            <div className="space-y-6 animate-fadeIn">
+                              <div className="bg-golden/10 backdrop-blur-md rounded-2xl p-6 border border-golden/20">
+                                <p className="text-lg font-medium text-golden mb-3">Sanskrit:</p>
+                                <p className="text-golden-light text-base leading-relaxed whitespace-pre-line font-mono">
+                                  {mantra.sanskrit}
+                                </p>
+                              </div>
+                              <div className="bg-golden/5 backdrop-blur-md rounded-2xl p-6 border border-golden/10">
+                                <p className="text-lg font-medium text-golden mb-3">Translation:</p>
+                                <p className="text-golden-light text-base leading-relaxed">{mantra.translation}</p>
+                              </div>
+                              <div className="bg-golden/5 backdrop-blur-md rounded-2xl p-6 border border-golden/10">
+                                <p className="text-lg font-medium text-golden mb-3">Significance:</p>
+                                <p className="text-golden-light text-base leading-relaxed">{mantra.significance}</p>
+                              </div>
                             </div>
                           </div>
-                          <button 
-                            onClick={() => setExpandedMantra(null)}
-                            className="ml-4 flex-shrink-0 p-2 rounded-full bg-golden/20 hover:bg-golden/30 transition-all duration-200"
-                          >
-                            <svg className="w-6 h-6 text-golden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-                          </button>
+                        </div>
+                      ))}
+                  </div>
+                )}
+                
+                {/* Card Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-8">
+                  {mantrasContent.map((mantra) => (
+                    <div 
+                      key={mantra._id} 
+                      className={`relative overflow-hidden rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 cursor-pointer hover:scale-105 transform content-container ${
+                        expandedMantra === mantra._id ? 'ring-2 ring-golden/50' : ''
+                      }`}
+                      style={{ 
+                        backgroundColor: 'rgba(21, 21, 21, 0.8)',
+                        minHeight: '200px' 
+                      }}
+                      onClick={() => handleMantraCardClick(mantra._id)}
+                    >
+                      {/* Clean background overlay - minimal design */}
+                      <div className="absolute inset-0 bg-gradient-to-br from-black/10 via-red-900/5 to-black/15"></div>
+                      
+                      <div className="relative z-10 p-6">
+                        <div className="flex justify-between items-start mb-4">
+                          <div className="w-12 h-12 flex-shrink-0">
+                            <img 
+                              src={`/${mantra.image}`} 
+                              alt="Sacred Symbol" 
+                              className="w-full h-full object-contain rounded-lg filter drop-shadow-lg"
+                            />
+                          </div>
+                          <div className="ml-4 flex-1">
+                            <h4 className="text-lg font-bold text-golden leading-tight mb-2">{mantra.title}</h4>
+                            <p className="text-golden-light/70 text-sm">Source: {mantra.source}</p>
+                          </div>
                         </div>
                         
-                        <div className="space-y-6 animate-fadeIn">
-                          <div className="bg-golden/10 backdrop-blur-md rounded-2xl p-6 border border-golden/20">
-                            <p className="text-lg font-medium text-golden mb-3">Sanskrit:</p>
-                            <p className="text-golden-light text-base leading-relaxed whitespace-pre-line font-mono">
-                              {mantra.sanskrit}
-                            </p>
-                          </div>
-                          <div className="bg-golden/5 backdrop-blur-md rounded-2xl p-6 border border-golden/10">
-                            <p className="text-lg font-medium text-golden mb-3">Translation:</p>
-                            <p className="text-golden-light text-base leading-relaxed">{mantra.translation}</p>
-                          </div>
-                          <div className="bg-golden/5 backdrop-blur-md rounded-2xl p-6 border border-golden/10">
-                            <p className="text-lg font-medium text-golden mb-3">Significance:</p>
-                            <p className="text-golden-light text-base leading-relaxed">{mantra.significance}</p>
+                        <div className="bg-golden/5 backdrop-blur-md rounded-xl p-4 border border-golden/10">
+                          <p className="text-golden-light text-sm leading-relaxed line-clamp-3">
+                            {mantra.significance}
+                          </p>
+                        </div>
+                        
+                        <div className="mt-4 flex justify-between items-center">
+                          <span className="text-golden-light/60 text-xs">
+                            Click to {expandedMantra === mantra._id ? 'collapse' : 'expand'}
+                          </span>
+                          <div className="flex space-x-1">
+                            <div className="w-2 h-2 rounded-full bg-golden opacity-60"></div>
+                            <div className="w-2 h-2 rounded-full bg-golden-light opacity-40"></div>
+                            <div className="w-2 h-2 rounded-full bg-golden opacity-60"></div>
                           </div>
                         </div>
                       </div>
                     </div>
                   ))}
+                </div>
               </div>
             )}
-            
-            {/* Card Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {mantrasContent.map((mantra) => (
-                <div 
-                  key={mantra.id} 
-                  className={`relative overflow-hidden rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 cursor-pointer hover:scale-105 transform ${
-                    expandedMantra === mantra.id ? 'ring-2 ring-golden/50' : ''
-                  }`}
-                  style={{ 
-                    backgroundColor: 'rgb(21, 21, 21)',
-                    minHeight: '200px' 
-                  }}
-                  onClick={() => handleMantraCardClick(mantra.id)}
-                >
-                  {/* Background overlay matching homepage */}
-                  <div className="absolute inset-0" style={{ backgroundColor: 'rgba(160, 40, 40, 0.2)' }}>
-                    <div className="absolute inset-0 opacity-10">
-                      <svg className="w-full h-full" viewBox="0 0 100 100">
-                        <circle cx="50" cy="50" r="40" fill="none" stroke="currentColor" strokeWidth="0.5" className="text-golden"/>
-                        <circle cx="50" cy="50" r="20" fill="none" stroke="currentColor" strokeWidth="0.5" className="text-golden-light"/>
-                      </svg>
-                    </div>
-                  </div>
-                  
-                  <div className="relative z-10 p-6">
-                    <div className="flex justify-between items-start mb-4">
-                      <div className="flex items-center space-x-3 flex-1">
-                        <div className="w-10 h-10 flex-shrink-0">
-                          <img 
-                            src={`/${mantra.image}`} 
-                            alt="Sacred Symbol" 
-                            className="w-full h-full object-contain rounded-lg filter drop-shadow-lg"
-                          />
-                        </div>
-                        <div className="flex-1">
-                          <h4 className="text-lg font-bold text-golden leading-tight pr-2">{mantra.title}</h4>
-                          <p className="text-golden-light/70 text-xs mt-1">{mantra.source}</p>
-                        </div>
-                      </div>
-                      <div className="ml-2 flex-shrink-0">
-                        <div className={`p-2 rounded-full transition-all duration-200 ${
-                          expandedMantra === mantra.id 
-                            ? 'bg-golden/30 rotate-180' 
-                            : 'bg-golden/20 hover:bg-golden/30'
-                        }`}>
-                          <svg className="w-4 h-4 text-golden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                          </svg>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <p className="text-golden-light/80 text-sm leading-relaxed">
-                      {expandedMantra === mantra.id 
-                        ? 'Expanded above - Click to collapse' 
-                        : 'Click to read the full mantra and its significance'
-                      }
-                    </p>
-                    
-                    {/* Preview of Sanskrit text for collapsed cards */}
-                    {expandedMantra !== mantra.id && (
-                      <div className="mt-4 p-3 bg-golden/5 backdrop-blur-sm rounded-lg border border-golden/10">
-                        <p className="text-golden-light/60 text-xs font-mono leading-relaxed line-clamp-2">
-                          {mantra.sanskrit.split('\n')[0]}...
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
           </div>
         );
-      
+
       case 'recipes':
         return (
-          <div className="space-y-8">
-            <h3 className="text-3xl font-bold text-golden mb-6">Traditional Recipes</h3>
-            
-            {/* Search Bar with Refresh Button */}
-            <div className="flex justify-center items-center gap-4 mb-8">
-              <div className="relative max-w-2xl w-full">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <svg className="w-5 h-5 text-golden/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                  </svg>
-                </div>
-                <input
-                  type="text"
-                  placeholder="Search by recipe name..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="block w-full pl-10 pr-12 py-3 border border-golden/30 rounded-full bg-black/30 backdrop-blur-md text-golden placeholder-golden/60 focus:outline-none focus:ring-2 focus:ring-golden/50 focus:border-golden/50"
-                />
-                {/* Clear button (X) */}
-                {searchTerm && (
-                  <button
-                    onClick={() => setSearchTerm('')}
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer hover:bg-golden/20 rounded-r-full transition-colors duration-200"
-                    title="Clear search"
-                  >
-                    <svg className="w-5 h-5 text-golden/60 hover:text-golden transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                  </button>
-                )}
+          <div className="space-y-8 p-6 bg-black/5 backdrop-blur-sm rounded-2xl border border-golden/10">
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between mb-8 gap-6">
+              <div>
+                <h3 className="text-4xl font-bold text-golden mb-2 drop-shadow-lg">Sacred Recipes</h3>
+                <div className="w-24 h-1 bg-gradient-to-r from-transparent via-golden to-transparent"></div>
               </div>
               
-              {/* Refresh Button */}
-              {!searchTerm && (
-                <button
-                  onClick={refreshRecipes}
-                  className="p-3 rounded-full bg-golden/20 hover:bg-golden/60 transition-all duration-300 transform hover:scale-110 hover:rotate-180 border border-golden/30 hover:border-golden/70 hover:shadow-lg hover:shadow-golden/30 cursor-pointer"
-                  title="Refresh recipes"
-                >
-                  <svg className="w-5 h-5 text-golden hover:text-white transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              <div className="flex flex-col sm:flex-row gap-4 lg:w-auto">
+                <div className="relative">
+                  <input
+                    type="text"
+                    placeholder="Search recipes or ingredients..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="w-full lg:w-80 px-6 py-3 rounded-2xl bg-white/10 backdrop-blur-md border-2 border-golden/30 text-golden-light placeholder-golden-light/60 focus:outline-none focus:ring-2 focus:ring-golden/50 focus:border-golden/70 transition-all duration-300"
+                  />
+                  <svg className="absolute right-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-golden-light/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                   </svg>
-                </button>
-              )}
-            </div>
-
-            {/* Recipe Cards */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-7xl mx-auto">
-              {displayedRecipes.map((recipe, index) => (
-                <div 
-                  key={index} 
-                  className="relative overflow-hidden rounded-3xl shadow-2xl hover:shadow-3xl transition-all duration-300 hover:scale-102"
-                  style={{ backgroundColor: 'rgb(21, 21, 21)' }}
-                >
-                  {/* Background overlay matching homepage */}
-                  <div className="absolute inset-0" style={{ backgroundColor: 'rgba(160, 40, 40, 0.3)' }}>
-                    {/* Mandala Pattern Background */}
-                    <div className="absolute inset-0 opacity-20">
-                      <svg className="w-full h-full" viewBox="0 0 100 100">
-                        <circle cx="50" cy="50" r="40" fill="none" stroke="currentColor" strokeWidth="0.3" className="text-golden"/>
-                        <circle cx="50" cy="50" r="30" fill="none" stroke="currentColor" strokeWidth="0.3" className="text-golden-light"/>
-                        <circle cx="50" cy="50" r="20" fill="none" stroke="currentColor" strokeWidth="0.3" className="text-golden"/>
-                        <circle cx="50" cy="50" r="10" fill="none" stroke="currentColor" strokeWidth="0.3" className="text-golden-dark"/>
-                        <path d="M50 10 L50 90 M10 50 L90 50 M25 25 L75 75 M75 25 L25 75" stroke="currentColor" strokeWidth="0.2" className="text-golden"/>
-                      </svg>
-                    </div>
-                  </div>
-
-                  <div className="relative z-10">
-                    {/* Video Section */}
-                    <div className="aspect-video bg-black/50 rounded-t-3xl overflow-hidden">
-                      <iframe
-                        className="w-full h-full"
-                        src={`https://www.youtube.com/embed/${recipe.videoId}`}
-                        title={recipe.title}
-                        frameBorder="0"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowFullScreen
-                      ></iframe>
-                    </div>
-
-                    {/* Content Section */}
-                    <div className="p-6">
-                      <div className="flex items-center space-x-4 mb-4">
-                        <h4 className="text-2xl font-bold text-golden">{recipe.title}</h4>
-                      </div>
-                      
-                      <div className="grid md:grid-cols-2 gap-6 mb-6">
-                        <div className="bg-golden/10 backdrop-blur-md rounded-2xl p-4 border border-golden/20">
-                          <h5 className="text-lg font-semibold text-golden mb-3">Ingredients:</h5>
-                          <ul className="space-y-2">
-                            {recipe.ingredients.map((ingredient, idx) => (
-                              <li key={idx} className="text-golden-light flex items-center text-sm">
-                                <span className="text-golden mr-2">•</span>
-                                {ingredient}
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                        <div className="bg-golden/5 backdrop-blur-md rounded-2xl p-4 border border-golden/10">
-                          <h5 className="text-lg font-semibold text-golden mb-3">Instructions:</h5>
-                          <ol className="space-y-2 max-h-48 overflow-y-auto">
-                            {recipe.instructions.slice(0, 4).map((step, idx) => (
-                              <li key={idx} className="text-golden-light text-sm">
-                                <span className="text-golden font-semibold mr-2">{idx + 1}.</span>
-                                {step}
-                              </li>
-                            ))}
-                            {recipe.instructions.length > 4 && (
-                              <li className="text-golden-light/70 text-xs italic">
-                                +{recipe.instructions.length - 4} more steps...
-                              </li>
-                            )}
-                          </ol>
-                        </div>
-                      </div>
-                      
-                      <div className="bg-golden/5 backdrop-blur-md rounded-2xl p-4 border border-golden/10">
-                        <p className="text-md font-medium text-golden mb-2">Significance:</p>
-                        <p className="text-golden-light text-sm">{recipe.significance}</p>
-                      </div>
-                    </div>
-                  </div>
                 </div>
-              ))}
+                {!searchTerm && (
+                  <button
+                    onClick={refreshRecipes}
+                    className="px-6 py-3 bg-gradient-to-r from-golden/20 to-golden-light/20 hover:from-golden/30 hover:to-golden-light/30 rounded-2xl text-golden font-bold transition-all duration-300 flex items-center space-x-3 border border-golden/30 hover:border-golden/50 hover:scale-105 transform"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                    <span>Shuffle</span>
+                  </button>
+                )}
+              </div>
             </div>
-            
-            {displayedRecipes.length === 0 && (
-              <div className="text-center py-12">
-                <p className="text-golden-light text-lg">No recipes found matching your search.</p>
+
+            {categoryLoading.recipes ? (
+              <div className="flex justify-center py-20">
+                <div className="text-center">
+                  <div className="animate-spin rounded-full h-16 w-16 border-4 border-golden border-t-transparent mx-auto mb-4"></div>
+                  <p className="text-golden-light">Loading delicious recipes...</p>
+                </div>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+                {getDisplayedRecipes().map((recipe) => (
+                  <div 
+                    key={recipe._id} 
+                    className="group relative overflow-hidden rounded-3xl shadow-2xl hover:shadow-3xl transition-all duration-500 hover:scale-[1.02] transform bg-gradient-to-br from-black/40 via-black/30 to-black/20 backdrop-blur-md border border-golden/20 cursor-pointer"
+                    onClick={() => setExpandedRecipe(expandedRecipe === recipe._id ? null : recipe._id)}
+                  >
+                    {/* Clean YouTube Thumbnail Background */}
+                    {recipe.videoId && (
+                      <div className="absolute inset-0">
+                        <img 
+                          src={getYoutubeThumbnail(recipe.videoId)} 
+                          alt={recipe.title}
+                          className="w-full h-full object-cover opacity-8 group-hover:opacity-12 transition-opacity duration-500"
+                          onError={(e) => {
+                            e.target.style.display = 'none';
+                          }}
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/70 to-black/80"></div>
+                      </div>
+                    )}
+                    
+                    {/* Minimal background pattern - removed for cleaner look */}
+                    
+                    <div className="relative z-10 p-8">
+                      <div className="flex items-start justify-between mb-6">
+                        <div className="flex-1">
+                          <h4 className="text-3xl font-bold text-golden mb-3 group-hover:text-golden-light transition-colors duration-300">{recipe.title}</h4>
+                          <p className="text-golden-light/90 text-base leading-relaxed">{recipe.significance}</p>
+                        </div>
+                        <div className="flex items-center space-x-3 ml-6">
+                          {recipe.videoId && (
+                            <a 
+                              href={getYoutubeUrl(recipe.videoId)}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="group/play relative"
+                              title="Watch Recipe Video"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              {/* YouTube Thumbnail */}
+                              <div className="relative w-24 h-18 rounded-xl overflow-hidden border-2 border-golden/50 group-hover/play:border-golden transition-all duration-300 group-hover/play:scale-110 transform">
+                                <img 
+                                  src={getYoutubeThumbnail(recipe.videoId, 'mqdefault')} 
+                                  alt={`${recipe.title} video`}
+                                  className="w-full h-full object-cover"
+                                  onError={(e) => {
+                                    e.target.style.display = 'none';
+                                  }}
+                                />
+                                <div className="absolute inset-0 bg-black/30 group-hover/play:bg-black/20 transition-colors duration-300"></div>
+                                <div className="absolute inset-0 flex items-center justify-center">
+                                  <div className="w-8 h-8 bg-red-600 rounded-full flex items-center justify-center group-hover/play:bg-red-500 transition-colors duration-300 shadow-lg">
+                                    <svg className="w-4 h-4 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24">
+                                      <path d="M8 5v14l11-7z"/>
+                                    </svg>
+                                  </div>
+                                </div>
+                              </div>
+                            </a>
+                          )}
+                          
+                          {/* Expand/Collapse Button */}
+                          <button 
+                            className="p-3 bg-golden/20 hover:bg-golden/30 rounded-full transition-all duration-300 group/expand"
+                            title={expandedRecipe === recipe._id ? "Hide Details" : "Show Recipe Details"}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setExpandedRecipe(expandedRecipe === recipe._id ? null : recipe._id);
+                            }}
+                          >
+                            <svg 
+                              className={`w-6 h-6 text-golden transform transition-transform duration-300 group-hover/expand:scale-110 ${
+                                expandedRecipe === recipe._id ? 'rotate-180' : ''
+                              }`} 
+                              fill="none" 
+                              stroke="currentColor" 
+                              viewBox="0 0 24 24"
+                            >
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                            </svg>
+                          </button>
+                        </div>
+                      </div>
+                      
+                      {/* Collapsible Recipe Details */}
+                      <div className={`overflow-hidden transition-all duration-500 ease-in-out ${
+                        expandedRecipe === recipe._id 
+                          ? 'max-h-[2000px] opacity-100' 
+                          : 'max-h-0 opacity-0'
+                      }`}>
+                        <div className="space-y-6 pt-4">
+                          <div className="bg-golden/10 backdrop-blur-md rounded-2xl p-6 border border-golden/20 group-hover:bg-golden/15 transition-colors duration-300">
+                            <h5 className="text-xl font-bold text-golden mb-4 flex items-center">
+                              <span className="w-2 h-2 bg-golden rounded-full mr-3"></span>
+                              Ingredients:
+                            </h5>
+                            <ul className="space-y-3">
+                              {recipe.ingredients && recipe.ingredients.map((ingredient, index) => (
+                                <li key={index} className="flex items-start space-x-3">
+                                  <span className="w-2 h-2 rounded-full bg-golden-light mt-2 flex-shrink-0"></span>
+                                  <span className="text-golden-light text-sm leading-relaxed">{ingredient}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                          
+                          <div className="bg-golden/5 backdrop-blur-md rounded-2xl p-6 border border-golden/10 group-hover:bg-golden/10 transition-colors duration-300">
+                            <h5 className="text-xl font-bold text-golden mb-4 flex items-center">
+                              <span className="w-2 h-2 bg-golden rounded-full mr-3"></span>
+                              Instructions:
+                            </h5>
+                            <ol className="space-y-4">
+                              {recipe.instructions && recipe.instructions.map((instruction, index) => (
+                                <li key={index} className="flex items-start space-x-4">
+                                  <span className="w-8 h-8 rounded-full bg-gradient-to-r from-golden to-golden-light text-red-900 text-sm font-bold flex items-center justify-center flex-shrink-0 mt-0.5 shadow-lg">
+                                    {index + 1}
+                                  </span>
+                                  <span className="text-golden-light text-sm leading-relaxed">{instruction}</span>
+                                </li>
+                              ))}
+                            </ol>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
             )}
           </div>
         );
-      
+
       case 'traditions':
         return (
-          <div className="space-y-8">
-            <h3 className="text-3xl font-bold text-golden mb-6">Traditions & Rituals</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {traditionsContent.map((tradition, index) => (
-                <div 
-                  key={index} 
-                  className="relative overflow-hidden rounded-3xl shadow-2xl hover:shadow-3xl transition-all duration-300 hover:scale-105"
-                  style={{ backgroundColor: 'rgb(21, 21, 21)' }}
-                >
-                  {/* Background overlay matching homepage */}
-                  <div className="absolute inset-0" style={{ backgroundColor: 'rgba(160, 40, 40, 0.3)' }}>
-                    {/* Mandala Pattern Background */}
-                    <div className="absolute inset-0 opacity-20">
-                      <svg className="w-full h-full" viewBox="0 0 100 100">
-                        <circle cx="50" cy="50" r="40" fill="none" stroke="currentColor" strokeWidth="0.3" className="text-golden"/>
-                        <circle cx="50" cy="50" r="30" fill="none" stroke="currentColor" strokeWidth="0.3" className="text-golden-light"/>
-                        <circle cx="50" cy="50" r="20" fill="none" stroke="currentColor" strokeWidth="0.3" className="text-golden"/>
-                        <circle cx="50" cy="50" r="10" fill="none" stroke="currentColor" strokeWidth="0.3" className="text-golden-dark"/>
-                        <path d="M50 10 L50 90 M10 50 L90 50 M25 25 L75 75 M75 25 L25 75" stroke="currentColor" strokeWidth="0.2" className="text-golden"/>
-                      </svg>
-                    </div>
-                  </div>
-
-                  <div className="relative z-10">
-                    {/* Image Section instead of Video */}
-                    <div className="aspect-video bg-gradient-to-br from-golden/20 to-golden/10 rounded-t-3xl overflow-hidden flex items-center justify-center">
-                      <div className="text-center">
-                        <img 
-                          src={`/${tradition.image}`} 
-                          alt={tradition.title} 
-                          className="w-24 h-24 object-contain mx-auto mb-4 filter drop-shadow-2xl"
-                        />
-                        <h5 className="text-golden font-semibold text-lg">{tradition.title}</h5>
-                        <p className="text-golden-light/80 text-sm mt-2">Sacred Tradition</p>
-                      </div>
-                    </div>
-
-                    {/* Content Section */}
-                    <div className="p-6">
-                      <div className="flex items-center space-x-3 mb-4">
-                        <div className="w-10 h-10 flex-shrink-0">
-                          <img 
-                            src={`/${tradition.image}`} 
-                            alt="Tradition Symbol" 
-                            className="w-full h-full object-contain rounded-lg filter drop-shadow-lg"
-                          />
-                        </div>
-                        <h4 className="text-xl font-bold text-golden leading-tight">{tradition.title}</h4>
-                      </div>
-                      
-                      <p className="text-golden-light mb-4 text-sm leading-relaxed">{tradition.description}</p>
-                      
-                      <div className="bg-golden/10 backdrop-blur-md rounded-2xl p-4 border border-golden/20 mb-4">
-                        <h5 className="text-md font-semibold text-golden mb-3">Rituals:</h5>
-                        <ul className="space-y-2">
-                          {tradition.rituals.map((ritual, idx) => (
-                            <li key={idx} className="text-golden-light flex items-start text-sm">
-                              <span className="text-golden mr-2 mt-1">🔸</span>
-                              {ritual}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                      
-                      <div className="bg-golden/5 backdrop-blur-md rounded-2xl p-4 border border-golden/10">
-                        <p className="text-md font-medium text-golden mb-2">Significance:</p>
-                        <p className="text-golden-light text-sm leading-relaxed">{tradition.significance}</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        );
-      
-      case 'books':
-        return (
-          <div className="space-y-8">
-            <h3 className="text-3xl font-bold text-golden mb-6">Sacred Books & Scriptures</h3>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {displayedBooks.map((book, index) => (
-                <div 
-                  key={index} 
-                  className="relative overflow-hidden rounded-3xl shadow-2xl hover:shadow-3xl transition-all duration-300 hover:scale-105"
-                  style={{ backgroundColor: 'rgb(21, 21, 21)' }}
-                >
-                  {/* Background overlay matching homepage */}
-                  <div className="absolute inset-0" style={{ backgroundColor: 'rgba(160, 40, 40, 0.3)' }}>
-                    {/* Mandala Pattern Background */}
-                    <div className="absolute inset-0 opacity-20">
-                      <svg className="w-full h-full" viewBox="0 0 100 100">
-                        <circle cx="50" cy="50" r="40" fill="none" stroke="currentColor" strokeWidth="0.3" className="text-golden"/>
-                        <circle cx="50" cy="50" r="30" fill="none" stroke="currentColor" strokeWidth="0.3" className="text-golden-light"/>
-                        <circle cx="50" cy="50" r="20" fill="none" stroke="currentColor" strokeWidth="0.3" className="text-golden"/>
-                        <circle cx="50" cy="50" r="10" fill="none" stroke="currentColor" strokeWidth="0.3" className="text-golden-dark"/>
-                        <path d="M50 10 L50 90 M10 50 L90 50 M25 25 L75 75 M75 25 L25 75" stroke="currentColor" strokeWidth="0.2" className="text-golden"/>
-                      </svg>
-                    </div>
-                  </div>
-
-                  <div className="relative z-10">
-                    {/* Image Section instead of Video */}
-                    <div className="aspect-video bg-gradient-to-br from-golden/20 to-golden/10 rounded-t-3xl overflow-hidden flex items-center justify-center">
-                      <div className="text-center">
-                        <h5 className="text-golden font-semibold text-2xl mb-2">{book.title}</h5>
-                        <p className="text-golden-light/80 text-lg">Sacred Scripture</p>
-                      </div>
-                    </div>
-
-                    {/* Content Section */}
-                    <div className="p-6">
-                      <div className="flex items-center space-x-3 mb-2">
-                        <h4 className="text-lg font-bold text-golden leading-tight">{book.title}</h4>
-                      </div>
-                      
-                      <p className="text-golden-light/80 mb-3 text-xs">Author: {book.author}</p>
-                      <p className="text-golden-light mb-4 text-sm leading-relaxed">{book.description}</p>
-                      
-                      <div className="bg-golden/10 backdrop-blur-md rounded-2xl p-4 border border-golden/20 mb-4">
-                        <h5 className="text-md font-semibold text-golden mb-3">Key Chapters/Sections:</h5>
-                        <ul className="space-y-2 max-h-32 overflow-y-auto">
-                          {book.chapters.map((chapter, idx) => (
-                            <li key={idx} className="text-golden-light flex items-start text-sm">
-                              <span className="text-golden mr-2 mt-1">📖</span>
-                              {chapter}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                      
-                      <div className="bg-golden/5 backdrop-blur-md rounded-2xl p-4 border border-golden/10">
-                        <p className="text-md font-medium text-golden mb-2">Significance:</p>
-                        <p className="text-golden-light text-sm leading-relaxed">{book.significance}</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        );
-      
-      case 'bhajans':
-        return (
-          <div className="space-y-8">
-            <h3 className="text-3xl font-bold text-golden mb-6">Sacred Bhajans & Devotional Songs</h3>
-            
-            {/* Search Bar */}
-            <div className="flex justify-center items-center mb-8">
-              <div className="relative max-w-2xl w-full">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <svg className="w-5 h-5 text-golden/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="space-y-8 p-6 bg-black/5 backdrop-blur-sm rounded-2xl border border-golden/10">
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between mb-8 gap-6">
+              <div>
+                <h3 className="text-4xl font-bold text-golden mb-2 drop-shadow-lg">Sacred Traditions & Rituals</h3>
+                <div className="w-24 h-1 bg-gradient-to-r from-transparent via-golden to-transparent"></div>
+              </div>
+              
+              <div className="flex flex-col sm:flex-row gap-4 lg:w-auto">
+                <div className="relative">
+                  <input
+                    type="text"
+                    placeholder="Explore ancient traditions..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="w-full lg:w-80 px-6 py-3 rounded-2xl bg-white/10 backdrop-blur-md border-2 border-golden/30 text-golden-light placeholder-golden-light/60 focus:outline-none focus:ring-2 focus:ring-golden/50 focus:border-golden/70 transition-all duration-300"
+                  />
+                  <svg className="absolute right-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-golden-light/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                   </svg>
                 </div>
-                <input
-                  type="text"
-                  placeholder="Search bhajans by title, artist..."
-                  value={bhajanSearchTerm}
-                  onChange={(e) => setBhajanSearchTerm(e.target.value)}
-                  className="block w-full pl-10 pr-12 py-3 border border-golden/30 rounded-full bg-black/30 backdrop-blur-md text-golden placeholder-golden/60 focus:outline-none focus:ring-2 focus:ring-golden/50 focus:border-golden/50"
-                />
-                {/* Clear button (X) */}
-                {bhajanSearchTerm && (
+                {!searchTerm && (
                   <button
-                    onClick={() => setBhajanSearchTerm('')}
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer hover:bg-golden/20 rounded-r-full transition-colors duration-200"
-                    title="Clear search"
+                    onClick={refreshTraditions}
+                    className="px-6 py-3 bg-gradient-to-r from-golden/20 to-golden-light/20 hover:from-golden/30 hover:to-golden-light/30 rounded-2xl text-golden font-bold transition-all duration-300 flex items-center space-x-3 border border-golden/30 hover:border-golden/50 hover:scale-105 transform"
                   >
-                    <svg className="w-5 h-5 text-golden/60 hover:text-golden transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                     </svg>
+                    <span>Shuffle</span>
                   </button>
                 )}
               </div>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {displayedBhajans.map((bhajan, index) => (
-                <div 
-                  key={index} 
-                  className="relative overflow-hidden rounded-3xl shadow-2xl hover:shadow-3xl transition-all duration-300 hover:scale-105"
-                  style={{ backgroundColor: 'rgb(21, 21, 21)' }}
-                >
-                  {/* Background overlay matching homepage */}
-                  <div className="absolute inset-0" style={{ backgroundColor: 'rgba(160, 40, 40, 0.3)' }}>
-                    {/* Mandala Pattern Background */}
-                    <div className="absolute inset-0 opacity-20">
-                      <svg className="w-full h-full" viewBox="0 0 100 100">
-                        <circle cx="50" cy="50" r="40" fill="none" stroke="currentColor" strokeWidth="0.3" className="text-golden"/>
-                        <circle cx="50" cy="50" r="30" fill="none" stroke="currentColor" strokeWidth="0.3" className="text-golden-light"/>
-                        <circle cx="50" cy="50" r="20" fill="none" stroke="currentColor" strokeWidth="0.3" className="text-golden"/>
-                        <circle cx="50" cy="50" r="10" fill="none" stroke="currentColor" strokeWidth="0.3" className="text-golden-dark"/>
-                        <path d="M50 10 L50 90 M10 50 L90 50 M25 25 L75 75 M75 25 L25 75" stroke="currentColor" strokeWidth="0.2" className="text-golden"/>
-                      </svg>
-                    </div>
-                  </div>
-
-                  <div className="relative z-10">
-                    {/* YouTube Video Embed */}
-                    <div className="aspect-video bg-black/50 rounded-t-3xl overflow-hidden">
-                      <iframe
-                        className="w-full h-full"
-                        src={`https://www.youtube.com/embed/${bhajan.videoId}`}
-                        title={bhajan.title}
-                        frameBorder="0"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowFullScreen
-                      ></iframe>
-                    </div>
+            {categoryLoading.traditions ? (
+              <div className="flex justify-center py-20">
+                <div className="text-center">
+                  <div className="animate-spin rounded-full h-16 w-16 border-4 border-golden border-t-transparent mx-auto mb-4"></div>
+                  <p className="text-golden-light">Discovering sacred traditions...</p>
+                </div>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                {traditionsContent.map((tradition) => (
+                  <div 
+                    key={tradition._id} 
+                    className="group relative overflow-hidden rounded-3xl shadow-2xl hover:shadow-3xl transition-all duration-500 hover:scale-[1.02] transform bg-gradient-to-br from-black/50 via-black/40 to-black/30 backdrop-blur-md border border-golden/20 cursor-pointer"
+                    onClick={() => setExpandedTradition(expandedTradition === tradition._id ? null : tradition._id)}
+                  >
+                    {/* Clean minimal background */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-black/20 via-red-900/5 to-black/25"></div>
                     
-                    {/* Video Info */}
-                    <div className="p-6">
-                      <h4 className="text-lg font-bold text-golden mb-2 leading-tight">{bhajan.title}</h4>
-                      <p className="text-golden-light/80 text-sm mb-3">Artist: {bhajan.artist}</p>
-                      <p className="text-golden-light text-sm leading-relaxed mb-4">{bhajan.description}</p>
-                      
-                      {/* Play Button Overlay */}
-                      <div className="flex items-center space-x-2">
-                        <div className="w-8 h-8 bg-golden/20 rounded-full flex items-center justify-center">
-                          <svg className="w-4 h-4 text-golden" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M8 5v14l11-7z"/>
-                          </svg>
+                    <div className="relative z-10 p-8">
+                      <div className="flex items-start justify-between mb-6">
+                        <div className="flex items-center space-x-4 flex-1">
+                          <div className="w-16 h-16 flex-shrink-0">
+                            <img 
+                              src={`/${tradition.image}`} 
+                              alt="Tradition Symbol" 
+                              className="w-full h-full object-contain rounded-lg filter drop-shadow-lg group-hover:scale-110 transition-transform duration-300"
+                            />
+                          </div>
+                          <div className="flex-1">
+                            <h4 className="text-2xl font-bold text-golden mb-2 group-hover:text-golden-light transition-colors duration-300">{tradition.title}</h4>
+                          </div>
                         </div>
-                        <span className="text-golden-light/70 text-xs">Click video to play</span>
+                        
+                        {/* Expand/Collapse Button */}
+                        <button 
+                          className="p-3 bg-golden/20 hover:bg-golden/30 rounded-full transition-all duration-300 group/expand flex-shrink-0"
+                          title={expandedTradition === tradition._id ? "Hide Details" : "Show Tradition Details"}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setExpandedTradition(expandedTradition === tradition._id ? null : tradition._id);
+                          }}
+                        >
+                          <svg 
+                            className={`w-6 h-6 text-golden transform transition-transform duration-300 group-hover/expand:scale-110 ${
+                              expandedTradition === tradition._id ? 'rotate-180' : ''
+                            }`} 
+                            fill="none" 
+                            stroke="currentColor" 
+                            viewBox="0 0 24 24"
+                          >
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                          </svg>
+                        </button>
+                      </div>
+                      
+                      {/* Always visible description */}
+                      <div className="bg-golden/10 backdrop-blur-md rounded-2xl p-6 border border-golden/20 group-hover:bg-golden/15 transition-colors duration-300 mb-6">
+                        <p className="text-golden-light text-base leading-relaxed">{tradition.description}</p>
+                      </div>
+                      
+                      {/* Collapsible Tradition Details */}
+                      <div className={`overflow-hidden transition-all duration-500 ease-in-out ${
+                        expandedTradition === tradition._id 
+                          ? 'max-h-[2000px] opacity-100' 
+                          : 'max-h-0 opacity-0'
+                      }`}>
+                        <div className="space-y-6">
+                          <div className="bg-golden/5 backdrop-blur-md rounded-2xl p-6 border border-golden/10 group-hover:bg-golden/10 transition-colors duration-300">
+                            <h5 className="text-lg font-bold text-golden mb-4 flex items-center">
+                              <svg className="w-5 h-5 mr-3 text-golden" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2L13.09 8.26L19 9L13.09 9.74L12 16L10.91 9.74L5 9L10.91 8.26L12 2Z"/>
+                              </svg>
+                              Sacred Rituals:
+                            </h5>
+                            <ul className="space-y-3">
+                              {tradition.rituals && tradition.rituals.map((ritual, index) => (
+                                <li key={index} className="flex items-start space-x-3">
+                                  <span className="w-2 h-2 rounded-full bg-golden mt-2 flex-shrink-0"></span>
+                                  <span className="text-golden-light text-sm leading-relaxed">{ritual}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                          
+                          <div className="bg-golden/5 backdrop-blur-md rounded-2xl p-6 border border-golden/10 group-hover:bg-golden/10 transition-colors duration-300">
+                            <h5 className="text-lg font-bold text-golden mb-3 flex items-center">
+                              <svg className="w-5 h-5 mr-3 text-golden" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M9.5 2C8.67 2 8 2.67 8 3.5V5H6.5C5.67 5 5 5.67 5 6.5S5.67 8 6.5 8H8V9.5C8 10.33 8.67 11 9.5 11S11 10.33 11 9.5V8H12.5C13.33 8 14 7.33 14 6.5S13.33 5 12.5 5H11V3.5C11 2.67 10.33 2 9.5 2Z"/>
+                              </svg>
+                              Divine Significance:
+                            </h5>
+                            <p className="text-golden-light text-sm leading-relaxed">{tradition.significance}</p>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              ))}
-            </div>
-            
-            {displayedBhajans.length === 0 && (
-              <div className="text-center py-12">
-                <p className="text-golden-light text-lg">No bhajans found matching your search.</p>
+                ))}
               </div>
             )}
           </div>
         );
-      
+
+      case 'books':
+        return (
+          <div className="space-y-8 p-6 bg-black/5 backdrop-blur-sm rounded-2xl border border-golden/10">
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between mb-8 gap-6">
+              <div>
+                <h3 className="text-4xl font-bold text-golden mb-2 drop-shadow-lg">Sacred Books & Scriptures</h3>
+                <div className="w-24 h-1 bg-gradient-to-r from-transparent via-golden to-transparent"></div>
+              </div>
+              
+              <div className="flex flex-col sm:flex-row gap-4 lg:w-auto">
+                <div className="relative">
+                  <input
+                    type="text"
+                    placeholder="Search sacred texts and authors..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="w-full lg:w-80 px-6 py-3 rounded-2xl bg-white/10 backdrop-blur-md border-2 border-golden/30 text-golden-light placeholder-golden-light/60 focus:outline-none focus:ring-2 focus:ring-golden/50 focus:border-golden/70 transition-all duration-300"
+                  />
+                  <svg className="absolute right-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-golden-light/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                </div>
+                {!searchTerm && (
+                  <button
+                    onClick={refreshBooks}
+                    className="px-6 py-3 bg-gradient-to-r from-golden/20 to-golden-light/20 hover:from-golden/30 hover:to-golden-light/30 rounded-2xl text-golden font-bold transition-all duration-300 flex items-center space-x-3 border border-golden/30 hover:border-golden/50 hover:scale-105 transform"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                    <span>Shuffle</span>
+                  </button>
+                )}
+              </div>
+            </div>
+            
+            {categoryLoading.books ? (
+              <div className="flex justify-center py-20">
+                <div className="text-center">
+                  <div className="animate-spin rounded-full h-16 w-16 border-4 border-golden border-t-transparent mx-auto mb-4"></div>
+                  <p className="text-golden-light">Loading sacred scriptures...</p>
+                </div>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+                {displayedBooks.map((book) => (
+                  <div 
+                    key={book._id} 
+                    className="group relative overflow-hidden rounded-3xl shadow-2xl hover:shadow-3xl transition-all duration-500 hover:scale-[1.02] transform bg-gradient-to-br from-black/60 via-black/50 to-black/40 backdrop-blur-md border border-golden/20 cursor-pointer"
+                    onClick={() => setExpandedBook(expandedBook === book._id ? null : book._id)}
+                  >
+                    {/* Clean minimal background */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-black/25 via-red-900/8 to-black/30"></div>
+                    
+                    <div className="relative z-10 p-8 h-full flex flex-col">
+                      <div className="flex items-start justify-between mb-6">
+                        <div className="flex items-center space-x-4 flex-1">
+                          <div className="w-16 h-16 flex-shrink-0">
+                            <img 
+                              src={`/${book.image}`} 
+                              alt="Book Symbol" 
+                              className="w-full h-full object-contain rounded-lg filter drop-shadow-lg group-hover:scale-110 transition-transform duration-300"
+                            />
+                          </div>
+                          <div className="flex-1">
+                            <h4 className="text-2xl font-bold text-golden mb-2 leading-tight group-hover:text-golden-light transition-colors duration-300">{book.title}</h4>
+                            <p className="text-golden-light/70 text-sm font-medium">By {book.author}</p>
+                          </div>
+                        </div>
+                        
+                        {/* Expand/Collapse Button */}
+                        <button 
+                          className="p-3 bg-golden/20 hover:bg-golden/30 rounded-full transition-all duration-300 group/expand flex-shrink-0"
+                          title={expandedBook === book._id ? "Hide Details" : "Show Book Details"}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setExpandedBook(expandedBook === book._id ? null : book._id);
+                          }}
+                        >
+                          <svg 
+                            className={`w-6 h-6 text-golden transform transition-transform duration-300 group-hover/expand:scale-110 ${
+                              expandedBook === book._id ? 'rotate-180' : ''
+                            }`} 
+                            fill="none" 
+                            stroke="currentColor" 
+                            viewBox="0 0 24 24"
+                          >
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                          </svg>
+                        </button>
+                      </div>
+                      
+                      {/* Always visible description */}
+                      <div className="bg-golden/10 backdrop-blur-md rounded-2xl p-5 border border-golden/20 group-hover:bg-golden/15 transition-colors duration-300 mb-4">
+                        <p className="text-golden-light text-sm leading-relaxed">{book.description}</p>
+                      </div>
+                      
+                      {/* Collapsible Book Details */}
+                      <div className={`overflow-hidden transition-all duration-500 ease-in-out flex-1 ${
+                        expandedBook === book._id 
+                          ? 'max-h-[2000px] opacity-100' 
+                          : 'max-h-0 opacity-0'
+                      }`}>
+                        <div className="space-y-5">
+                          <div className="bg-golden/5 backdrop-blur-md rounded-2xl p-5 border border-golden/10 group-hover:bg-golden/10 transition-colors duration-300">
+                            <h5 className="text-lg font-bold text-golden mb-4 flex items-center">
+                              <svg className="w-5 h-5 mr-3 text-golden" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M19 3H5C3.89 3 3 3.89 3 5V19C3 20.11 3.89 21 5 21H19C20.11 21 21 20.11 21 19V5C21 3.89 20.11 3 19 3ZM19 19H5V5H19V19ZM17 7H7V9H17V7ZM17 11H7V13H17V11ZM14 15H7V17H14V15Z"/>
+                              </svg>
+                              Key Chapters:
+                            </h5>
+                            <ul className="space-y-3">
+                              {book.chapters && book.chapters.slice(0, 4).map((chapter, index) => (
+                                <li key={index} className="flex items-start space-x-3">
+                                  <span className="w-6 h-6 rounded-full bg-gradient-to-r from-golden to-golden-light text-red-900 text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5 shadow-lg">
+                                    {index + 1}
+                                  </span>
+                                  <span className="text-golden-light text-sm leading-relaxed">{chapter}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                          
+                          <div className="bg-golden/5 backdrop-blur-md rounded-2xl p-5 border border-golden/10 group-hover:bg-golden/10 transition-colors duration-300">
+                            <h5 className="text-lg font-bold text-golden mb-3 flex items-center">
+                              <svg className="w-5 h-5 mr-3 text-golden" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2L13.09 8.26L19 9L13.09 9.74L12 16L10.91 9.74L5 9L10.91 8.26L12 2Z"/>
+                              </svg>
+                              Spiritual Significance:
+                            </h5>
+                            <p className="text-golden-light text-sm leading-relaxed">{book.significance}</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        );
+
+      case 'bhajans':
+        return (
+          <div className="space-y-8 p-6 bg-black/5 backdrop-blur-sm rounded-2xl border border-golden/10">
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between mb-8 gap-6">
+              <div>
+                <h3 className="text-4xl font-bold text-golden mb-2 drop-shadow-lg">Divine Bhajans</h3>
+                <div className="w-24 h-1 bg-gradient-to-r from-transparent via-golden to-transparent"></div>
+              </div>
+              
+              <div className="flex flex-col sm:flex-row gap-4 lg:w-auto">
+                <div className="relative">
+                  <input
+                    type="text"
+                    placeholder="Search bhajans, artists, moods..."
+                    value={bhajanSearchTerm}
+                    onChange={(e) => setBhajanSearchTerm(e.target.value)}
+                    className="w-full lg:w-80 px-6 py-3 rounded-2xl bg-white/10 backdrop-blur-md border-2 border-golden/30 text-golden-light placeholder-golden-light/60 focus:outline-none focus:ring-2 focus:ring-golden/50 focus:border-golden/70 transition-all duration-300"
+                  />
+                  <svg className="absolute right-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-golden-light/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                </div>
+                {!bhajanSearchTerm && (
+                  <button
+                    onClick={refreshBhajans}
+                    className="px-6 py-3 bg-gradient-to-r from-golden/20 to-golden-light/20 hover:from-golden/30 hover:to-golden-light/30 rounded-2xl text-golden font-bold transition-all duration-300 flex items-center space-x-3 border border-golden/30 hover:border-golden/50 hover:scale-105 transform"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                    <span>Shuffle</span>
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {categoryLoading.bhajans ? (
+              <div className="flex justify-center py-20">
+                <div className="text-center">
+                  <div className="animate-spin rounded-full h-16 w-16 border-4 border-golden border-t-transparent mx-auto mb-4"></div>
+                  <p className="text-golden-light">Loading divine melodies...</p>
+                </div>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+                {displayedBhajans.map((bhajan) => (
+                  <div 
+                    key={bhajan._id} 
+                    className="group relative overflow-hidden rounded-3xl shadow-2xl hover:shadow-3xl transition-all duration-500 hover:scale-[1.02] transform bg-gradient-to-br from-black/60 via-black/50 to-black/40 backdrop-blur-md border border-golden/20"
+                    style={{ minHeight: '400px' }}
+                  >
+                    {/* Clean YouTube Thumbnail Background */}
+                    {bhajan.videoId && (
+                      <div className="absolute inset-0">
+                        <img 
+                          src={getYoutubeThumbnail(bhajan.videoId)} 
+                          alt={bhajan.title}
+                          className="w-full h-full object-cover opacity-10 group-hover:opacity-15 transition-opacity duration-500"
+                          onError={(e) => {
+                            e.target.style.display = 'none';
+                          }}
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/80 to-black/85"></div>
+                      </div>
+                    )}
+                    
+                    {/* Minimal background - removed pattern for cleaner look */}
+                    
+                    <div className="relative z-10 p-8 h-full flex flex-col">
+                      <div className="flex items-start justify-between mb-6">
+                        <div className="flex-1">
+                          <h4 className="text-2xl font-bold text-golden mb-3 leading-tight group-hover:text-golden-light transition-colors duration-300">{bhajan.title}</h4>
+                          <p className="text-golden-light/80 text-sm font-medium mb-2">🎤 {bhajan.artist}</p>
+                          {bhajan.category && (
+                            <span className="inline-block px-3 py-1 rounded-full text-xs font-bold bg-golden/20 text-golden border border-golden/30">
+                              {bhajan.category}
+                            </span>
+                          )}
+                        </div>
+                        {bhajan.videoId && (
+                          <a 
+                            href={getYoutubeUrl(bhajan.videoId)}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="ml-4 group/play relative flex-shrink-0"
+                            title="Play Divine Bhajan"
+                          >
+                            <div className="relative w-24 h-18 rounded-xl overflow-hidden border-2 border-golden/50 group-hover/play:border-golden transition-all duration-300 group-hover/play:scale-110 transform">
+                              <img 
+                                src={getYoutubeThumbnail(bhajan.videoId, 'mqdefault')} 
+                                alt={`${bhajan.title} video`}
+                                className="w-full h-full object-cover"
+                                onError={(e) => {
+                                  e.target.style.display = 'none';
+                                }}
+                              />
+                              <div className="absolute inset-0 bg-black/30 group-hover/play:bg-black/20 transition-colors duration-300"></div>
+                              <div className="absolute inset-0 flex items-center justify-center">
+                                <div className="w-10 h-10 bg-red-600 rounded-full flex items-center justify-center group-hover/play:bg-red-500 transition-colors duration-300 shadow-lg">
+                                  <svg className="w-5 h-5 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M8 5v14l11-7z"/>
+                                  </svg>
+                                </div>
+                              </div>
+                            </div>
+                          </a>
+                        )}
+                      </div>
+                      
+                      <div className="flex-1 space-y-5">
+                        <div className="bg-golden/10 backdrop-blur-md rounded-2xl p-5 border border-golden/20 group-hover:bg-golden/15 transition-colors duration-300">
+                          <p className="text-golden-light text-sm leading-relaxed">{bhajan.description}</p>
+                        </div>
+                        
+                        {bhajan.significance && (
+                          <div className="bg-golden/5 backdrop-blur-md rounded-2xl p-5 border border-golden/10 group-hover:bg-golden/10 transition-colors duration-300">
+                            <h5 className="text-lg font-bold text-golden mb-3 flex items-center">
+                              <svg className="w-5 h-5 mr-3 text-golden" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 3V1L14.5 3.5L12 6V4C8.69 4 6 6.69 6 10S8.69 16 12 16 18 13.31 18 10H16C16 12.21 14.21 14 12 14S8 12.21 8 10 9.79 6 12 6Z"/>
+                              </svg>
+                              Spiritual Significance:
+                            </h5>
+                            <p className="text-golden-light text-sm leading-relaxed">{bhajan.significance}</p>
+                          </div>
+                        )}
+                        
+                        <div className="flex items-center justify-between pt-3">
+                          <div className="flex space-x-2">
+                            <div className="w-3 h-3 rounded-full bg-golden opacity-80 animate-pulse"></div>
+                            <div className="w-3 h-3 rounded-full bg-golden-light opacity-60 animate-pulse" style={{animationDelay: '0.2s'}}></div>
+                            <div className="w-3 h-3 rounded-full bg-golden opacity-80 animate-pulse" style={{animationDelay: '0.4s'}}></div>
+                          </div>
+                          <div className="flex items-center space-x-2 text-golden-light/60 text-sm">
+                            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                              <path d="M12 3V1L14.5 3.5L12 6V4C8.69 4 6 6.69 6 10S8.69 16 12 16 18 13.31 18 10H16C16 12.21 14.21 14 12 14S8 12.21 8 10 9.79 6 12 6Z"/>
+                            </svg>
+                            <span>Divine Music</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        );
+
       default:
-        return null;
+        return <div className="text-center py-20 text-golden-light">Select a category to explore</div>;
     }
   };
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: 'rgb(21, 21, 21)' }}>
+    <div className="min-h-screen relative overflow-x-hidden spiritual-gradient">
+      {/* Fixed Background Elements - Non-scrolling Sacred Patterns */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
+        {/* Sacred Om Symbol Background */}
+        <div className="absolute top-20 left-10 w-32 h-32 opacity-3">
+          <svg viewBox="0 0 100 100" className="w-full h-full text-golden">
+            <path d="M30 70 Q40 50 50 70 Q60 50 70 70 M35 60 Q50 45 65 60 M20 80 Q50 40 80 80" 
+                  stroke="currentColor" strokeWidth="2" fill="none"/>
+          </svg>
+        </div>
+        
+        {/* Lotus Petals Pattern */}
+        <div className="absolute top-40 right-16 w-28 h-28 opacity-4">
+          <svg viewBox="0 0 100 100" className="w-full h-full text-golden-light">
+            <path d="M50 10 Q60 30 80 40 Q60 50 50 70 Q40 50 20 40 Q40 30 50 10" 
+                  stroke="currentColor" strokeWidth="1.5" fill="currentColor" fillOpacity="0.1"/>
+          </svg>
+        </div>
+        
+        {/* Sacred Geometry Mandala */}
+        <div className="absolute bottom-40 left-16 w-36 h-36 opacity-4">
+          <svg viewBox="0 0 100 100" className="w-full h-full text-golden-dark">
+            <circle cx="50" cy="50" r="40" fill="none" stroke="currentColor" strokeWidth="0.8"/>
+            <circle cx="50" cy="50" r="30" fill="none" stroke="currentColor" strokeWidth="0.6"/>
+            <circle cx="50" cy="50" r="20" fill="none" stroke="currentColor" strokeWidth="0.4"/>
+            <circle cx="50" cy="50" r="10" fill="none" stroke="currentColor" strokeWidth="0.3"/>
+            <path d="M50 10 L50 90 M10 50 L90 50 M25 25 L75 75 M75 25 L25 75" 
+                  stroke="currentColor" strokeWidth="0.2"/>
+          </svg>
+        </div>
+        
+        {/* Decorative Border Elements */}
+        <div className="absolute bottom-20 right-10 w-24 h-24 opacity-5">
+          <svg viewBox="0 0 100 100" className="w-full h-full text-golden">
+            <path d="M10 10 L90 10 L90 90 L10 90 Z M20 20 L80 20 L80 80 L20 80 Z" 
+                  stroke="currentColor" strokeWidth="1" fill="none"/>
+            <circle cx="50" cy="50" r="15" stroke="currentColor" strokeWidth="0.8" fill="none"/>
+          </svg>
+        </div>
+      </div>
+
       <Header />
-      
-      {/* Hero Section */}
-      <section className="pt-24 pb-12 px-4">
-        <div className="max-w-7xl mx-auto text-center">
-          <h1 className="text-4xl md:text-6xl font-bold text-golden mb-6">
-            Cultural Learning
+
+      {/* Enhanced Hero Section with clean background */}
+      <section className="relative pt-32 pb-20 px-4 z-10 bg-gradient-to-b from-transparent via-red-900/5 to-transparent">
+        <div className="max-w-5xl mx-auto text-center relative z-10">
+          <div className="mb-8 flex justify-center">
+            <div className="w-20 h-20 bg-gradient-to-br from-golden via-golden-light to-golden-dark rounded-full flex items-center justify-center shadow-2xl border-4 border-golden/30">
+              <svg className="w-12 h-12 text-red-900" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+              </svg>
+            </div>
+          </div>
+          
+          <h1 className="text-6xl md:text-8xl font-bold text-golden mb-8 drop-shadow-2xl tracking-tight">
+            <span className="bg-gradient-to-r from-golden via-golden-light to-golden bg-clip-text text-transparent">
+              Cultural Learning
+            </span>
           </h1>
-          <p className="text-xl text-golden-light max-w-3xl mx-auto leading-relaxed">
-            Discover the rich traditions, sacred texts, and spiritual wisdom of Lord Ganesha
+          
+          <p className="text-xl md:text-2xl text-golden-light mb-12 max-w-4xl mx-auto leading-relaxed font-medium">
+            Embark on a spiritual journey through the rich heritage of Lord Ganesha worship - 
+            discover sacred mantras, traditional recipes, ancient scriptures, and divine music 
+            that have blessed devotees for millennia
           </p>
+          
+          <div className="flex flex-col items-center space-y-4">
+            <div className="w-40 h-1.5 bg-gradient-to-r from-transparent via-golden to-transparent rounded-full shadow-lg"></div>
+            <div className="flex space-x-2">
+              <div className="w-3 h-3 bg-golden rounded-full animate-pulse"></div>
+              <div className="w-3 h-3 bg-golden-light rounded-full animate-pulse delay-200"></div>
+              <div className="w-3 h-3 bg-golden rounded-full animate-pulse delay-400"></div>
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* Category Navigation */}
-      <section className="pb-8 px-4">
+      {/* Clean Navigation Section - Fixed Layout */}
+      <section className="relative pb-12 px-4 z-10 bg-gradient-to-b from-transparent via-black/5 to-transparent">
         <div className="max-w-7xl mx-auto">
-          <div className="flex flex-wrap justify-center gap-4 mb-12">
+          <div className="flex justify-center items-center gap-2 lg:gap-4 mb-16 flex-wrap">
             {categories.map((category) => (
               <button
                 key={category.id}
-                onClick={() => setActiveCategory(category.id)}
-                className={`flex items-center space-x-2 px-6 py-3 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 ${
+                onClick={() => handleCategoryChange(category.id)}
+                disabled={categoryLoading[category.id]}
+                className={`group relative flex items-center space-x-2 px-4 lg:px-6 py-3 rounded-2xl font-bold transition-all duration-500 transform hover:scale-105 hover:-translate-y-1 whitespace-nowrap ${
                   activeCategory === category.id
-                    ? 'bg-golden text-red-900 shadow-xl'
-                    : 'bg-white/20 text-golden hover:bg-white/30'
-                }`}
+                    ? 'bg-gradient-to-r from-golden via-golden-light to-golden text-red-900 shadow-2xl shadow-golden/50 scale-105'
+                    : 'bg-white/10 backdrop-blur-md text-golden hover:bg-white/20 border border-golden/30 hover:border-golden/50'
+                } ${categoryLoading[category.id] ? 'opacity-60 cursor-not-allowed' : 'hover:shadow-xl'}`}
               >
-                <span className="text-xl">{category.icon}</span>
-                <span>{category.name}</span>
+                {/* Icon with enhanced styling */}
+                <span className={`text-lg lg:text-xl transform transition-transform group-hover:scale-125 ${
+                  activeCategory === category.id ? 'animate-bounce' : ''
+                }`}>
+                  {category.icon}
+                </span>
+                
+                {/* Category name */}
+                <span className="text-sm lg:text-base tracking-wide">{category.name}</span>
+                
+                {/* Loading spinner */}
+                {categoryLoading[category.id] && (
+                  <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
+                )}
+                
+                {/* Active category indicator */}
+                {activeCategory === category.id && (
+                  <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-3 h-3 bg-golden rotate-45"></div>
+                )}
+                
+                {/* Hover glow effect */}
+                <div className="absolute inset-0 rounded-2xl bg-golden/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10"></div>
               </button>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Content Section */}
-      <section className="pb-20 px-4">
-        <div className="max-w-7xl mx-auto">
+      {/* Main Content Section with clean background */}
+      <section className="relative pb-20 px-4 z-10 bg-gradient-to-b from-transparent via-red-900/3 to-transparent">
+        <div className="max-w-7xl mx-auto bg-black/10 backdrop-blur-sm rounded-3xl p-8 border border-golden/10">
           {renderContent()}
         </div>
       </section>
 
-      {/* Floating Spiritual Elements */}
-      <div className="fixed top-1/4 left-5 text-4xl opacity-20 animate-pulse pointer-events-none">🕉️</div>
-      <div className="fixed top-1/3 right-5 text-3xl opacity-20 animate-bounce delay-300 pointer-events-none">🪔</div>
-      <div className="fixed bottom-1/4 left-5 text-3xl opacity-20 animate-pulse delay-700 pointer-events-none">📿</div>
-      <div className="fixed bottom-1/3 right-5 text-4xl opacity-20 animate-bounce delay-500 pointer-events-none">🌺</div>
+      {/* Fixed Floating Spiritual Elements - Non-scrolling */}
+      <div className="fixed top-1/4 left-3 text-2xl opacity-10 animate-pulse pointer-events-none z-5">🕉️</div>
+      <div className="fixed top-1/3 right-3 text-xl opacity-10 animate-bounce delay-300 pointer-events-none z-5">🪔</div>
+      <div className="fixed bottom-1/4 left-3 text-xl opacity-10 animate-pulse delay-700 pointer-events-none z-5">📿</div>
+      <div className="fixed bottom-1/3 right-3 text-2xl opacity-10 animate-bounce delay-500 pointer-events-none z-5">🌺</div>
     </div>
   );
 };
