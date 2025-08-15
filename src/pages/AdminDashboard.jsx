@@ -3,6 +3,7 @@ import { useAuth } from '../contexts/AuthContext'
 import { adminAPI, COMMITTEE_ROLES, USER_ROLES } from '../services/AdminService'
 import MessageService from '../services/MessageService'
 import { EventService } from '../services/api/EventService'
+import ImageKitService from '../services/ImageKitService'
 import Header from '../components/Header'
 
 const AdminDashboard = () => {
@@ -34,6 +35,7 @@ const AdminDashboard = () => {
     fetchMandals()
     fetchMessages()
     fetchEvents()
+    fetchGalleryPhotos()
   }, [currentPage, searchTerm])
 
   const fetchUsers = async () => {
@@ -88,6 +90,38 @@ const AdminDashboard = () => {
       setMandals([])
     } catch (err) {
       console.error('Failed to fetch mandals:', err)
+    }
+  }
+
+  const fetchGalleryPhotos = async () => {
+    try {
+      const categories = ['ganesh-chaturthi', 'community-volunteers', 'cultural-programs'];
+      const categoryMap = {
+        'ganesh-chaturthi': 'Ganesh Chaturthi',
+        'community-volunteers': 'Community Volunteers',
+        'cultural-programs': 'Cultural Programs'
+      };
+      
+      const allPhotos = [];
+      for (const category of categories) {
+        try {
+          const data = await ImageKitService.getGalleryPhotos(category);
+          const photos = data.photos.map(photo => ({
+            id: photo._id || photo.fileId,
+            title: photo.title || 'Untitled',
+            category: categoryMap[category],
+            date: photo.createdAt?.split('T')[0] || new Date().toISOString().split('T')[0],
+            url: photo.url || photo.thumbnailUrl,
+            fileId: photo.fileId
+          }));
+          allPhotos.push(...photos);
+        } catch (err) {
+          console.error(`Failed to fetch ${category} photos:`, err);
+        }
+      }
+      setGalleryPhotos(allPhotos);
+    } catch (err) {
+      console.error('Failed to fetch gallery photos:', err)
     }
   }
 
@@ -204,16 +238,19 @@ const AdminDashboard = () => {
     }
   }
 
-  const handleCommitteeAssignment = async (userId, committeeRole, mandalId) => {
-    try {
-      await adminAPI.assignToCommittee(userId, committeeRole, mandalId)
-      fetchUsers()
-      setShowModal(false)
-      setSelectedUser(null)
-    } catch (err) {
-      setError(err.message || 'Failed to assign committee role')
+  const handleDeleteGalleryPhoto = async (photo) => {
+    if (window.confirm(`Are you sure you want to delete "${photo.title}"?`)) {
+      try {
+        await ImageKitService.deleteGalleryPhoto(photo.fileId);
+        // Remove from local state
+        setGalleryPhotos(prev => prev.filter(p => p.id !== photo.id));
+        alert('Photo deleted successfully!');
+      } catch (error) {
+        console.error('Gallery delete error:', error);
+        alert('Failed to delete photo: ' + error.message);
+      }
     }
-  }
+  };
 
   const handleRemoveFromCommittee = async (userId) => {
     try {
@@ -916,21 +953,41 @@ const AdminDashboard = () => {
                 <div className="grid md:grid-cols-3 lg:grid-cols-4 gap-4">
                   {galleryPhotos.map((photo) => (
                     <div key={photo.id} className="bg-gradient-to-br from-red-900/80 to-amber-900/80 backdrop-blur-sm rounded-lg p-3 border border-yellow-500/30">
-                      <div className="aspect-square bg-red-800/40 rounded-lg mb-3 flex items-center justify-center">
-                        <span className="text-4xl">📸</span>
+                      <div className="aspect-square bg-red-800/40 rounded-lg mb-3 overflow-hidden">
+                        {photo.url ? (
+                          <img 
+                            src={photo.url} 
+                            alt={photo.title}
+                            className="w-full h-full object-cover rounded-lg"
+                            onError={(e) => {
+                              e.target.style.display = 'none';
+                              e.target.nextSibling.style.display = 'flex';
+                            }}
+                          />
+                        ) : null}
+                        <div className="w-full h-full flex items-center justify-center" style={{ display: photo.url ? 'none' : 'flex' }}>
+                          <span className="text-4xl">📸</span>
+                        </div>
                       </div>
                       <h5 className="text-golden text-sm font-semibold truncate">{photo.title}</h5>
                       <p className="text-golden-light text-xs">{photo.category}</p>
                       <div className="flex justify-between items-center mt-2">
-                        <span className="text-golden-light text-xs">{photo.date}</span>
+                        <span className="text-golden-light text-xs">{new Date(photo.date).toLocaleDateString()}</span>
                         <div className="flex space-x-1">
                           <button
                             onClick={() => {setEditingItem(photo); setShowGalleryModal(true);}}
                             className="text-yellow-400 hover:text-yellow-300 cursor-pointer text-sm"
+                            title="Edit photo"
                           >
                             ✏️
                           </button>
-                          <button className="text-red-400 hover:text-red-300 cursor-pointer text-sm">🗑️</button>
+                          <button 
+                            onClick={() => handleDeleteGalleryPhoto(photo)}
+                            className="text-red-400 hover:text-red-300 cursor-pointer text-sm"
+                            title="Delete photo"
+                          >
+                            🗑️
+                          </button>
                         </div>
                       </div>
                     </div>
@@ -1110,11 +1167,39 @@ const AdminDashboard = () => {
             setShowGalleryModal(false)
             setEditingItem(null)
           }}
-          onSave={(photoData) => {
-            // Handle save logic
-            console.log('Saving photo:', photoData)
-            setShowGalleryModal(false)
-            setEditingItem(null)
+          onSave={async (photoData) => {
+            try {
+              if (!photoData.imageFile) {
+                alert('Please select an image file');
+                return;
+              }
+
+              // Map categories to backend format
+              const categoryMap = {
+                'Ganesh Chaturthi': 'ganesh-chaturthi',
+                'Community Volunteers': 'community-volunteers',
+                'Cultural Programs': 'cultural-programs'
+              };
+
+              const mappedCategory = categoryMap[photoData.category];
+              if (!mappedCategory) {
+                alert('Invalid category selected');
+                return;
+              }
+
+              // Upload to ImageKit using the gallery service
+              const result = await ImageKitService.uploadGalleryPhotos([photoData.imageFile], mappedCategory);
+              
+              alert('Photo uploaded successfully!');
+              
+              // Refresh gallery photos
+              fetchGalleryPhotos();
+            } catch (error) {
+              console.error('Gallery upload error:', error);
+              alert('Failed to upload photo: ' + error.message);
+            }
+            setShowGalleryModal(false);
+            setEditingItem(null);
           }}
         />
       )}
@@ -1649,17 +1734,58 @@ const EventModal = ({ event, onClose, onSave }) => {
 // Gallery Modal Component
 const GalleryModal = ({ photo, onClose, onSave }) => {
   const [title, setTitle] = useState(photo?.title || '')
-  const [category, setCategory] = useState(photo?.category || 'Festivals')
-  const [date, setDate] = useState(photo?.date || new Date().toISOString().split('T')[0])
+  const [category, setCategory] = useState(photo?.category || 'Ganesh Chaturthi')
   const [imageFile, setImageFile] = useState(null)
+  const [fileError, setFileError] = useState('')
+
+  // Get current date for display
+  const uploadDate = photo?.date || new Date().toISOString().split('T')[0]
+  const formattedDate = new Date(uploadDate).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  })
+
+  const validateFile = (file) => {
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+    const maxSize = 5 * 1024 * 1024; // 5MB
+
+    if (!allowedTypes.includes(file.type)) {
+      return 'Only JPEG, JPG, and PNG formats are allowed';
+    }
+    
+    if (file.size > maxSize) {
+      return 'File size must be less than 5MB';
+    }
+    
+    return null;
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const error = validateFile(file);
+      if (error) {
+        setFileError(error);
+        setImageFile(null);
+        e.target.value = ''; // Clear the input
+      } else {
+        setFileError('');
+        setImageFile(file);
+      }
+    }
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault()
+    if (fileError) {
+      alert('Please fix file validation errors before submitting');
+      return;
+    }
     onSave({
       id: photo?.id || Date.now(),
       title,
       category,
-      date,
       imageFile
     })
   }
@@ -1692,43 +1818,44 @@ const GalleryModal = ({ photo, onClose, onSave }) => {
             />
           </div>
           
-          <div className="grid md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-golden text-sm font-semibold mb-2">Category</label>
-              <select
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-                className="w-full bg-red-900/40 border border-golden/30 rounded-lg px-4 py-3 text-golden-light focus:border-golden focus:outline-none"
-                required
-              >
-                <option value="Festivals">Festivals</option>
-                <option value="Community Events">Community Events</option>
-                <option value="Volunteers">Volunteers</option>
-                <option value="Behind the Scenes">Behind the Scenes</option>
-              </select>
-            </div>
-            
-            <div>
-              <label className="block text-golden text-sm font-semibold mb-2">Date</label>
-              <input
-                type="date"
-                value={date}
-                onChange={(e) => setDate(e.target.value)}
-                className="w-full bg-red-900/40 border border-golden/30 rounded-lg px-4 py-3 text-golden-light focus:border-golden focus:outline-none"
-                required
-              />
-            </div>
+          <div>
+            <label className="block text-golden text-sm font-semibold mb-2">Category</label>
+            <select
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              className="w-full bg-red-900/40 border border-golden/30 rounded-lg px-4 py-3 text-golden-light focus:border-golden focus:outline-none"
+              required
+            >
+              <option value="Ganesh Chaturthi">Ganesh Chaturthi</option>
+              <option value="Community Volunteers">Community Volunteers</option>
+              <option value="Cultural Programs">Cultural Programs</option>
+            </select>
           </div>
+
+          {photo && (
+            <div>
+              <label className="block text-golden text-sm font-semibold mb-2">Upload Date</label>
+              <div className="w-full bg-red-900/40 border border-golden/30 rounded-lg px-4 py-3 text-golden-light">
+                {formattedDate}
+              </div>
+            </div>
+          )}
           
           <div>
             <label className="block text-golden text-sm font-semibold mb-2">Upload Photo</label>
             <input
               type="file"
-              accept="image/*"
-              onChange={(e) => setImageFile(e.target.files[0])}
+              accept=".jpeg,.jpg,.png"
+              onChange={handleFileChange}
               className="w-full bg-red-900/40 border border-golden/30 rounded-lg px-4 py-3 text-golden-light file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-golden/20 file:text-golden hover:file:bg-golden/30 focus:border-golden focus:outline-none"
               required={!photo}
             />
+            {fileError && (
+              <p className="text-red-400 text-sm mt-1">{fileError}</p>
+            )}
+            <p className="text-golden-light text-xs mt-1">
+              Supported formats: JPEG, JPG, PNG • Max size: 5MB
+            </p>
           </div>
           
           <div className="flex space-x-4 pt-4">
