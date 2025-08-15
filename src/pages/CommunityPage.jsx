@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import Header from '../components/Header';
 import AdvancedGalleryUploader from '../components/AdvancedGalleryUploader';
 import GalleryViewer from '../components/GalleryViewer';
@@ -9,6 +9,7 @@ import { useAuth } from '../contexts/AuthContext';
 
 const CommunityPage = () => {
   const { user } = useAuth();
+  const [searchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState('message');
   const [isLoading, setIsLoading] = useState(true);
   const [expandedMessage, setExpandedMessage] = useState(null);
@@ -16,6 +17,14 @@ const CommunityPage = () => {
   const [messages, setMessages] = useState([]);
   const [events, setEvents] = useState([]);
   const [error, setError] = useState(null);
+
+  // Check for tab parameter in URL and set active tab
+  useEffect(() => {
+    const tabParam = searchParams.get('tab');
+    if (tabParam && ['message', 'events', 'gallery'].includes(tabParam)) {
+      setActiveTab(tabParam);
+    }
+  }, [searchParams]);
 
   // Fetch messages from the database
   const fetchMessages = async () => {
