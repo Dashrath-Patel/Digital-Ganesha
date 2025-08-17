@@ -1,23 +1,14 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 
 const VirtualDarshanPage = () => {
   const navigate = useNavigate();
-  const [activeSection, setActiveSection] = useState('temple-tour');
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [currentMantra, setCurrentMantra] = useState(0);
+  const [activeSection, setActiveSection] = useState('live-aarti');
   const [offerings, setOfferings] = useState([]);
-  const [showPrayerModal, setShowPrayerModal] = useState(false);
-  const [prayerText, setPrayerText] = useState('');
-  const audioRef = useRef(null);
-
-  const mantras = [
-    { text: "ॐ गं गणपतये नमः", translation: "Om Gam Ganapataye Namaha" },
-    { text: "वक्रतुण्ड महाकाय सूर्यकोटि समप्रभ", translation: "Vakratunda Mahakaya Suryakoti Samaprabha" },
-    { text: "गणानां त्वा गणपतिं हवामहे", translation: "Gananam Tva Ganapatim Havaamahe" },
-    { text: "मंगलमूर्ति मोरया", translation: "Mangalmurti Morya" }
-  ];
+  const [isLiveStreamActive, setIsLiveStreamActive] = useState(false);
+  const [liveStreamData, setLiveStreamData] = useState(null);
+  const [lastChecked, setLastChecked] = useState(null);
 
   const offeringTypes = [
     { id: 'flowers', name: 'Flowers', icon: '🌺', price: 'Free' },
@@ -30,17 +21,58 @@ const VirtualDarshanPage = () => {
 
   const templeAreas = [
     { id: 'main-hall', name: 'Main Hall', description: 'The sacred main darshan area' },
-    { id: 'prayer-hall', name: 'Prayer Hall', description: 'Community prayer space' },
+    { id: 'prayer-hall', name: 'Mandap Area', description: 'Community prayer space' },
     { id: 'decoration', name: 'Festival Decorations', description: 'Beautiful festive arrangements' },
-    { id: 'entrance', name: 'Temple Entrance', description: 'Welcome gateway to divinity' }
+    { id: 'entrance', name: 'Mandap Entrance', description: 'Welcome gateway to divinity' }
   ];
 
-  useEffect(() => {
-    // Auto-rotate mantras every 10 seconds
-    const interval = setInterval(() => {
-      setCurrentMantra((prev) => (prev + 1) % mantras.length);
-    }, 10000);
+  // Configuration for live streaming
+  const liveStreamConfig = {
+    // Replace with your actual YouTube channel ID
+    youtubeChannelId: 'UCl7q1eR1E98WGxeb9tHGyVg', // Example: 'UCxxxxxxxxxxxxxxxxxxxxxxx'
+    manualLiveStatus: false, // Set to true for testing
+  };
 
+  // Check live stream status (YouTube approach)
+  const checkLiveStreamStatus = async () => {
+    try {
+      // YouTube Data API v3 approach (requires API key)
+      // const API_KEY = 'your-youtube-api-key';
+      // const response = await fetch(
+      //   `https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${liveStreamConfig.youtubeChannelId}&eventType=live&type=video&key=${API_KEY}`
+      // );
+      // const data = await response.json();
+      
+      // For demo purposes, we'll simulate the check
+      // In production, uncomment above and remove this simulation
+      const isLive = liveStreamConfig.manualLiveStatus; // Simulate live status
+      
+      if (isLive) {
+        setIsLiveStreamActive(true);
+        setLiveStreamData({
+          title: 'KTYA Mandal Evening Aarti',
+          embedUrl: liveStreamConfig.manualStreamUrl,
+          platform: 'YouTube'
+        });
+      } else {
+        setIsLiveStreamActive(false);
+        setLiveStreamData(null);
+      }
+      
+      setLastChecked(new Date());
+    } catch (error) {
+      console.error('Error checking live stream status:', error);
+      setIsLiveStreamActive(false);
+    }
+  };
+
+  // Check live stream status on component mount and periodically
+  useEffect(() => {
+    checkLiveStreamStatus();
+    
+    // Check every 2 minutes for live stream status
+    const interval = setInterval(checkLiveStreamStatus, 2 * 60 * 1000);
+    
     return () => clearInterval(interval);
   }, []);
 
@@ -54,31 +86,14 @@ const VirtualDarshanPage = () => {
     }
   };
 
-  const handlePrayerSubmit = () => {
-    if (prayerText.trim()) {
-      alert('Your prayer has been submitted to Lord Ganesha 🙏');
-      setPrayerText('');
-      setShowPrayerModal(false);
-    }
-  };
-
-  const toggleMantraAudio = () => {
-    if (isPlaying) {
-      audioRef.current?.pause();
-    } else {
-      audioRef.current?.play();
-    }
-    setIsPlaying(!isPlaying);
-  };
-
   const renderSection = () => {
     switch (activeSection) {
       case 'temple-tour':
         return (
           <div className="space-y-6">
             <div className="text-center mb-8">
-              <h2 className="text-3xl font-bold text-golden mb-4">360° Temple Tour</h2>
-              <p className="text-golden-light">Explore every corner of our sacred temple</p>
+              <h2 className="text-3xl font-bold text-golden mb-4">About KTYA</h2>
+              <p className="text-golden-light">Explore more about our KTYA Mandal</p>
             </div>
 
             {/* 360° Viewer Placeholder */}
@@ -86,8 +101,7 @@ const VirtualDarshanPage = () => {
               <div className="aspect-video bg-black/20 rounded-xl flex items-center justify-center relative">
                 <div className="text-center">
                   <div className="text-6xl mb-4">🏛️</div>
-                  <h3 className="text-2xl font-bold text-golden mb-2">360° Virtual Tour</h3>
-                  <p className="text-golden-light mb-4">Click and drag to explore the temple</p>
+                  <h3 className="text-2xl font-bold text-golden mb-2">360° Virtual Experience</h3>
                   <div className="flex justify-center space-x-4">
                     <button className="bg-golden/20 hover:bg-golden/30 text-golden px-4 py-2 rounded-lg transition-all duration-300">
                       🎯 Full Screen
@@ -96,17 +110,6 @@ const VirtualDarshanPage = () => {
                       🔍 Zoom In
                     </button>
                   </div>
-                </div>
-                
-                {/* Floating Hotspots */}
-                <div className="absolute top-1/4 left-1/4 animate-pulse">
-                  <div className="w-4 h-4 bg-golden rounded-full shadow-lg cursor-pointer" title="Main Ganesha Statue"></div>
-                </div>
-                <div className="absolute top-1/3 right-1/3 animate-pulse delay-300">
-                  <div className="w-4 h-4 bg-golden rounded-full shadow-lg cursor-pointer" title="Prayer Hall"></div>
-                </div>
-                <div className="absolute bottom-1/4 left-1/2 animate-pulse delay-700">
-                  <div className="w-4 h-4 bg-golden rounded-full shadow-lg cursor-pointer" title="Aarti Area"></div>
                 </div>
               </div>
             </div>
@@ -133,52 +136,98 @@ const VirtualDarshanPage = () => {
 
             {/* Live Stream Area */}
             <div className="bg-gradient-to-br from-red-900/40 to-amber-900/40 rounded-2xl p-6 border border-golden/30">
-              <div className="aspect-video bg-black/30 rounded-xl flex items-center justify-center mb-6">
-                <div className="text-center">
-                  <div className="text-6xl mb-4">📺</div>
-                  <h3 className="text-2xl font-bold text-golden mb-2">Live Aarti Stream</h3>
-                  <div className="flex items-center justify-center space-x-2 mb-4">
-                    <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
-                    <span className="text-red-400 font-semibold">LIVE</span>
-                  </div>
-                  <p className="text-golden-light">Evening Aarti - 7:00 PM</p>
-                </div>
-              </div>
-
-              <div className="flex justify-center space-x-4">
-                <button className="bg-golden hover:bg-golden-light text-red-900 px-6 py-2 rounded-lg font-semibold transition-all duration-300">
-                  🔔 Ring Temple Bell
-                </button>
-                <button className="bg-red-700 hover:bg-red-600 text-white px-6 py-2 rounded-lg font-semibold transition-all duration-300">
-                  ❤️ Join Aarti (245 devotees)
-                </button>
-              </div>
-            </div>
-
-            {/* Aarti Schedule */}
-            <div className="bg-red-900/40 rounded-xl p-6 border border-golden/30">
-              <h3 className="text-xl font-bold text-golden mb-4">Today's Aarti Schedule</h3>
-              <div className="space-y-3">
-                {[
-                  { time: '6:00 AM', name: 'Morning Aarti', status: 'completed' },
-                  { time: '12:00 PM', name: 'Afternoon Aarti', status: 'completed' },
-                  { time: '7:00 PM', name: 'Evening Aarti', status: 'live' },
-                  { time: '9:00 PM', name: 'Night Aarti', status: 'upcoming' }
-                ].map((aarti, index) => (
-                  <div key={index} className="flex items-center justify-between p-3 bg-black/20 rounded-lg">
-                    <div>
-                      <span className="text-golden font-medium">{aarti.time}</span>
-                      <span className="text-golden-light ml-3">{aarti.name}</span>
+              <div className="aspect-video bg-black/30 rounded-xl flex items-center justify-center mb-6 relative overflow-hidden">
+                {isLiveStreamActive && liveStreamData ? (
+                  // Live Stream Active
+                  <div className="w-full h-full">
+                    <iframe
+                      src={liveStreamData.embedUrl}
+                      className="w-full h-full rounded-xl"
+                      frameBorder="0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                      title="KTYA Live Aarti Stream"
+                    ></iframe>
+                    
+                    {/* Live Stream Overlay Info */}
+                    <div className="absolute top-4 left-4 bg-red-600/90 backdrop-blur-sm rounded-lg px-3 py-1 flex items-center space-x-2">
+                      <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
+                      <span className="text-white text-sm font-semibold">LIVE</span>
+                      <span className="text-white text-xs">👥 {liveStreamData.viewers}</span>
                     </div>
-                    <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                      aarti.status === 'live' ? 'bg-red-500 text-white' :
-                      aarti.status === 'completed' ? 'bg-green-600 text-white' :
-                      'bg-amber-600 text-white'
-                    }`}>
-                      {aarti.status.toUpperCase()}
-                    </span>
+                    
+                    <div className="absolute bottom-4 left-4 right-4 bg-black/70 backdrop-blur-sm rounded-lg p-2">
+                      <p className="text-white text-sm font-medium">{liveStreamData.title}</p>
+                      <p className="text-white/80 text-xs">Streaming on {liveStreamData.platform}</p>
+                    </div>
                   </div>
-                ))}
+                ) : (
+                  // No Live Stream
+                  <div className="text-center">
+                    <div className="text-6xl mb-4">📺</div>
+                    <h3 className="text-2xl font-bold text-golden mb-2">Live Aarti Stream</h3>
+                    <div className="flex items-center justify-center space-x-2 mb-4">
+                      <div className="w-3 h-3 bg-gray-500 rounded-full"></div>
+                      <span className="text-gray-400 font-semibold">OFFLINE</span>
+                    </div>
+                    <p className="text-golden-light">Evening Aarti - 8:00 PM</p>
+                    
+                    {/* No Live Stream Message */}
+                    <div className="mt-6 p-4 bg-red-900/30 rounded-lg border border-golden/20">
+                      <p className="text-golden-light text-lg mb-2">🙏 Live streaming hasn't started</p>
+                      <p className="text-golden/80 text-sm mb-3">
+                        Our evening aarti will be streamed live at 8:00 PM daily
+                      </p>
+                      <p className="text-golden/60 text-xs">
+                        Last checked: {lastChecked ? lastChecked.toLocaleTimeString() : 'Never'}
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Stream Controls */}
+              <div className="flex justify-center space-x-4">
+                <button 
+                  onClick={checkLiveStreamStatus}
+                  className="bg-golden/20 hover:bg-golden/30 text-golden px-6 py-2 rounded-lg font-semibold transition-all duration-300 flex items-center space-x-2"
+                >
+                  <span>🔄</span>
+                  <span>Check Live Status</span>
+                </button>
+                
+                {isLiveStreamActive ? (
+                  <button className="bg-red-700 hover:bg-red-600 text-white px-6 py-2 rounded-lg font-semibold transition-all duration-300 flex items-center space-x-2">
+                    <span>❤️</span>
+                    <span>Join Aarti ({liveStreamData?.viewers || 0} devotees)</span>
+                  </button>
+                ) : (
+                  <button className="bg-golden hover:bg-golden-light text-red-900 px-6 py-2 rounded-lg font-semibold transition-all duration-300 flex items-center space-x-2">
+                    <span>🔔</span>
+                    <span>Notify When Live</span>
+                  </button>
+                )}
+              </div>
+              
+              {/* Alternative Platforms */}
+              <div className="mt-6 p-4 bg-black/20 rounded-lg border border-golden/10">
+                <h4 className="text-golden font-semibold mb-3 text-center">Follow us on other platforms</h4>
+                <div className="flex justify-center space-x-4">
+                  <a 
+                    href={`https://instagram.com/${liveStreamConfig.instagramUsername}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300"
+                  >
+                    📸 Instagram
+                  </a>
+                  <button className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300">
+                    📺 YouTube
+                  </button>
+                  <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300">
+                    📘 Facebook
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -231,61 +280,6 @@ const VirtualDarshanPage = () => {
           </div>
         );
 
-      case 'prayer-room':
-        return (
-          <div className="space-y-6">
-            <div className="text-center mb-8">
-              <h2 className="text-3xl font-bold text-golden mb-4">Personal Prayer Space</h2>
-              <p className="text-golden-light">Your private spiritual sanctuary</p>
-            </div>
-
-            {/* Virtual Altar */}
-            <div className="bg-gradient-to-br from-red-900/40 to-amber-900/40 rounded-2xl p-8 border border-golden/30 text-center">
-              <div className="mb-6">
-                <div className="text-8xl mb-4">🕉️</div>
-                <h3 className="text-2xl font-bold text-golden mb-2">Lord Ganesha</h3>
-                <p className="text-golden-light">Vighna Harta, Mangal Murti</p>
-              </div>
-
-              {/* Current Mantra Display */}
-              <div className="bg-black/30 rounded-xl p-6 mb-6">
-                <h4 className="text-golden font-semibold mb-3">Sacred Mantra</h4>
-                <div className="text-2xl text-golden-light font-bold mb-2 font-devanagari">
-                  {mantras[currentMantra].text}
-                </div>
-                <div className="text-golden italic">
-                  {mantras[currentMantra].translation}
-                </div>
-              </div>
-
-              {/* Prayer Controls */}
-              <div className="flex justify-center space-x-4 mb-6">
-                <button 
-                  onClick={toggleMantraAudio}
-                  className="bg-golden/20 hover:bg-golden/30 text-golden px-6 py-3 rounded-lg transition-all duration-300"
-                >
-                  {isPlaying ? '⏸️ Pause Mantras' : '▶️ Play Mantras'}
-                </button>
-                <button 
-                  onClick={() => setShowPrayerModal(true)}
-                  className="bg-golden hover:bg-golden-light text-red-900 px-6 py-3 rounded-lg font-semibold transition-all duration-300"
-                >
-                  🙏 Submit Prayer
-                </button>
-              </div>
-
-              {/* Virtual Diya */}
-              <div className="flex justify-center">
-                <div className="text-6xl animate-pulse">🪔</div>
-              </div>
-            </div>
-
-            <audio ref={audioRef} loop>
-              <source src="/mantras/ganpati-mantras.mp3" type="audio/mpeg" />
-            </audio>
-          </div>
-        );
-
       default:
         return null;
     }
@@ -320,12 +314,11 @@ const VirtualDarshanPage = () => {
 
           {/* Navigation Tabs */}
           <div className="bg-gradient-to-r from-red-900/60 to-amber-900/60 backdrop-blur-sm rounded-2xl p-2 border border-golden/40 mb-8">
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-2">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-2">
               {[
-                { id: 'temple-tour', name: '360° Tour', icon: '🏛️' },
+                { id: 'temple-tour', name: 'KTYA', icon: '🏛️' },
                 { id: 'live-aarti', name: 'Live Aarti', icon: '🔔' },
-                { id: 'offerings', name: 'Offerings', icon: '🙏' },
-                { id: 'prayer-room', name: 'Prayer Room', icon: '🕉️' }
+                { id: 'offerings', name: 'Offerings', icon: '🙏' }
               ].map((tab) => (
                 <button
                   key={tab.id}
@@ -359,43 +352,6 @@ const VirtualDarshanPage = () => {
           </div>
         </div>
       </div>
-
-      {/* Prayer Modal */}
-      {showPrayerModal && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-gradient-to-br from-red-900/95 to-amber-900/95 backdrop-blur-lg rounded-2xl w-full max-w-md border border-golden/40 shadow-2xl">
-            <div className="p-6">
-              <div className="text-center mb-6">
-                <div className="text-4xl mb-2">🙏</div>
-                <h3 className="text-xl font-bold text-golden">Submit Your Prayer</h3>
-                <p className="text-golden-light text-sm">Lord Ganesha will receive your heartfelt prayer</p>
-              </div>
-
-              <textarea
-                value={prayerText}
-                onChange={(e) => setPrayerText(e.target.value)}
-                placeholder="Write your prayer to Lord Ganesha..."
-                className="w-full h-32 bg-black/30 border border-golden/30 rounded-lg p-4 text-golden-light placeholder-golden/50 resize-none focus:ring-2 focus:ring-golden focus:border-transparent"
-              />
-
-              <div className="flex space-x-3 mt-6">
-                <button
-                  onClick={handlePrayerSubmit}
-                  className="flex-1 bg-golden hover:bg-golden-light text-red-900 py-3 rounded-lg font-semibold transition-all duration-300"
-                >
-                  Submit Prayer
-                </button>
-                <button
-                  onClick={() => setShowPrayerModal(false)}
-                  className="flex-1 bg-red-700 hover:bg-red-600 text-white py-3 rounded-lg font-semibold transition-all duration-300"
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
