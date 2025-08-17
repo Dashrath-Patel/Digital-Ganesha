@@ -207,6 +207,42 @@ const GalleryViewer = ({
     });
   };
 
+  // Format user role display
+  const formatUserRole = (uploadedBy) => {
+    if (!uploadedBy) return 'Guest';
+    
+    // If it's a string (just name), return it
+    if (typeof uploadedBy === 'string') {
+      return uploadedBy;
+    }
+    
+    // If it's an object with user details
+    if (uploadedBy.committeeRole) {
+      const roleMap = {
+        'president': 'Chair Person',
+        'vice_president': 'Vice Chair Person', 
+        'secretary': 'Secretary',
+        'treasurer': 'Treasurer',
+        'coordinator': 'Coordinator',
+        'volunteer': 'Committee Member'
+      };
+      return roleMap[uploadedBy.committeeRole] || 'Committee Member';
+    }
+    
+    if (uploadedBy.role === 'admin') {
+      return 'Administrator';
+    }
+    
+    if (uploadedBy.isCommitteeMember) {
+      return 'Committee Member';
+    }
+    
+    // Return name in order of preference
+    return uploadedBy.name || 
+           (uploadedBy.firstName ? `${uploadedBy.firstName} ${uploadedBy.lastName}`.trim() : '') || 
+           'Guest';
+  };
+
   const formatFileSize = (bytes) => {
     if (!bytes || bytes === 0) return '0 Bytes';
     
@@ -296,108 +332,59 @@ const GalleryViewer = ({
       {/* Search and Filters */}
       {showFilters && (
         <div className="space-y-4">
-          {/* Search Bar */}
-          <div className="relative max-w-md mx-auto">
-            <input
-              type="text"
-              placeholder="Search by title or description..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full bg-white/10 border border-golden/30 rounded-xl px-4 py-3 pl-12 text-golden placeholder-golden-light/60 focus:outline-none focus:border-golden focus:bg-white/20 transition-all duration-300"
-            />
-            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-golden-light/60">
-              🔍
-            </div>
-            {searchTerm && (
-              <button
-                onClick={() => setSearchTerm('')}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-golden-light/60 hover:text-golden transition-colors"
-              >
-                ✕
-              </button>
-            )}
-          </div>
-
-          {/* Filter Controls */}
-          <div className="flex flex-wrap gap-4 justify-between items-center">
-            {/* Category Filter */}
-            <div className="flex flex-wrap gap-2">
-              {categories.map((cat) => (
+          {/* Single line with search and basic filters */}
+          <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
+            {/* Search Bar */}
+            <div className="relative w-full lg:max-w-md">
+              <input
+                type="text"
+                placeholder="Search by title or description..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full bg-white/10 border border-golden/30 rounded-xl px-4 py-3 pl-12 text-golden placeholder-golden-light/60 focus:outline-none focus:border-golden focus:bg-white/20 transition-all duration-300"
+              />
+              <div className="absolute left-4 top-1/2 -translate-y-1/2 text-golden-light/60">
+                🔍
+              </div>
+              {searchTerm && (
                 <button
-                  key={cat}
-                  onClick={() => setSelectedCategory(cat === 'All' ? '' : cat)}
-                  className={`px-4 py-2 rounded-full border transition-all duration-300 text-sm font-medium ${
-                    (cat === 'All' && !selectedCategory) || selectedCategory === cat
-                      ? 'bg-golden text-red-900 border-golden shadow-lg shadow-golden/30'
-                      : 'bg-transparent text-golden border-golden/30 hover:border-golden hover:bg-golden/10'
-                  }`}
+                  onClick={() => setSearchTerm('')}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-golden-light/60 hover:text-golden transition-colors"
                 >
-                  {cat}
+                  ✕
                 </button>
-              ))}
-            </div>
-
-            {/* Refresh Button */}
-            <div className="flex items-center gap-2">
-              <button
-                onClick={handleRefresh}
-                disabled={loading}
-                className="flex items-center gap-2 px-4 py-2 bg-golden/20 border border-golden/40 rounded-lg text-golden hover:bg-golden/30 hover:border-golden transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-                title={`Refresh gallery to see latest changes. Last updated: ${formatLastRefresh()}`}
-              >
-                <span className={`text-lg ${loading ? 'animate-spin' : ''}`}>🔄</span>
-                <div className="flex flex-col items-start">
-                  <span className="text-sm font-medium">Refresh</span>
-                  <span className="text-xs text-golden/70">{formatLastRefresh()}</span>
-                </div>
-              </button>
-              {autoRefresh && (
-                <div className="text-xs text-golden/60">
-                  Auto-refresh: ON
-                </div>
               )}
             </div>
 
-            {/* View Mode and Sort Controls */}
-            <div className="flex gap-2 items-center">
-              {/* View Mode Filter */}
-              <div className="flex gap-1 bg-white/5 rounded-lg p-1">
-                {[
-                  { key: 'all', label: 'All', icon: '🖼️' },
-                  { key: 'images', label: 'Photos', icon: '📷' },
-                  { key: 'videos', label: 'Videos', icon: '🎥' }
-                ].map((mode) => (
+            {/* Essential filters only */}
+            <div className="flex flex-wrap items-center gap-3">
+              {/* Category Filter - Only essential categories */}
+              <div className="flex flex-wrap gap-2">
+                {['All', 'Festivals', 'Community Events', 'Cultural Programs'].map((cat) => (
                   <button
-                    key={mode.key}
-                    onClick={() => setViewMode(mode.key)}
-                    className={`px-3 py-2 rounded-md transition-all duration-300 flex items-center gap-2 text-sm ${
-                      viewMode === mode.key
-                        ? 'bg-golden text-red-900 shadow-md'
-                        : 'text-golden hover:bg-white/10'
+                    key={cat}
+                    onClick={() => setSelectedCategory(cat === 'All' ? '' : cat)}
+                    className={`px-3 py-2 rounded-full border transition-all duration-300 text-xs sm:text-sm font-medium ${
+                      (cat === 'All' && !selectedCategory) || selectedCategory === cat
+                        ? 'bg-golden text-red-900 border-golden shadow-lg'
+                        : 'bg-transparent text-golden border-golden/30 hover:border-golden hover:bg-golden/10'
                     }`}
                   >
-                    <span>{mode.icon}</span>
-                    <span className="hidden sm:inline">{mode.label}</span>
+                    {cat}
                   </button>
                 ))}
               </div>
 
-              {/* Sort Controls */}
-              <select
-                value={`${sortBy}-${sortOrder}`}
-                onChange={(e) => {
-                  const [field, order] = e.target.value.split('-');
-                  setSortBy(field);
-                  setSortOrder(order);
-                }}
-                className="bg-white/10 border border-golden/30 rounded-lg px-3 py-2 text-golden text-sm focus:outline-none focus:border-golden"
+              {/* Refresh Button */}
+              <button
+                onClick={handleRefresh}
+                disabled={loading}
+                className="flex items-center gap-2 px-3 py-2 bg-golden/20 border border-golden/40 rounded-lg text-golden hover:bg-golden/30 transition-all duration-300 disabled:opacity-50"
+                title="Refresh gallery"
               >
-                <option value="createdAt-desc">Newest First</option>
-                <option value="createdAt-asc">Oldest First</option>
-                <option value="title-asc">Title A-Z</option>
-                <option value="title-desc">Title Z-A</option>
-                <option value="category-asc">Category A-Z</option>
-              </select>
+                <span className={`text-sm ${loading ? 'animate-spin' : ''}`}>🔄</span>
+                <span className="hidden sm:inline text-sm">Refresh</span>
+              </button>
             </div>
           </div>
         </div>
@@ -464,47 +451,31 @@ const GalleryViewer = ({
           {media.map((item) => (
             <div
               key={item._id}
-              className={`group relative bg-gradient-to-br from-red-900/40 via-amber-900/30 to-yellow-900/40 backdrop-blur-md rounded-2xl overflow-hidden border border-golden/20 hover:border-golden/50 transition-all duration-500 hover:shadow-2xl hover:shadow-golden/20 cursor-pointer hover:-translate-y-1 ${
+              className={`group relative bg-gradient-to-br from-red-900/40 via-amber-900/30 to-yellow-900/40 backdrop-blur-md rounded-2xl overflow-hidden border border-golden/20 hover:border-golden/50 transition-all duration-300 hover:shadow-xl hover:shadow-golden/20 cursor-pointer hover:scale-105 ${
                 layout === 'masonry' ? 'break-inside-avoid mb-4' : ''
               }`}
               onClick={() => handleImageClick(item)}
             >
               {/* Media Preview */}
-              <div className={`relative overflow-hidden ${layout === 'list' ? 'aspect-video' : 'aspect-square'}`}>
-                {/* Always Visible Category Badge */}
-                {item.category && (
-                  <div className="absolute top-3 left-3 z-10">
-                    <div className="bg-gradient-to-r from-golden via-yellow-400 to-amber-400 text-red-900 px-3 py-1.5 rounded-full text-xs font-bold shadow-lg border border-yellow-300/50 backdrop-blur-sm">
-                      {PhotoUploadService.mapCategoryToFrontend(item.category)}
-                    </div>
-                  </div>
-                )}
+              <div className={`relative overflow-hidden ${layout === 'list' ? 'aspect-video' : 'aspect-[5/4]'}`}>
 
                 {item.type === 'video' ? (
                   <div className="relative w-full h-full bg-gradient-to-br from-purple-900/50 to-blue-900/50 flex items-center justify-center">
-                    <div className="text-6xl text-white/80 transition-transform duration-300 group-hover:scale-110">🎥</div>
-                    <div className="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300">
-                      <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:scale-110 transition-transform duration-300">
-                        <div className="w-0 h-0 border-l-[20px] border-l-white border-y-[14px] border-y-transparent ml-1"></div>
-                      </div>
-                    </div>
-                    <div className="absolute top-4 left-4 bg-purple-500/80 text-white px-2 py-1 rounded-full text-xs font-semibold">
+                    <div className="text-4xl text-white/80 transition-transform duration-300 group-hover:scale-110">🎥</div>
+                    <div className="absolute top-3 right-3 bg-purple-500/80 text-white px-2 py-1 rounded-full text-xs font-semibold">
                       VIDEO
                     </div>
                   </div>
                 ) : (
-                  <>
-                    <img
-                      src={getOptimizedImageUrl(item.url, 400, 400, 85)}
-                      alt={item.title || 'Gallery image'}
-                      className="w-full h-full object-cover transition-all duration-500 group-hover:scale-110"
-                      loading="lazy"
-                      onError={(e) => {
-                        e.target.src = '/api/placeholder/400/400';
-                      }}
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                  </>
+                  <img
+                    src={getOptimizedImageUrl(item.url, 300, 225, 80)} // Smaller dimensions for better performance
+                    alt={item.title || 'Gallery image'}
+                    className="w-full h-full object-cover transition-all duration-300 group-hover:scale-105"
+                    loading="lazy"
+                    onError={(e) => {
+                      e.target.src = '/api/placeholder/300/225';
+                    }}
+                  />
                 )}
                 
                 {/* Always Visible Category Badge */}
@@ -557,21 +528,21 @@ const GalleryViewer = ({
               </div>
 
               {/* Media Info (Always Visible) */}
-              <div className="p-4">
-                <h4 className="text-golden font-bold text-sm mb-2 truncate">
+              <div className="p-3">
+                <h4 className="text-golden font-bold text-xs mb-1 truncate">
                   {item.title || 'Untitled'}
                 </h4>
                 
                 {/* Category Tag - More Prominent */}
                 {item.category && (
-                  <div className="mb-3">
-                    <span className="bg-gradient-to-r from-golden via-yellow-400 to-amber-400 text-red-900 px-2.5 py-1 rounded-full text-xs font-bold shadow-md">
+                  <div className="mb-2">
+                    <span className="bg-gradient-to-r from-golden via-yellow-400 to-amber-400 text-red-900 px-2 py-0.5 rounded-full text-xs font-bold shadow-md">
                       📂 {PhotoUploadService.mapCategoryToFrontend(item.category)}
                     </span>
                   </div>
                 )}
                 
-                <div className="flex items-center justify-between text-xs text-golden-light mb-2">
+                <div className="flex items-center justify-between text-xs text-golden-light mb-1">
                   <span className="flex items-center gap-1">
                     {item.type === 'video' ? '🎥' : '📷'} 
                     {item.type}
@@ -579,16 +550,16 @@ const GalleryViewer = ({
                   <span>📅 {formatDate(item.createdAt)}</span>
                 </div>
                 {item.description && (
-                  <p className="text-golden-light/80 text-xs leading-relaxed line-clamp-2">
+                  <p className="text-golden-light/80 text-xs leading-relaxed line-clamp-1">
                     {item.description}
                   </p>
                 )}
-                <div className="flex items-center justify-between mt-3 text-xs text-golden-light/60">
+                <div className="flex items-center justify-between mt-2 text-xs text-golden-light/60">
                   {item.fileSize && (
                     <span>📦 {formatFileSize(item.fileSize)}</span>
                   )}
                   {item.uploadedBy && (
-                    <span>👤 {item.uploadedBy.name || 'Anonymous'}</span>
+                    <span>👤 {formatUserRole(item.uploadedBy)}</span>
                   )}
                 </div>
               </div>
@@ -669,7 +640,7 @@ const GalleryViewer = ({
           onClick={closeModal}
         >
           <div 
-            className="relative max-w-7xl max-h-full"
+            className="relative max-w-2xl max-h-full"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Close Button */}
@@ -702,21 +673,21 @@ const GalleryViewer = ({
             )}
 
             {/* Media Container */}
-            <div className="bg-white/10 backdrop-blur-md rounded-3xl overflow-hidden border border-white/20 shadow-2xl">
+            <div className="bg-white/10 backdrop-blur-md rounded-2xl overflow-hidden border border-white/20 shadow-2xl max-w-2xl">
               {selectedImage.type === 'video' ? (
-                <div className="w-full max-w-5xl aspect-video bg-black rounded-t-3xl flex items-center justify-center">
+                <div className="w-full max-w-xl aspect-video bg-black rounded-t-2xl flex items-center justify-center">
                   <div className="text-center">
-                    <div className="text-8xl text-white/60 mb-4">🎥</div>
-                    <p className="text-white/80 text-lg">Video Preview</p>
+                    <div className="text-6xl text-white/60 mb-4">🎥</div>
+                    <p className="text-white/80 text-base">Video Preview</p>
                     <p className="text-white/60 text-sm mt-2">Click to play in external player</p>
                   </div>
                 </div>
               ) : (
                 <div className="relative">
                   <img
-                    src={getOptimizedImageUrl(selectedImage.url, 1400, 1000, 95)}
+                    src={getOptimizedImageUrl(selectedImage.url, 600, 450, 90)}
                     alt={selectedImage.title || 'Gallery image'}
-                    className="max-w-full max-h-[85vh] object-contain"
+                    className="w-full max-h-[60vh] object-contain"
                     onError={(e) => {
                       e.target.src = selectedImage.url; // Fallback to original URL
                     }}
