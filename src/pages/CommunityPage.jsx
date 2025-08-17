@@ -78,8 +78,7 @@ const CommunityPage = () => {
   const tabs = [
     { id: 'message', name: "Admin's Message", icon: '📢' },
     { id: 'events', name: 'Upcoming Events', icon: '📅' },
-    { id: 'gallery', name: 'Community Gallery', icon: '📸' },
-    { id: 'volunteers', name: 'Volunteer Hub', icon: '🤝' }
+    { id: 'gallery', name: 'Community Gallery', icon: '📸' }
   ];
 
   // Loading Component
@@ -103,13 +102,13 @@ const CommunityPage = () => {
     switch (activeTab) {
       case 'message':
         return (
-          <div className="space-y-8">
-            <div className="text-center mb-12">
-              <h3 className="text-4xl md:text-5xl font-bold text-golden mb-4">Admin's Messages</h3>
-              <p className="text-golden-light text-lg max-w-2xl mx-auto">
+          <div className="space-y-6">
+            <div className="text-center mb-8">
+              <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-golden mb-3">Admin's Messages</h3>
+              <p className="text-golden-light text-base sm:text-lg max-w-2xl mx-auto px-4">
                 Important announcements and updates from our community leadership
               </p>
-              <div className="w-24 h-1 bg-gradient-to-r from-golden to-golden-light mx-auto mt-4 rounded-full"></div>
+              <div className="w-16 sm:w-24 h-1 bg-gradient-to-r from-golden to-golden-light mx-auto mt-3 rounded-full"></div>
             </div>
 
             {/* Messages List */}
@@ -119,29 +118,29 @@ const CommunityPage = () => {
               </div>
             )}
             
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
               {messages.length === 0 && !error ? (
-                <div className="text-center py-12">
-                  <div className="text-6xl mb-4">📭</div>
-                  <p className="text-golden-light text-lg">No messages available at the moment.</p>
-                  <p className="text-golden-light/70 text-sm mt-2">Check back later for updates from the admin team.</p>
+                <div className="text-center py-8 sm:py-12">
+                  <div className="text-4xl sm:text-6xl mb-4">📭</div>
+                  <p className="text-golden-light text-base sm:text-lg">No messages available at the moment.</p>
+                  <p className="text-golden-light/70 text-sm mt-2 px-4">Check back later for updates from the admin team.</p>
                 </div>
               ) : (
                 messages.map((message) => (
-                  <div key={message._id || message.id} className="bg-gradient-to-br from-red-950/90 via-red-900/80 to-amber-900/70 backdrop-blur-xl rounded-2xl border-2 border-golden/50 shadow-2xl shadow-red-900/50 overflow-hidden">
+                  <div key={message._id || message.id} className="bg-gradient-to-br from-red-950/90 via-red-900/80 to-amber-900/70 backdrop-blur-xl rounded-xl sm:rounded-2xl border-2 border-golden/50 shadow-2xl shadow-red-900/50 overflow-hidden">
                     {/* Message Header - Clickable */}
                     <div
                       onClick={() => setExpandedMessage(expandedMessage === (message._id || message.id) ? null : (message._id || message.id))}
-                      className="p-6 cursor-pointer hover:bg-red-900/30 transition-all duration-300"
+                      className="p-4 sm:p-6 cursor-pointer hover:bg-red-900/30 transition-all duration-300"
                     >
                       <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-4">
-                          <div className="w-12 h-12 bg-gradient-to-r from-golden to-golden-light rounded-full flex items-center justify-center shadow-xl">
-                            <span className="text-2xl">📢</span>
+                        <div className="flex items-center space-x-3 sm:space-x-4 flex-1 min-w-0">
+                          <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-golden to-golden-light rounded-full flex items-center justify-center shadow-xl flex-shrink-0">
+                            <span className="text-lg sm:text-2xl">📢</span>
                           </div>
-                          <div>
-                            <h4 className="text-golden font-bold text-lg md:text-xl">{message.title}</h4>
-                            <p className="text-golden-light text-sm">{new Date(message.createdAt || message.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                          <div className="min-w-0 flex-1">
+                            <h4 className="text-golden font-bold text-base sm:text-lg lg:text-xl truncate">{message.title}</h4>
+                            <p className="text-golden-light text-xs sm:text-sm">{new Date(message.createdAt || message.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
                             {message.priority && message.priority !== 'low' && (
                               <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium mt-1 ${
                                 message.priority === 'urgent' ? 'bg-red-500/20 text-red-300' :
@@ -153,12 +152,12 @@ const CommunityPage = () => {
                             )}
                           </div>
                         </div>
-                        <div className="flex items-center space-x-4">
-                          <div className="text-right">
-                            <p className="text-golden-light text-sm font-medium">By</p>
-                            <p className="text-golden text-sm font-semibold">{message.author}</p>
+                        <div className="flex items-center space-x-2 sm:space-x-4 flex-shrink-0">
+                          <div className="text-right hidden sm:block">
+                            <p className="text-golden-light text-xs sm:text-sm font-medium">By</p>
+                            <p className="text-golden text-xs sm:text-sm font-semibold">{message.author}</p>
                           </div>
-                          <div className="text-golden text-2xl transform transition-transform duration-300" style={{ transform: expandedMessage === (message._id || message.id) ? 'rotate(180deg)' : 'rotate(0deg)' }}>
+                          <div className="text-golden text-xl sm:text-2xl transform transition-transform duration-300" style={{ transform: expandedMessage === (message._id || message.id) ? 'rotate(180deg)' : 'rotate(0deg)' }}>
                             ↓
                           </div>
                         </div>
@@ -167,17 +166,19 @@ const CommunityPage = () => {
 
                     {/* Message Content - Collapsible */}
                     {expandedMessage === (message._id || message.id) && (
-                      <div className="px-6 pb-6 border-t border-golden/30">
+                      <div className="px-4 sm:px-6 pb-4 sm:pb-6 border-t border-golden/30">
                         <div className="pt-4">
-                          <p className="text-golden-light leading-relaxed text-justify">
+                          <p className="text-golden-light leading-relaxed text-justify text-sm sm:text-base">
                             {message.content}
                           </p>
-
-                          <div className="text-center mt-6">
-                            <p className="text-golden-light text-lg font-semibold devanagari-text drop-shadow-lg">
+                          <div className="block sm:hidden mt-4 pt-4 border-t border-golden/20">
+                            <p className="text-golden-light text-xs text-center">By {message.author}</p>
+                          </div>
+                          <div className="text-center mt-4 sm:mt-6">
+                            <p className="text-golden-light text-base sm:text-lg font-semibold devanagari-text drop-shadow-lg">
                               🕉️ ॐ गणेशाय नमः 🕉️
                             </p>
-                            <p className="text-golden-light">
+                            <p className="text-golden-light text-sm sm:text-base">
                               Om Ganapataye Namaha
                             </p>
                           </div>
@@ -193,24 +194,24 @@ const CommunityPage = () => {
 
       case 'events':
         return (
-          <div className="space-y-8">
-            <div className="text-center mb-12">
-              <h3 className="text-4xl md:text-5xl font-bold text-golden mb-4">Upcoming Community Events</h3>
-              <p className="text-golden-light text-lg max-w-2xl mx-auto">
+          <div className="space-y-6">
+            <div className="text-center mb-8">
+              <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-golden mb-3">Upcoming Community Events</h3>
+              <p className="text-golden-light text-base sm:text-lg max-w-2xl mx-auto px-4">
                 Join us in celebrating our traditions and strengthening our community bonds
               </p>
-              <div className="w-24 h-1 bg-gradient-to-r from-golden to-golden-light mx-auto mt-4 rounded-full"></div>
+              <div className="w-16 sm:w-24 h-1 bg-gradient-to-r from-golden to-golden-light mx-auto mt-3 rounded-full"></div>
             </div>
 
             {/* Events List */}
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
               {events.length === 0 ? (
-                <div className="text-center py-12">
-                  <div className="w-20 h-20 bg-gradient-to-r from-golden/20 to-golden-light/20 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <span className="text-4xl">📅</span>
+                <div className="text-center py-8 sm:py-12">
+                  <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-r from-golden/20 to-golden-light/20 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6">
+                    <span className="text-3xl sm:text-4xl">📅</span>
                   </div>
-                  <h4 className="text-xl font-semibold text-golden mb-2">No Events Yet</h4>
-                  <p className="text-golden-light">Check back soon for upcoming community events!</p>
+                  <h4 className="text-lg sm:text-xl font-semibold text-golden mb-2">No Events Yet</h4>
+                  <p className="text-golden-light text-sm sm:text-base px-4">Check back soon for upcoming community events!</p>
                 </div>
               ) : (
                 events.map((event) => {
@@ -230,22 +231,23 @@ const CommunityPage = () => {
                      event.category === 'spiritual' ? '🕉️' : '📅');
 
                   return (
-                    <div key={event._id || event.id} className="bg-gradient-to-br from-red-950/90 via-red-900/80 to-amber-900/70 backdrop-blur-xl rounded-2xl border-2 border-golden/50 shadow-2xl shadow-red-900/50 overflow-hidden">
+                    <div key={event._id || event.id} className="bg-gradient-to-br from-red-950/90 via-red-900/80 to-amber-900/70 backdrop-blur-xl rounded-xl sm:rounded-2xl border-2 border-golden/50 shadow-2xl shadow-red-900/50 overflow-hidden">
                       {/* Event Header - Clickable */}
                       <div
                         onClick={() => setExpandedEvent(expandedEvent === (event._id || event.id) ? null : (event._id || event.id))}
-                        className="p-6 cursor-pointer hover:bg-red-900/30 transition-all duration-300"
+                        className="p-4 sm:p-6 cursor-pointer hover:bg-red-900/30 transition-all duration-300"
                       >
                         <div className="flex items-center justify-between">
-                          <div className="flex items-center space-x-4">
-                            <div className="w-12 h-12 bg-gradient-to-r from-golden to-golden-light rounded-full flex items-center justify-center shadow-xl">
-                              <span className="text-2xl">{eventIcon}</span>
+                          <div className="flex items-center space-x-3 sm:space-x-4 flex-1 min-w-0">
+                            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-golden to-golden-light rounded-full flex items-center justify-center shadow-xl flex-shrink-0">
+                              <span className="text-lg sm:text-2xl">{eventIcon}</span>
                             </div>
-                            <div>
-                              <h4 className="text-golden font-bold text-lg md:text-xl">{event.title}</h4>
-                              <p className="text-golden-light text-sm">{eventDate} • {eventLocation}</p>
+                            <div className="min-w-0 flex-1">
+                              <h4 className="text-golden font-bold text-base sm:text-lg lg:text-xl truncate">{event.title}</h4>
+                              <p className="text-golden-light text-xs sm:text-sm truncate">{eventDate}</p>
+                              <p className="text-golden-light text-xs sm:text-sm truncate">{eventLocation}</p>
                               {/* Event Tags */}
-                              <div className="flex gap-2 mt-1">
+                              <div className="flex gap-1 sm:gap-2 mt-1 flex-wrap">
                                 {event.category && (
                                   <span className="inline-block px-2 py-1 rounded-full text-xs font-medium bg-golden/20 text-golden">
                                     {event.category.toUpperCase()}
@@ -263,7 +265,7 @@ const CommunityPage = () => {
                               </div>
                             </div>
                           </div>
-                          <div className="text-golden text-2xl transform transition-transform duration-300" style={{ transform: expandedEvent === (event._id || event.id) ? 'rotate(180deg)' : 'rotate(0deg)' }}>
+                          <div className="text-golden text-xl sm:text-2xl transform transition-transform duration-300 flex-shrink-0" style={{ transform: expandedEvent === (event._id || event.id) ? 'rotate(180deg)' : 'rotate(0deg)' }}>
                             ↓
                           </div>
                         </div>
@@ -271,29 +273,29 @@ const CommunityPage = () => {
 
                       {/* Event Content - Collapsible */}
                       {expandedEvent === (event._id || event.id) && (
-                        <div className="px-6 pb-6 border-t border-golden/30">
+                        <div className="px-4 sm:px-6 pb-4 sm:pb-6 border-t border-golden/30">
                           <div className="pt-4">
-                            <p className="text-golden-light leading-relaxed text-justify mb-6">
+                            <p className="text-golden-light leading-relaxed text-justify mb-4 sm:mb-6 text-sm sm:text-base">
                               {event.description}
                             </p>
                             
-                            <div className="flex flex-wrap gap-4 mb-6">
-                              <div className="flex items-center gap-2 text-golden-light bg-red-950/60 px-3 py-2 rounded-full border border-golden/30">
+                            <div className="flex flex-wrap gap-2 sm:gap-4 mb-4 sm:mb-6">
+                              <div className="flex items-center gap-2 text-golden-light bg-red-950/60 px-2 sm:px-3 py-1.5 sm:py-2 rounded-full border border-golden/30 text-xs sm:text-sm">
                                 <span>📅</span>
-                                <span>{eventDate}</span>
+                                <span className="truncate">{eventDate}</span>
                               </div>
-                              <div className="flex items-center gap-2 text-golden-light bg-red-950/60 px-3 py-2 rounded-full border border-golden/30">
+                              <div className="flex items-center gap-2 text-golden-light bg-red-950/60 px-2 sm:px-3 py-1.5 sm:py-2 rounded-full border border-golden/30 text-xs sm:text-sm">
                                 <span>📍</span>
-                                <span>{eventLocation}</span>
+                                <span className="truncate">{eventLocation}</span>
                               </div>
-                              <div className="flex items-center gap-2 text-golden-light bg-red-950/60 px-3 py-2 rounded-full border border-golden/30">
+                              <div className="flex items-center gap-2 text-golden-light bg-red-950/60 px-2 sm:px-3 py-1.5 sm:py-2 rounded-full border border-golden/30 text-xs sm:text-sm">
                                 <span>👥</span>
                                 <span>Open to All</span>
                               </div>
                               {event.mandal && (
-                                <div className="flex items-center gap-2 text-golden-light bg-red-950/60 px-3 py-2 rounded-full border border-golden/30">
+                                <div className="flex items-center gap-2 text-golden-light bg-red-950/60 px-2 sm:px-3 py-1.5 sm:py-2 rounded-full border border-golden/30 text-xs sm:text-sm">
                                   <span>🏛️</span>
-                                  <span>{event.mandal.name || 'KTYA'}</span>
+                                  <span className="truncate">{event.mandal.name || 'KTYA'}</span>
                                 </div>
                               )}
                             </div>
@@ -305,29 +307,18 @@ const CommunityPage = () => {
                 })
               )}
             </div>
-
-            {/* Enhanced Call to Action */}
-            <div className="text-center mt-12">
-              <div className="bg-gradient-to-r from-red-950/80 via-red-900/70 to-red-950/80 backdrop-blur-md rounded-2xl p-8 border-2 border-golden/40 shadow-2xl">
-                <h4 className="text-2xl font-bold text-golden mb-4 drop-shadow-lg">Want to Organize an Event?</h4>
-                <p className="text-golden-light mb-6 drop-shadow-sm">Have an idea for a community event? We'd love to hear from you!</p>
-                <button className="bg-gradient-to-r from-golden to-golden-light text-red-950 px-8 py-3 rounded-full font-bold hover:from-golden-light hover:to-golden transition-all duration-300 transform hover:scale-105 shadow-xl cursor-pointer">
-                  Propose Event
-                </button>
-              </div>
-            </div>
           </div>
         );
 
       case 'gallery':
         return (
-          <div className="space-y-8">
-            <div className="text-center mb-12">
-              <h3 className="text-4xl md:text-5xl font-bold text-golden mb-4">Community Gallery</h3>
-              <p className="text-golden-light text-lg max-w-2xl mx-auto">
+          <div className="space-y-6">
+            <div className="text-center mb-8">
+              <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-golden mb-3">Community Gallery</h3>
+              <p className="text-golden-light text-base sm:text-lg max-w-2xl mx-auto px-4">
                 Cherished moments and beautiful memories from our community celebrations
               </p>
-              <div className="w-24 h-1 bg-gradient-to-r from-golden to-golden-light mx-auto mt-4 rounded-full"></div>
+              <div className="w-16 sm:w-24 h-1 bg-gradient-to-r from-golden to-golden-light mx-auto mt-3 rounded-full"></div>
             </div>
 
             {/* Real Gallery Component */}
@@ -335,208 +326,13 @@ const CommunityPage = () => {
               showFilters={true}
               showPagination={true}
               layout="grid"
-              columns={4}
-              itemsPerPage={12}
+              columns={4} // More columns for smaller cards
+              itemsPerPage={12} // Increase items per page since cards are smaller
               allowDelete={false}
               showUploader={false}
               autoRefresh={true}
               autoRefreshInterval={60000}
             />
-          </div>
-        );
-
-      case 'volunteers':
-        return (
-          <div className="space-y-8">
-            <div className="text-center mb-12">
-              <h3 className="text-4xl md:text-5xl font-bold text-golden mb-4">Volunteer Hub</h3>
-              <p className="text-golden-light text-lg max-w-3xl mx-auto">
-                Join our dedicated team of volunteers and be part of something meaningful. 
-                Together, we create magic and spread joy in our community.
-              </p>
-              <div className="w-24 h-1 bg-gradient-to-r from-golden to-golden-light mx-auto mt-4 rounded-full"></div>
-            </div>
-
-            {/* Hero Volunteer Section */}
-            <div className="bg-gradient-to-br from-red-900/80 via-amber-900/60 to-yellow-900/80 backdrop-blur-xl rounded-3xl p-8 md:p-12 border border-golden/40 shadow-2xl">
-              <div className="flex flex-col lg:flex-row items-center gap-8">
-                <div className="flex-1">
-                  <div className="flex items-center gap-4 mb-6">
-                    <div className="w-16 h-16 bg-gradient-to-r from-golden to-golden-light rounded-full flex items-center justify-center">
-                      <span className="text-3xl">🤝</span>
-                    </div>
-                    <div>
-                      <span className="bg-gradient-to-r from-golden to-golden-light px-4 py-2 rounded-full text-red-900 font-semibold text-sm">
-                        MAKE A DIFFERENCE
-                      </span>
-                    </div>
-                  </div>
-                  <h4 className="text-3xl md:text-4xl font-bold text-golden mb-4">Join Our Volunteer Family</h4>
-                  <p className="text-golden-light text-lg mb-6 leading-relaxed">
-                    Experience the joy of giving back to the community. Whether you have a few hours or want to take on bigger responsibilities, 
-                    there's a perfect volunteer opportunity waiting for you.
-                  </p>
-                  <div className="grid grid-cols-2 gap-4 mb-6">
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-golden">50+</div>
-                      <div className="text-golden-light text-sm">Active Volunteers</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-golden">1000+</div>
-                      <div className="text-golden-light text-sm">Hours Served</div>
-                    </div>
-                  </div>
-                  <button className="bg-gradient-to-r from-golden to-golden-light text-red-900 px-8 py-4 rounded-full font-semibold hover:from-golden-light hover:to-golden transition-all duration-300 transform hover:scale-105 shadow-lg text-lg">
-                    Register as Volunteer
-                  </button>
-                </div>
-                <div className="flex-shrink-0">
-                  <div className="w-64 h-48 bg-gradient-to-br from-golden/20 to-amber-900/20 rounded-2xl flex items-center justify-center border border-golden/30">
-                    <span className="text-8xl">🙏</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Volunteer Opportunities - Photography Only */}
-            <div>
-              <h4 className="text-2xl font-bold text-golden mb-6 text-center">How You Can Help</h4>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {[
-                  {
-                    icon: '📸',
-                    title: 'Photography',
-                    desc: 'Capture precious moments and create lasting memories of our events',
-                    commitment: 'As needed',
-                    color: 'from-orange-900/60 to-red-900/40'
-                  }
-                ].map((opportunity, index) => (
-                  <div key={index} className={`group bg-gradient-to-br ${opportunity.color} backdrop-blur-md rounded-2xl p-6 border-2 border-golden/30 shadow-xl hover:shadow-2xl hover:shadow-golden/30 transition-all duration-500 hover:-translate-y-2 hover:border-golden/50`}>
-                    <div className="text-5xl mb-4 transition-transform duration-300 group-hover:scale-110 drop-shadow-lg">
-                      {opportunity.icon}
-                    </div>
-                    <h5 className="text-xl font-bold text-golden mb-2 group-hover:text-golden-light transition-colors duration-300 drop-shadow-sm">
-                      {opportunity.title}
-                    </h5>
-                    <p className="text-golden-light/90 mb-4 leading-relaxed text-sm drop-shadow-sm">
-                      {opportunity.desc}
-                    </p>
-                    <div className="flex items-center justify-between">
-                      <span className="text-golden-light text-sm bg-red-950/60 px-3 py-1 rounded-full border border-golden/30">
-                        {opportunity.commitment}
-                      </span>
-                      <button className="text-golden hover:text-golden-light font-semibold transition-colors duration-300 opacity-0 group-hover:opacity-100 transform translate-x-4 group-hover:translate-x-0 cursor-pointer">
-                        Apply →
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Awards Section */}
-            <div className="bg-gradient-to-br from-red-950/90 via-red-900/80 to-amber-900/70 backdrop-blur-xl rounded-3xl p-8 border-2 border-golden/50 shadow-2xl shadow-red-900/50">
-              <div className="text-center mb-8">
-                <div className="w-16 h-16 bg-gradient-to-r from-golden to-golden-light rounded-full flex items-center justify-center mx-auto mb-4 shadow-2xl border-2 border-golden/40">
-                  <span className="text-3xl drop-shadow-lg">🏆</span>
-                </div>
-                <h4 className="text-3xl font-bold text-golden mb-4 drop-shadow-lg">Community Awards & Recognition</h4>
-                <p className="text-golden-light text-lg max-w-3xl mx-auto drop-shadow-sm">
-                  Celebrating the outstanding contributions of our community members who have made a significant impact
-                </p>
-                <div className="w-24 h-1 bg-gradient-to-r from-golden to-golden-light mx-auto mt-4 rounded-full shadow-lg"></div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {[
-                  {
-                    icon: '🥇',
-                    title: 'Seva Ratna Award',
-                    desc: 'For exceptional service to the community',
-                    recipients: ['Rajesh Patel (2024)', 'Meera Sharma (2023)'],
-                    color: 'from-yellow-600/30 to-amber-600/30'
-                  },
-                  {
-                    icon: '🌟',
-                    title: 'Cultural Excellence',
-                    desc: 'Outstanding contribution to cultural programs',
-                    recipients: ['Priya Joshi (2024)', 'Amit Kumar (2023)'],
-                    color: 'from-amber-600/30 to-orange-600/30'
-                  },
-                  {
-                    icon: '🤝',
-                    title: 'Community Builder',
-                    desc: 'For fostering unity and bringing people together',
-                    recipients: ['Sunita Devi (2024)', 'Ramesh Gupta (2023)'],
-                    color: 'from-orange-600/30 to-red-600/30'
-                  },
-                  {
-                    icon: '📸',
-                    title: 'Best Photography',
-                    desc: 'Capturing the essence of our celebrations',
-                    recipients: ['Vikash Singh (2024)', 'Anjali Nair (2023)'],
-                    color: 'from-red-600/30 to-pink-600/30'
-                  },
-                  {
-                    icon: '🎭',
-                    title: 'Event Organizer',
-                    desc: 'Excellence in event management and coordination',
-                    recipients: ['Kiran Jain (2024)', 'Deepak Roy (2023)'],
-                    color: 'from-pink-600/30 to-purple-600/30'
-                  },
-                  {
-                    icon: '💫',
-                    title: 'Rising Star',
-                    desc: 'Young volunteer making significant impact',
-                    recipients: ['Aarav Patel (2024)', 'Riya Sharma (2023)'],
-                    color: 'from-purple-600/30 to-indigo-600/30'
-                  }
-                ].map((award, index) => (
-                  <div key={index} className={`group bg-gradient-to-br ${award.color} backdrop-blur-md rounded-2xl p-6 border-2 border-golden/30 shadow-xl hover:shadow-2xl hover:shadow-golden/30 transition-all duration-500 hover:-translate-y-2 hover:border-golden/50`}>
-                    <div className="text-center mb-4">
-                      <div className="text-4xl mb-3 transition-transform duration-300 group-hover:scale-110 drop-shadow-lg">
-                        {award.icon}
-                      </div>
-                      <h5 className="text-lg font-bold text-golden mb-2 group-hover:text-golden-light transition-colors duration-300 drop-shadow-sm">
-                        {award.title}
-                      </h5>
-                      <p className="text-golden-light/90 text-sm mb-4 leading-relaxed drop-shadow-sm">
-                        {award.desc}
-                      </p>
-                    </div>
-                    <div className="space-y-2">
-                      <h6 className="text-golden font-semibold text-xs mb-2">Recent Recipients:</h6>
-                      {award.recipients.map((recipient, idx) => (
-                        <div key={idx} className="bg-red-950/60 rounded-lg px-3 py-2 border border-golden/20">
-                          <span className="text-golden-light text-xs font-medium">{recipient}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              <div className="text-center mt-8">
-                <div className="bg-gradient-to-r from-golden/30 to-amber-600/30 rounded-xl p-6 border-2 border-golden/50 shadow-lg">
-                  <h5 className="text-xl font-bold text-golden mb-3">Nominate Someone Special</h5>
-                  <p className="text-golden-light mb-4 text-sm">Know someone who deserves recognition? Nominate them for our annual community awards!</p>
-                  <button className="bg-gradient-to-r from-golden to-golden-light text-red-950 px-6 py-3 rounded-full font-bold hover:from-golden-light hover:to-golden transition-all duration-300 transform hover:scale-105 shadow-xl cursor-pointer">
-                    Submit Nomination
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* Contact Information */}
-            <div className="text-center">
-              <div className="bg-gradient-to-r from-red-900/40 via-amber-900/30 to-red-900/40 backdrop-blur-md rounded-2xl p-6 border border-golden/30">
-                <h4 className="text-xl font-bold text-golden mb-2">Have Questions?</h4>
-                <p className="text-golden-light mb-4">Contact our volunteer coordinator for more information</p>
-                <button className="border border-golden text-golden px-6 py-2 rounded-full font-semibold hover:bg-golden hover:text-red-900 transition-all duration-300">
-                  Get in Touch
-                </button>
-              </div>
-            </div>
           </div>
         );
 
@@ -560,89 +356,65 @@ const CommunityPage = () => {
       </div>
       
       {/* Hero Section with Enhanced Spiritual Design */}
-      <section className="pt-24 pb-16 px-4 relative">
-        <div className="max-w-7xl mx-auto text-center">
-          <div className="mb-12 relative">
+      <section className="pt-20 pb-8 px-4 sm:px-6 lg:px-8 relative">
+        <div className="max-w-6xl mx-auto text-center">
+          <div className="mb-8 relative">
             <div className="absolute inset-0 bg-gradient-to-r from-golden/20 via-transparent to-golden/20 rounded-full blur-3xl scale-150"></div>
-            <div className="relative w-32 h-32 bg-gradient-to-br from-golden via-golden-light to-amber-500 rounded-full flex items-center justify-center mx-auto mb-8 shadow-2xl shadow-golden/30 animate-float border-4 border-golden/40">
-              <div className="w-28 h-28 bg-gradient-to-br from-red-950 via-red-900 to-red-950 rounded-full flex items-center justify-center shadow-inner">
-                <span className="text-6xl drop-shadow-lg">👥</span>
+            <div className="relative w-20 h-20 sm:w-28 sm:h-28 lg:w-32 lg:h-32 bg-gradient-to-br from-golden via-golden-light to-amber-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-2xl shadow-golden/30 animate-float border-4 border-golden/40">
+              <div className="w-16 h-16 sm:w-24 sm:h-24 lg:w-28 lg:h-28 bg-gradient-to-br from-red-950 via-red-900 to-red-950 rounded-full flex items-center justify-center shadow-inner">
+                <span className="text-3xl sm:text-5xl lg:text-6xl drop-shadow-lg">👥</span>
               </div>
             </div>
           </div>
           
-          <div className="space-y-6 mb-12">
+          <div className="space-y-4 mb-8">
             {/* Sanskrit greeting */}
-            <div className="mb-6">
-              <h1 className="text-2xl md:text-3xl font-bold text-golden mb-2 devanagari-text drop-shadow-lg">
+            <div className="mb-4">
+              <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-golden mb-2 devanagari-text drop-shadow-lg">
                 समुदाय संगम
               </h1>
-              <p className="text-golden-light text-lg">Community Hub</p>
+              <p className="text-golden-light text-base sm:text-lg">Community Hub</p>
             </div>
             
-            <h2 className="text-4xl md:text-6xl font-bold mb-6 relative">
+            <h2 className="text-3xl sm:text-4xl lg:text-6xl font-bold mb-4 relative">
               <span className="bg-gradient-to-r from-golden via-golden-light to-golden-dark bg-clip-text text-transparent drop-shadow-xl">
                 Divine Community
               </span>
-              <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2 w-32 h-1 bg-gradient-to-r from-transparent via-golden to-transparent rounded-full shadow-lg"></div>
+              <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-24 sm:w-32 h-1 bg-gradient-to-r from-transparent via-golden to-transparent rounded-full shadow-lg"></div>
             </h2>
             
-            <p className="text-xl md:text-2xl text-golden-light max-w-4xl mx-auto leading-relaxed font-light drop-shadow-lg">
+            <p className="text-base sm:text-lg lg:text-xl text-golden-light max-w-3xl mx-auto leading-relaxed font-light drop-shadow-lg px-4">
               Connect with devotees, organize events, coordinate volunteers, and share experiences 
               <span className="block mt-2 text-golden font-medium">
                 in our divine community
               </span>
             </p>
           </div>
-
-          {/* Quick Stats Cards */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto mb-8">
-            <div className="bg-gradient-to-br from-golden/10 to-amber-900/20 backdrop-blur-md rounded-2xl p-4 border border-golden/20">
-              <div className="text-2xl mb-2">🕉️</div>
-              <div className="text-golden font-bold text-lg">250+</div>
-              <div className="text-golden-light text-sm">Active Members</div>
-            </div>
-            <div className="bg-gradient-to-br from-golden/10 to-amber-900/20 backdrop-blur-md rounded-2xl p-4 border border-golden/20">
-              <div className="text-2xl mb-2">🎭</div>
-              <div className="text-golden font-bold text-lg">15+</div>
-              <div className="text-golden-light text-sm">Annual Events</div>
-            </div>
-            <div className="bg-gradient-to-br from-golden/10 to-amber-900/20 backdrop-blur-md rounded-2xl p-4 border border-golden/20">
-              <div className="text-2xl mb-2">🤝</div>
-              <div className="text-golden font-bold text-lg">50+</div>
-              <div className="text-golden-light text-sm">Volunteers</div>
-            </div>
-            <div className="bg-gradient-to-br from-golden/10 to-amber-900/20 backdrop-blur-md rounded-2xl p-4 border border-golden/20">
-              <div className="text-2xl mb-2">📸</div>
-              <div className="text-golden font-bold text-lg">1000+</div>
-              <div className="text-golden-light text-sm">Memories</div>
-            </div>
-          </div>
         </div>
       </section>
 
       {/* Enhanced Tab Navigation with Spiritual Theme */}
-      <section className="pb-12 px-4 relative">
-        <div className="max-w-7xl mx-auto">
-          <div className="bg-gradient-to-r from-red-950/80 via-red-900/90 to-red-950/80 backdrop-blur-xl rounded-3xl p-6 border border-golden/40 shadow-2xl shadow-red-900/50">
-            <div className="flex flex-wrap justify-center gap-3">
+      <section className="pb-8 px-4 sm:px-6 lg:px-8 relative">
+        <div className="max-w-6xl mx-auto">
+          <div className="bg-gradient-to-r from-red-950/80 via-red-900/90 to-red-950/80 backdrop-blur-xl rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-golden/40 shadow-2xl shadow-red-900/50">
+            <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-2 sm:gap-3">
               {tabs.map((tab, index) => (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`group relative flex items-center space-x-3 px-8 py-4 rounded-2xl font-semibold transition-all duration-500 transform hover:scale-105 hover:-translate-y-1 cursor-pointer ${
+                  className={`group relative flex items-center justify-center space-x-2 sm:space-x-3 px-4 sm:px-6 lg:px-8 py-3 sm:py-4 rounded-xl sm:rounded-2xl font-semibold transition-all duration-500 transform hover:scale-105 hover:-translate-y-1 cursor-pointer w-full sm:w-auto ${
                     activeTab === tab.id
                       ? 'bg-gradient-to-r from-golden to-golden-light text-red-950 shadow-2xl shadow-golden/50 border-2 border-golden/60'
                       : 'bg-gradient-to-r from-white/10 to-white/5 text-golden hover:bg-gradient-to-r hover:from-white/20 hover:to-white/10 border-2 border-golden/30 hover:border-golden/50'
                   }`}
                   style={{ animationDelay: `${index * 100}ms` }}
                 >
-                  <span className={`text-2xl transition-transform duration-300 ${activeTab === tab.id ? 'scale-110' : 'group-hover:scale-110'}`}>
+                  <span className={`text-xl sm:text-2xl transition-transform duration-300 ${activeTab === tab.id ? 'scale-110' : 'group-hover:scale-110'}`}>
                     {tab.icon}
                   </span>
-                  <span className="text-lg font-bold drop-shadow-sm">{tab.name}</span>
+                  <span className="text-sm sm:text-base lg:text-lg font-bold drop-shadow-sm">{tab.name}</span>
                   {activeTab === tab.id && (
-                    <div className="absolute -bottom-3 left-1/2 transform -translate-x-1/2 w-8 h-1 bg-gradient-to-r from-red-950 via-red-900 to-red-950 rounded-full shadow-lg"></div>
+                    <div className="absolute -bottom-2 sm:-bottom-3 left-1/2 transform -translate-x-1/2 w-6 sm:w-8 h-1 bg-gradient-to-r from-red-950 via-red-900 to-red-950 rounded-full shadow-lg"></div>
                   )}
                 </button>
               ))}
@@ -652,8 +424,8 @@ const CommunityPage = () => {
       </section>
 
       {/* Content Section */}
-      <section className="pb-20 px-4 relative">
-        <div className="max-w-7xl mx-auto">
+      <section className="pb-16 px-4 sm:px-6 lg:px-8 relative">
+        <div className="max-w-6xl mx-auto">
           <div className="relative z-10">
             {renderContent()}
           </div>
@@ -684,10 +456,10 @@ const CommunityPage = () => {
 
       {/* Scroll to Top Button */}
       <button 
-        className="fixed bottom-8 right-8 w-12 h-12 bg-gradient-to-r from-golden to-golden-light text-red-900 rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-all duration-300 z-20"
+        className="fixed bottom-4 right-4 sm:bottom-8 sm:right-8 w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-golden to-golden-light text-red-900 rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-all duration-300 z-20"
         onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
       >
-        <span className="text-xl">↑</span>
+        <span className="text-lg sm:text-xl">↑</span>
       </button>
     </div>
   );
