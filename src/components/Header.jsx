@@ -10,10 +10,9 @@ const Header = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  // Only show Home, About, Features, Contact for admin compact header
   const navigation = [
     { name: 'Home', href: '/' },
-    { name: 'Community', href: '/community' },
-    { name: 'Mandal Locator', href: '/mandal-locator' },
     { name: 'Features', href: '#features' },
     { name: 'About', href: '#about' },
     { name: 'Contact', href: '#contact' },
@@ -60,32 +59,31 @@ const Header = () => {
   return (
     <header className="fixed w-full top-0 z-50 backdrop-blur-md border-b border-red-200/30 shadow-sm bg-gradient-to-br from-red-950 via-red-900 to-red-950">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-20">
+        <div className="flex justify-between items-center h-14 md:h-16">
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-3 hover:opacity-90 transition-all duration-200 group">
+          <Link to="/" className="flex items-center space-x-2 hover:opacity-90 transition-all duration-200 group">
             {/* Ganesha Image */}
-            <div className="relative w-14 h-14 rounded-full overflow-hidden border-2 border-yellow-400 shadow-lg group-hover:shadow-xl group-hover:scale-105 transition-all duration-200">
+            <div className="relative w-10 h-10 md:w-12 md:h-12 rounded-full overflow-hidden border border-yellow-400 shadow-md group-hover:shadow-lg group-hover:scale-105 transition-all duration-200">
               <div className="w-full h-full bg-gradient-to-br from-yellow-400/20 to-yellow-500/20 flex items-center justify-center">
                 {/* Placeholder until actual image is added */}
-                <img src="/header-logo.png" alt="ganesha" className="text-2xl" />
+                <img src="/header-logo.png" alt="ganesha" className="text-lg md:text-xl" />
               </div>
             </div>
-            <div className="flex flex-col">
-              <span className="text-2xl md:text-3xl font-bold tracking-widest drop-shadow-lg group-hover:opacity-90 transition-all duration-200" style={{ color: 'rgb(255, 215, 0)' }}>
+            <div className="flex flex-col justify-center">
+              <span className="text-base md:text-lg font-bold tracking-widest drop-shadow-lg group-hover:opacity-90 transition-all duration-200 leading-none" style={{ color: 'rgb(255, 215, 0)' }}>
                 KTYA
               </span>
-
-              <span className="text-xs md:text-sm font-medium -mt-1 drop-shadow-md" style={{ color: 'rgb(255, 215, 0)' }}>
+              <span className="text-[10px] md:text-xs font-medium -mt-0.5 drop-shadow-md leading-none" style={{ color: 'rgb(255, 215, 0)' }}>
                 Krishna Township Youth Association
               </span>
-              <span className="text-xs md:text-sm font-small -mt-1 drop-shadow-md" style={{ color: 'rgb(255, 215, 0)' }}>
+              <span className="text-[9px] md:text-[10px] font-small -mt-0.5 drop-shadow-md leading-none" style={{ color: 'rgb(255, 215, 0)' }}>
                 (Regn. No: MH/890/03/Thane)
               </span>
             </div>
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex space-x-8">
+          <nav className="hidden md:flex gap-6 items-center text-yellow-400 font-semibold text-base">
             {navigation.map((item) => (
               <button
                 key={item.name}
