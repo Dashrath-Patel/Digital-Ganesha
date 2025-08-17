@@ -32,6 +32,7 @@ const AdminDashboard = () => {
   const [galleryLastRefresh, setGalleryLastRefresh] = useState(Date.now())
   const [galleryLoading, setGalleryLoading] = useState(false)
   const [currentTime, setCurrentTime] = useState(Date.now())
+  // Removed: showAwardModal state (Awards feature removed)
 
   useEffect(() => {
     fetchUsers()
@@ -423,194 +424,127 @@ const AdminDashboard = () => {
         <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-amber-600/5 rounded-full blur-3xl animate-pulse delay-1000" />
       </div>
 
-      <div className="relative z-10 min-h-screen pt-20 pb-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="relative z-10 min-h-screen pt-16 pb-6">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Modern Header Section */}
-          <div className="mb-8">
-            <div className="text-center lg:text-left">
-              <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-                <div>
-                  <div className="flex items-center justify-center lg:justify-start gap-3 mb-2">
-                    <div className="p-3 bg-gradient-to-br from-golden/20 to-amber-600/20 rounded-xl border border-golden/30">
-                      <span className="text-2xl">🛡️</span>
+          <div className="mb-4">
+            <div className="text-center">
+              <div className="max-w-xl mx-auto">
+                {/* Main Title Section */}
+                <div className="bg-gradient-to-br from-red-950/60 to-amber-900/40 backdrop-blur-xl rounded-lg p-3 border border-golden/20 shadow-xl mb-3">
+                  <div className="flex items-center justify-center gap-2 mb-2">
+                    <div className="p-1.5 bg-gradient-to-br from-golden/30 to-amber-600/30 rounded-lg border border-golden/40 shadow-lg">
+                      <span className="text-lg">🛡️</span>
                     </div>
-                    <div>
-                      <h1 className="text-3xl lg:text-4xl font-bold bg-gradient-to-r from-golden via-amber-400 to-golden-light bg-clip-text text-transparent">
+                    <div className="text-center">
+                      <h1 className="text-xl lg:text-2xl font-bold bg-gradient-to-r from-golden via-amber-300 to-golden-light bg-clip-text text-transparent leading-tight">
                         Admin Dashboard
                       </h1>
-                      <p className="text-golden-light/80 text-sm">Welcome back, {user?.firstName}</p>
+                      <p className="text-golden-light/90 text-xs font-medium">Welcome back, {user?.firstName}</p>
                     </div>
                   </div>
-                  <p className="text-golden-light/70 max-w-md mx-auto lg:mx-0">
-                    Manage your community platform with powerful admin tools
+                  <p className="text-golden-light/80 text-center text-xs max-w-sm mx-auto">
+                    Manage your community platform
                   </p>
                 </div>
-                
-                {/* Quick Stats Preview */}
-                <div className="flex gap-4 justify-center lg:justify-end">
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-golden">{stats.totalUsers || 0}</div>
-                    <div className="text-xs text-golden-light">Users</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-golden">{galleryPhotos.length || 0}</div>
-                    <div className="text-xs text-golden-light">Photos</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-golden">{events.length || 0}</div>
-                    <div className="text-xs text-golden-light">Events</div>
-                  </div>
-                </div>
               </div>
             </div>
           </div>
 
-          {/* Enhanced Tab Navigation with Better Mobile Support */}
+          {/* Enhanced Tab Navigation - Available for all sections */}
           <div className="mb-8">
-            <div className="bg-gradient-to-r from-red-950/90 via-red-900/80 to-amber-900/90 backdrop-blur-xl rounded-2xl p-2 border border-golden/20 shadow-2xl">
-              {/* Mobile Dropdown for Small Screens */}
-              <div className="sm:hidden">
-                <select
-                  value={activeTab}
-                  onChange={(e) => setActiveTab(e.target.value)}
-                  className="w-full bg-red-950/50 border border-golden/30 rounded-xl px-4 py-3 text-golden focus:ring-2 focus:ring-golden/50 focus:border-golden"
-                >
-                  <option value="users">👥 Users</option>
-                  <option value="messages">📢 Messages</option>
-                  <option value="events">📅 Events</option>
-                  <option value="gallery">📸 Gallery</option>
-                  {/* Awards and Analytics options removed */}
-                </select>
-              </div>
-              
-              {/* Desktop Tab Navigation */}
-              <div className="hidden sm:grid grid-cols-3 lg:grid-cols-6 gap-2">
-                {[
-                  { id: 'users', label: 'Users', icon: '👥', count: stats.totalUsers },
-                  { id: 'messages', label: 'Messages', icon: '📢', count: messages.length },
-                  { id: 'events', label: 'Events', icon: '📅', count: events.length },
-                  { id: 'gallery', label: 'Gallery', icon: '📸', count: galleryPhotos.length },
-                ].map((tab) => (
-                  <button
-                    key={tab.id}
-                    onClick={() => setActiveTab(tab.id)}
-                    className={`group relative flex flex-col items-center justify-center p-4 rounded-xl font-medium transition-all duration-300 hover:scale-105 ${
-                      activeTab === tab.id
-                        ? 'bg-gradient-to-br from-golden to-amber-500 text-red-950 shadow-lg scale-105'
-                        : 'text-golden hover:bg-red-800/40 hover:border-golden/20'
-                    }`}
+            <div className="max-w-2xl mx-auto">
+              <div className="bg-gradient-to-r from-red-950/80 via-red-900/70 to-amber-900/80 backdrop-blur-xl rounded-xl p-2 border border-golden/30 shadow-lg">
+                {/* Mobile Dropdown */}
+                <div className="sm:hidden">
+                  <select
+                    value={activeTab}
+                    onChange={(e) => setActiveTab(e.target.value)}
+                    className="w-full bg-red-950/50 border border-golden/30 rounded-lg px-3 py-2 text-golden focus:ring-2 focus:ring-golden/50 focus:border-golden text-sm"
                   >
-                    <span className="text-xl mb-1 group-hover:scale-110 transition-transform duration-200">{tab.icon}</span>
-                    <span className="text-sm font-semibold">{tab.label}</span>
-                    {tab.count !== undefined && (
-                      <span className={`text-xs mt-1 px-2 py-0.5 rounded-full ${
-                        activeTab === tab.id ? 'bg-red-950/20 text-red-950' : 'bg-golden/20 text-golden'
-                      }`}>
-                        {tab.count}
-                      </span>
-                    )}
-                    
-                    {/* Active indicator */}
-                    {activeTab === tab.id && (
-                      <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-8 h-1 bg-red-950 rounded-full" />
-                    )}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Tab Content with Enhanced Design */}
-          <div className="space-y-6">
-            {activeTab === 'users' && (
-              <div className="space-y-6">
-                {/* Enhanced Stats Cards with Better Mobile Layout */}
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                    <option value="users">👥 Users</option>
+                    <option value="messages">📢 Messages</option>
+                    <option value="events">📅 Events</option>
+                    <option value="gallery">📸 Gallery</option>
+                  </select>
+                </div>
+                
+                {/* Desktop Tab Navigation - Smaller & Separated Buttons */}
+                <div className="hidden sm:flex justify-center gap-3">
                   {[
-                    { 
-                      title: 'Total Users', 
-                      value: stats.totalUsers || 0, 
-                      icon: '👥', 
-                      color: 'from-blue-600/20 to-blue-800/20',
-                      border: 'border-blue-500/30'
-                    },
-                    { 
-                      title: 'Committee Members', 
-                      value: stats.committeeMembers || 0, 
-                      icon: '🏛️', 
-                      color: 'from-purple-600/20 to-purple-800/20',
-                      border: 'border-purple-500/30'
-                    },
-                    { 
-                      title: 'Active Mandals', 
-                      value: stats.activeMandals || 0, 
-                      icon: '🏺', 
-                      color: 'from-orange-600/20 to-orange-800/20',
-                      border: 'border-orange-500/30'
-                    },
-                    { 
-                      title: 'New This Month', 
-                      value: stats.newUsersThisMonth || 0, 
-                      icon: '📈', 
-                      color: 'from-green-600/20 to-green-800/20',
-                      border: 'border-green-500/30'
-                    }
-                  ].map((stat, index) => (
-                    <div 
-                      key={index}
-                      className={`bg-gradient-to-br ${stat.color} backdrop-blur-xl rounded-xl p-4 lg:p-6 border ${stat.border} hover:scale-105 transition-all duration-300 group`}
+                    { id: 'users', label: 'Users', icon: '👥', count: stats.totalUsers },
+                    { id: 'messages', label: 'Messages', icon: '📢', count: messages.length },
+                    { id: 'events', label: 'Events', icon: '📅', count: events.length },
+                    { id: 'gallery', label: 'Gallery', icon: '📸', count: galleryPhotos.length },
+                  ].map((tab) => (
+                    <button
+                      key={tab.id}
+                      onClick={() => setActiveTab(tab.id)}
+                      className={`relative flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-300 hover:scale-105 min-w-[100px] justify-center ${
+                        activeTab === tab.id
+                          ? 'bg-gradient-to-r from-golden to-amber-500 text-red-950 shadow-md border border-golden/60'
+                          : 'text-golden hover:bg-red-800/30 hover:border-golden/30 border border-transparent backdrop-blur-sm'
+                      }`}
                     >
-                      <div className="flex items-center justify-between">
-                        <div className="flex-1">
-                          <p className="text-golden-light text-xs lg:text-sm font-medium">{stat.title}</p>
-                          <p className="text-xl lg:text-3xl font-bold text-golden mt-1 group-hover:scale-110 transition-transform duration-200">
-                            {stat.value}
-                          </p>
-                        </div>
-                        <div className="text-2xl lg:text-3xl opacity-70 group-hover:opacity-100 transition-opacity duration-200">
-                          {stat.icon}
-                        </div>
-                      </div>
-                    </div>
+                      <span className="text-base group-hover:scale-110 transition-transform duration-200">{tab.icon}</span>
+                      <span className="font-semibold">{tab.label}</span>
+                      {tab.count !== undefined && (
+                        <span className={`text-xs px-1.5 py-0.5 rounded-full font-bold ml-1 ${
+                          activeTab === tab.id ? 'bg-red-950/30 text-red-950' : 'bg-golden/25 text-golden'
+                        }`}>
+                          {tab.count}
+                        </span>
+                      )}
+                    </button>
                   ))}
                 </div>
+              </div>
+            </div>
+          </div>
 
-                {/* Enhanced Search and Actions Section */}
-                <div className="bg-gradient-to-br from-red-950/80 to-amber-900/60 backdrop-blur-xl rounded-xl p-6 border border-golden/20 shadow-lg">
-                  <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-                    <div className="flex-1 w-full sm:max-w-md">
-                      <div className="relative">
-                        <input
-                          type="text"
-                          placeholder="Search users by name or email..."
-                          value={searchTerm}
-                          onChange={(e) => setSearchTerm(e.target.value)}
-                          className="w-full pl-10 pr-4 py-3 bg-red-950/50 border border-golden/30 rounded-xl focus:ring-2 focus:ring-golden/50 focus:border-golden text-golden placeholder-golden/60 text-sm transition-all duration-200"
-                        />
-                        <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-golden/60">
-                          🔍
+          {/* Tab Content */}
+          <div className="space-y-8">
+            {activeTab === 'users' && (
+              <div className="space-y-6">
+
+                {/* Enhanced Search Section */}
+                <div className="max-w-4xl mx-auto">
+                  <div className="bg-gradient-to-br from-red-950/70 to-amber-900/50 backdrop-blur-xl rounded-2xl p-6 border border-golden/30 shadow-xl">
+                    <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+                      <div className="flex-1 w-full sm:max-w-md">
+                        <div className="relative">
+                          <input
+                            type="text"
+                            placeholder="Search users by name or email..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="w-full pl-12 pr-4 py-3 bg-red-950/40 border border-golden/40 rounded-xl focus:ring-2 focus:ring-golden/50 focus:border-golden text-golden placeholder-golden/70 text-sm transition-all duration-200 shadow-inner"
+                          />
+                          <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-golden/70 text-lg">
+                            🔍
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    
-                    <div className="flex gap-3 w-full sm:w-auto">
-                      <button
-                        onClick={() => fetchUsers()}
-                        className="flex-1 sm:flex-none bg-gradient-to-r from-golden to-amber-500 text-red-950 px-6 py-3 rounded-xl font-semibold hover:from-amber-500 hover:to-golden transition-all duration-300 hover:scale-105 shadow-lg"
-                      >
-                        <span className="hidden sm:inline">Search</span>
-                        <span className="sm:hidden">🔍 Search</span>
-                      </button>
-                      <button
-                        onClick={() => {
-                          setSearchTerm('')
-                          fetchUsers()
-                        }}
-                        className="px-4 py-3 bg-red-800/40 border border-golden/30 rounded-xl text-golden hover:bg-red-700/40 transition-all duration-300 hover:scale-105"
-                        title="Clear search"
-                      >
-                        ✕
-                      </button>
+                      
+                      <div className="flex gap-3 w-full sm:w-auto">
+                        <button
+                          onClick={() => fetchUsers()}
+                          className="flex-1 sm:flex-none bg-gradient-to-r from-golden to-amber-500 text-red-950 px-6 py-3 rounded-xl font-semibold hover:from-amber-500 hover:to-golden transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl"
+                        >
+                          <span className="hidden sm:inline">Search Users</span>
+                          <span className="sm:hidden">🔍 Search</span>
+                        </button>
+                        <button
+                          onClick={() => {
+                            setSearchTerm('')
+                            fetchUsers()
+                          }}
+                          className="px-4 py-3 bg-red-800/50 border border-golden/40 rounded-xl text-golden hover:bg-red-700/50 transition-all duration-300 hover:scale-105 shadow-lg"
+                          title="Clear search"
+                        >
+                          ✕
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -624,43 +558,43 @@ const AdminDashboard = () => {
                 )}
 
                 {/* Modern Users Display - Cards for Mobile, Table for Desktop */}
-                <div className="bg-gradient-to-br from-red-950/80 to-amber-900/60 backdrop-blur-xl rounded-xl border border-golden/20 shadow-lg overflow-hidden">
+                <div className="bg-gradient-to-br from-red-950/80 to-amber-900/60 backdrop-blur-xl rounded-lg border border-golden/20 shadow-lg overflow-hidden max-w-5xl mx-auto">
                   {/* Mobile Card View */}
                   <div className="block lg:hidden">
                     {loading ? (
-                      <div className="p-8 text-center">
+                      <div className="p-6 text-center">
                         <div className="flex items-center justify-center gap-3 text-golden-light">
-                          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-golden"></div>
+                          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-golden"></div>
                           <span>Loading users...</span>
                         </div>
                       </div>
                     ) : users.length === 0 ? (
-                      <div className="p-8 text-center">
-                        <div className="text-4xl mb-4">👥</div>
-                        <p className="text-golden-light text-lg">No users found</p>
+                      <div className="p-6 text-center">
+                        <div className="text-3xl mb-3">👥</div>
+                        <p className="text-golden-light text-base">No users found</p>
                         <p className="text-golden-light/60 text-sm mt-1">
                           {searchTerm ? 'Try adjusting your search terms' : 'Users will appear here when they register'}
                         </p>
                       </div>
                     ) : (
-                      <div className="p-4 space-y-4">
+                      <div className="p-3 space-y-3">
                         {users.map((user) => (
                           <div 
                             key={user._id} 
-                            className="bg-gradient-to-r from-red-900/40 to-amber-900/40 backdrop-blur-sm rounded-xl p-4 border border-golden/20 hover:border-golden/40 transition-all duration-300"
+                            className="bg-gradient-to-r from-red-900/40 to-amber-900/40 backdrop-blur-sm rounded-lg p-3 border border-golden/20 hover:border-golden/40 transition-all duration-300"
                           >
-                            <div className="flex items-start gap-4">
-                              <div className="w-12 h-12 bg-gradient-to-br from-golden to-amber-500 rounded-full flex items-center justify-center text-red-950 font-bold flex-shrink-0">
+                            <div className="flex items-start gap-3">
+                              <div className="w-10 h-10 bg-gradient-to-br from-golden to-amber-500 rounded-full flex items-center justify-center text-red-950 font-bold flex-shrink-0 text-sm">
                                 {user.firstName?.[0]}{user.lastName?.[0]}
                               </div>
                               
                               <div className="flex-1 min-w-0">
                                 <div className="flex items-start justify-between">
                                   <div className="min-w-0">
-                                    <h3 className="text-golden font-semibold text-base truncate">
+                                    <h3 className="text-golden font-semibold text-sm truncate">
                                       {user.firstName} {user.lastName}
                                     </h3>
-                                    <p className="text-golden-light text-sm truncate">{user.email}</p>
+                                    <p className="text-golden-light text-xs truncate">{user.email}</p>
                                   </div>
                                   
                                   <button
@@ -668,13 +602,13 @@ const AdminDashboard = () => {
                                       setSelectedUser(user)
                                       setShowModal(true)
                                     }}
-                                    className="ml-2 p-2 bg-golden/20 rounded-lg text-golden hover:bg-golden/30 transition-colors duration-200 flex-shrink-0"
+                                    className="ml-2 p-1.5 bg-golden/20 rounded-md text-golden hover:bg-golden/30 transition-colors duration-200 flex-shrink-0"
                                   >
                                     ⚙️
                                   </button>
                                 </div>
                                 
-                                <div className="flex flex-wrap gap-2 mt-3">
+                                <div className="flex flex-wrap gap-1.5 mt-2">
                                   <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-md ${
                                     user.role === USER_ROLES.ADMIN
                                       ? 'bg-purple-900/50 text-purple-300'
@@ -1551,22 +1485,7 @@ const AdminDashboard = () => {
         />
       )}
 
-      {/* Award Modal */}
-      {showAwardModal && (
-        <AwardModal
-          award={editingItem}
-          onClose={() => {
-            setShowAwardModal(false)
-            setEditingItem(null)
-          }}
-          onSave={(awardData) => {
-            // Handle save logic
-            console.log('Saving award:', awardData)
-            setShowAwardModal(false)
-            setEditingItem(null)
-          }}
-        />
-      )}
+  {/* Award Modal removed (Awards feature removed) */}
     </div>
   )
 }
