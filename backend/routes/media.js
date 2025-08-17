@@ -226,7 +226,7 @@ router.get('/', async (req, res) => {
     sortOptions[sortBy] = sortOrder === 'desc' ? -1 : 1
 
     const media = await Media.find(searchQuery)
-      .populate('uploadedBy', 'firstName lastName avatar')
+      .populate('uploadedBy', 'firstName lastName avatar role isCommitteeMember committeeRole')
       .populate('mandal', 'name logo')
       .populate('event', 'title startDate')
       .select('-comments') // Exclude comments for list view
@@ -266,7 +266,7 @@ router.get('/:id', async (req, res) => {
     const { id } = req.params
 
     const media = await Media.findById(id)
-      .populate('uploadedBy', 'firstName lastName avatar')
+      .populate('uploadedBy', 'firstName lastName avatar role isCommitteeMember committeeRole')
       .populate('mandal', 'name logo')
       .populate('event', 'title startDate')
       .populate('comments.userId', 'firstName lastName avatar')
