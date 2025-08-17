@@ -70,13 +70,13 @@ const Header = () => {
               </div>
             </div>
             <div className="flex flex-col justify-center">
-              <span className="text-base md:text-lg font-bold tracking-widest drop-shadow-lg group-hover:opacity-90 transition-all duration-200 leading-none" style={{ color: 'rgb(255, 215, 0)' }}>
+              <span className="text-base md:text-lg font-bold tracking-widest drop-shadow-lg group-hover:opacity-90 transition-all duration-200 leading-none mb-1" style={{ color: 'rgb(255, 215, 0)' }}>
                 KTYA
               </span>
-              <span className="text-[10px] md:text-xs font-medium -mt-0.5 drop-shadow-md leading-none" style={{ color: 'rgb(255, 215, 0)' }}>
+              <span className="text-[10px] md:text-xs font-medium drop-shadow-md leading-none mb-0.5" style={{ color: 'rgb(255, 215, 0)' }}>
                 Krishna Township Youth Association
               </span>
-              <span className="text-[9px] md:text-[10px] font-small -mt-0.5 drop-shadow-md leading-none" style={{ color: 'rgb(255, 215, 0)' }}>
+              <span className="text-[9px] md:text-[10px] font-small drop-shadow-md leading-none" style={{ color: 'rgb(255, 215, 0)' }}>
                 (Regn. No: MH/890/03/Thane)
               </span>
             </div>
