@@ -43,7 +43,8 @@ const mediaSchema = new mongoose.Schema({
         enum: [
             'profile-avatar', 'profile-cover', 'mandal-logo', 'mandal-cover',
             'event-banner', 'event-gallery', 'festival-photos', 'ritual-videos',
-            'promotional', 'social', 'other'
+            'promotional', 'social', 'other', 'festivals', 'community-events', 
+            'volunteers', 'behind-the-scenes', 'cultural-activities', 'worship'
         ],
         required: [true, 'Category is required']
     },
