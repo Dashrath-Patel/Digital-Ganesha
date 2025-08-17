@@ -477,6 +477,7 @@ const SignUpPage = () => {
                     value={formData.email}
                     onChange={handleChange}
                     required
+                    autoComplete="email"
                     className="w-full px-3 py-2 bg-red-900/50 border border-yellow-500/30 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 text-yellow-100 placeholder-yellow-300/50 backdrop-blur-sm"
                     placeholder="Enter your email"
                   />
@@ -493,6 +494,7 @@ const SignUpPage = () => {
                     value={formData.password}
                     onChange={handleChange}
                     required
+                    autoComplete="new-password"
                     className="w-full px-3 py-2 bg-red-900/50 border border-yellow-500/30 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 text-yellow-100 placeholder-yellow-300/50 backdrop-blur-sm"
                     placeholder="Create a password"
                   />
