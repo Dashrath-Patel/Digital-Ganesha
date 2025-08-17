@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import ImageKitService from '../services/ImageKitService';
+import PhotoUploadService from '../services/PhotoUploadService';
 import { useAuth } from '../contexts/AuthContext';
 
 const GalleryViewer = ({ 
@@ -10,7 +10,9 @@ const GalleryViewer = ({
   columns = 4, // Number of columns for grid layout
   showFilters = true,
   showPagination = true,
-  itemsPerPage = 12
+  itemsPerPage = 12,
+  autoRefresh = false, // Auto refresh every 30 seconds
+  autoRefreshInterval = 30000 // 30 seconds
 }) => {
   const { user } = useAuth();
   const [media, setMedia] = useState([]);
@@ -25,6 +27,9 @@ const GalleryViewer = ({
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState('createdAt'); // 'createdAt', 'title', 'category'
   const [sortOrder, setSortOrder] = useState('desc'); // 'asc', 'desc'
+  const [refreshTrigger, setRefreshTrigger] = useState(0); // For manual refresh
+  const [lastRefresh, setLastRefresh] = useState(Date.now()); // Track last refresh time
+  const [currentTime, setCurrentTime] = useState(Date.now()); // For real-time updates
 
   // Available categories
   const categories = [
@@ -47,9 +52,9 @@ const GalleryViewer = ({
     try {
       const filters = {
         limit: itemsPerPage,
-        skip: (currentPage - 1) * itemsPerPage,
-        sortBy,
-        sortOrder
+        page: currentPage,
+        type: 'image', // Only show images in gallery
+        isPublic: true // Only show public images
       };
 
       // Apply category filter
@@ -57,22 +62,18 @@ const GalleryViewer = ({
         filters.category = selectedCategory;
       }
 
-      // Apply type filter
-      if (viewMode !== 'all') {
-        filters.type = viewMode === 'images' ? 'image' : 'video';
-      }
-
       // Apply search filter
       if (searchTerm.trim()) {
         filters.search = searchTerm.trim();
       }
 
-      const result = await ImageKitService.listMedia(filters);
+      const result = await PhotoUploadService.getMediaList(filters);
       
       if (result.success) {
         setMedia(result.data.media || []);
         setTotalPages(result.data.pagination?.pages || 1);
         setTotalItems(result.data.pagination?.total || 0);
+        setLastRefresh(Date.now()); // Update last refresh time
       } else {
         throw new Error(result.error || 'Failed to load media');
       }
@@ -85,17 +86,55 @@ const GalleryViewer = ({
     } finally {
       setLoading(false);
     }
-  }, [selectedCategory, currentPage, viewMode, searchTerm, sortBy, sortOrder, itemsPerPage]);
+  }, [selectedCategory, currentPage, searchTerm, itemsPerPage, refreshTrigger]);
 
   // Load media when filters change
   useEffect(() => {
     loadMedia();
   }, [loadMedia]);
 
+  // Manual refresh function
+  const handleRefresh = () => {
+    setRefreshTrigger(prev => prev + 1);
+  };
+
+  // Format last refresh time
+  const formatLastRefresh = () => {
+    const diff = currentTime - lastRefresh;
+    const minutes = Math.floor(diff / 60000);
+    const seconds = Math.floor((diff % 60000) / 1000);
+    
+    if (minutes > 0) {
+      return `${minutes}m ago`;
+    } else {
+      return `${seconds}s ago`;
+    }
+  };
+
+  // Auto-refresh functionality
+  useEffect(() => {
+    if (!autoRefresh) return;
+
+    const interval = setInterval(() => {
+      setRefreshTrigger(prev => prev + 1);
+    }, autoRefreshInterval);
+
+    return () => clearInterval(interval);
+  }, [autoRefresh, autoRefreshInterval]);
+
+  // Update current time every second for accurate "time ago" display
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTime(Date.now());
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
   // Reset to first page when filters change
   useEffect(() => {
     setCurrentPage(1);
-  }, [selectedCategory, viewMode, searchTerm, sortBy, sortOrder]);
+  }, [selectedCategory, searchTerm]);
 
   const handleImageClick = (imageItem) => {
     setSelectedImage(imageItem);
@@ -109,7 +148,7 @@ const GalleryViewer = ({
     }
 
     try {
-      const result = await ImageKitService.deleteFile(mediaId);
+      const result = await PhotoUploadService.deleteMedia(mediaId);
       if (result.success) {
         // Remove from current media list
         setMedia(prev => prev.filter(item => item._id !== mediaId));
@@ -134,12 +173,9 @@ const GalleryViewer = ({
   const getOptimizedImageUrl = (url, width = 300, height = 300, quality = 80) => {
     if (!url) return '';
     
-    return ImageKitService.getOptimizedImageURL(url, {
-      width,
-      height,
-      quality,
-      crop: 'maintain_ratio'
-    });
+    // For now, return the original URL as ImageKit already provides optimized images
+    // We can add transformations later if needed
+    return url;
   };
 
   const closeModal = () => {
@@ -301,6 +337,27 @@ const GalleryViewer = ({
               ))}
             </div>
 
+            {/* Refresh Button */}
+            <div className="flex items-center gap-2">
+              <button
+                onClick={handleRefresh}
+                disabled={loading}
+                className="flex items-center gap-2 px-4 py-2 bg-golden/20 border border-golden/40 rounded-lg text-golden hover:bg-golden/30 hover:border-golden transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                title={`Refresh gallery to see latest changes. Last updated: ${formatLastRefresh()}`}
+              >
+                <span className={`text-lg ${loading ? 'animate-spin' : ''}`}>🔄</span>
+                <div className="flex flex-col items-start">
+                  <span className="text-sm font-medium">Refresh</span>
+                  <span className="text-xs text-golden/70">{formatLastRefresh()}</span>
+                </div>
+              </button>
+              {autoRefresh && (
+                <div className="text-xs text-golden/60">
+                  Auto-refresh: ON
+                </div>
+              )}
+            </div>
+
             {/* View Mode and Sort Controls */}
             <div className="flex gap-2 items-center">
               {/* View Mode Filter */}
@@ -414,6 +471,15 @@ const GalleryViewer = ({
             >
               {/* Media Preview */}
               <div className={`relative overflow-hidden ${layout === 'list' ? 'aspect-video' : 'aspect-square'}`}>
+                {/* Always Visible Category Badge */}
+                {item.category && (
+                  <div className="absolute top-3 left-3 z-10">
+                    <div className="bg-gradient-to-r from-golden via-yellow-400 to-amber-400 text-red-900 px-3 py-1.5 rounded-full text-xs font-bold shadow-lg border border-yellow-300/50 backdrop-blur-sm">
+                      {PhotoUploadService.mapCategoryToFrontend(item.category)}
+                    </div>
+                  </div>
+                )}
+
                 {item.type === 'video' ? (
                   <div className="relative w-full h-full bg-gradient-to-br from-purple-900/50 to-blue-900/50 flex items-center justify-center">
                     <div className="text-6xl text-white/80 transition-transform duration-300 group-hover:scale-110">🎥</div>
@@ -441,16 +507,21 @@ const GalleryViewer = ({
                   </>
                 )}
                 
-                {/* Overlay Content */}
+                {/* Always Visible Category Badge */}
+                {item.category && (
+                  <div className="absolute top-3 left-3 z-10">
+                    <div className="bg-gradient-to-r from-golden to-yellow-400 text-red-900 px-3 py-1.5 rounded-full text-xs font-bold shadow-lg border border-yellow-300/50 backdrop-blur-sm">
+                      {PhotoUploadService.mapCategoryToFrontend(item.category)}
+                    </div>
+                  </div>
+                )}
+
+                {/* Hover Overlay Content */}
                 <div className="absolute inset-0 flex flex-col justify-between p-4 opacity-0 group-hover:opacity-100 transition-all duration-300">
                   {/* Top Row */}
                   <div className="flex justify-between items-start">
-                    {/* Category Badge */}
-                    {item.category && (
-                      <div className="bg-golden/90 backdrop-blur-sm text-red-900 px-3 py-1 rounded-full text-xs font-bold shadow-lg">
-                        {item.category}
-                      </div>
-                    )}
+                    {/* Spacer for category badge */}
+                    <div></div>
                     
                     {/* Delete Button */}
                     {allowDelete && (user?.role === 'admin' || user?._id === item.uploadedBy) && (
@@ -490,6 +561,16 @@ const GalleryViewer = ({
                 <h4 className="text-golden font-bold text-sm mb-2 truncate">
                   {item.title || 'Untitled'}
                 </h4>
+                
+                {/* Category Tag - More Prominent */}
+                {item.category && (
+                  <div className="mb-3">
+                    <span className="bg-gradient-to-r from-golden via-yellow-400 to-amber-400 text-red-900 px-2.5 py-1 rounded-full text-xs font-bold shadow-md">
+                      📂 {PhotoUploadService.mapCategoryToFrontend(item.category)}
+                    </span>
+                  </div>
+                )}
+                
                 <div className="flex items-center justify-between text-xs text-golden-light mb-2">
                   <span className="flex items-center gap-1">
                     {item.type === 'video' ? '🎥' : '📷'} 
@@ -633,19 +714,11 @@ const GalleryViewer = ({
               ) : (
                 <div className="relative">
                   <img
-                    src={ImageKitService.getOptimizedImageURL(selectedImage.url, {
-                      width: 1400,
-                      height: 1000,
-                      quality: 95
-                    })}
+                    src={getOptimizedImageUrl(selectedImage.url, 1400, 1000, 95)}
                     alt={selectedImage.title || 'Gallery image'}
                     className="max-w-full max-h-[85vh] object-contain"
                     onError={(e) => {
-                      e.target.src = ImageKitService.getOptimizedImageURL(selectedImage.url, {
-                        width: 800,
-                        height: 600,
-                        quality: 80
-                      });
+                      e.target.src = selectedImage.url; // Fallback to original URL
                     }}
                   />
                 </div>
