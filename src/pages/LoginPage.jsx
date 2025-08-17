@@ -1,7 +1,8 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import Header from '../components/Header'
+import Captcha from '../components/Captcha'
 
 const LoginPage = () => {
   const [formData, setFormData] = useState({
@@ -10,6 +11,10 @@ const LoginPage = () => {
   })
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [captchaValue, setCaptchaValue] = useState('')
+  const [isCaptchaValid, setIsCaptchaValid] = useState(false)
+  const [captchaError, setCaptchaError] = useState('')
+  const captchaRef = useRef(null)
   const { login } = useAuth()
   const navigate = useNavigate()
 
@@ -21,15 +26,43 @@ const LoginPage = () => {
     setError('')
   }
 
+  const handleCaptchaChange = (value) => {
+    setCaptchaValue(value)
+    setCaptchaError('')
+  }
+
+  const handleCaptchaValidate = (isValid) => {
+    setIsCaptchaValid(isValid)
+    // Don't show error while typing, only on submit
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     setIsLoading(true)
     setError('')
+    setCaptchaError('')
+
+    // Validate captcha on submit
+    const isValidCaptcha = captchaRef.current && captchaRef.current.validateCaptcha()
+    
+    if (!isValidCaptcha || captchaValue.length !== 5) {
+      setCaptchaError('Invalid captcha')
+      setIsLoading(false)
+      // Auto-refresh captcha after showing error
+      setTimeout(() => {
+        if (captchaRef.current) {
+          captchaRef.current.refreshCaptcha()
+        }
+      }, 1500)
+      return
+    }
 
     try {
       await login(formData.email, formData.password)
       navigate('/')
       setFormData({ email: '', password: '' })
+      setCaptchaValue('')
+      setIsCaptchaValid(false)
     } catch (err) {
       setError(err.message)
     } finally {
@@ -108,6 +141,16 @@ const LoginPage = () => {
                     required
                     className="w-full px-4 py-3 bg-red-900/50 border border-yellow-500/30 rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 text-yellow-100 placeholder-yellow-300/50 backdrop-blur-sm transition-all"
                     placeholder="Enter your password"
+                  />
+                </div>
+
+                {/* Captcha Component */}
+                <div>
+                  <Captcha
+                    ref={captchaRef}
+                    onCaptchaChange={handleCaptchaChange}
+                    onCaptchaValidate={handleCaptchaValidate}
+                    error={captchaError}
                   />
                 </div>
 

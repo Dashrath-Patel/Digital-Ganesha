@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Header from '../components/Header';
 import CulturalService from '../services/CulturalService';
 
@@ -11,6 +11,12 @@ const CulturalLearningPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [bhajanSearchTerm, setBhajanSearchTerm] = useState('');
   const [currentRecipeStart, setCurrentRecipeStart] = useState(0);
+  
+  // Refs for smooth scrolling
+  const expandedMantraRef = useRef(null);
+  
+  // Loading state for smooth scroll animation
+  const [isScrolling, setIsScrolling] = useState(false);
   
   // Dynamic data state
   const [mantrasContent, setMantrasContent] = useState([]);
@@ -222,7 +228,44 @@ const CulturalLearningPage = () => {
   // Removed auto-scroll functionality to prevent unwanted page jumps
   // Users can manually scroll to see the expanded content if needed
 
-  // Handle mantra card click
+  // Smooth scroll utility function with enhanced behavior
+  const smoothScrollToElement = (element, offset = -100) => {
+    if (!element) return;
+    
+    setIsScrolling(true);
+    
+    const elementTop = element.getBoundingClientRect().top + window.pageYOffset;
+    const offsetPosition = elementTop + offset;
+    
+    // Custom smooth scroll with easing
+    const startPosition = window.pageYOffset;
+    const distance = offsetPosition - startPosition;
+    const duration = 800; // 800ms for smooth animation
+    let startTime = null;
+    
+    const easeOutCubic = (t) => {
+      return 1 - Math.pow(1 - t, 3);
+    };
+    
+    const animation = (currentTime) => {
+      if (startTime === null) startTime = currentTime;
+      const timeElapsed = currentTime - startTime;
+      const progress = Math.min(timeElapsed / duration, 1);
+      const easedProgress = easeOutCubic(progress);
+      
+      window.scrollTo(0, startPosition + (distance * easedProgress));
+      
+      if (timeElapsed < duration) {
+        requestAnimationFrame(animation);
+      } else {
+        setIsScrolling(false);
+      }
+    };
+    
+    requestAnimationFrame(animation);
+  };
+
+  // Handle mantra card click with enhanced smooth scroll
   const handleMantraCardClick = async (mantraId) => {
     const newExpandedMantra = expandedMantra === mantraId ? null : mantraId;
     setExpandedMantra(newExpandedMantra);
@@ -234,6 +277,13 @@ const CulturalLearningPage = () => {
       } catch (err) {
         console.error('Error tracking mantra view:', err);
       }
+      
+      // Enhanced smooth scroll to expanded card with proper timing
+      setTimeout(() => {
+        if (expandedMantraRef.current) {
+          smoothScrollToElement(expandedMantraRef.current, -80);
+        }
+      }, 150); // Slightly longer delay for better state synchronization
     }
   };
 
@@ -286,14 +336,22 @@ const CulturalLearningPage = () => {
               <div className="space-y-6">
                 {/* Expanded Card Display */}
                 {expandedMantra && (
-                  <div className="mb-12 section-spacing">
+                  <div 
+                    ref={expandedMantraRef} 
+                    className={`mb-12 section-spacing transform transition-all duration-500 ease-out ${
+                      isScrolling ? 'scale-[1.02]' : 'scale-100'
+                    }`}
+                  >
                     {mantrasContent
                       .filter(mantra => mantra._id === expandedMantra)
                       .map((mantra) => (
                         <div 
                           key={`expanded-${mantra._id}`}
-                          className="relative overflow-hidden rounded-3xl shadow-2xl content-container"
-                          style={{ backgroundColor: 'rgba(21, 21, 21, 0.8)' }}
+                          className="relative overflow-hidden rounded-3xl shadow-2xl content-container animate-fadeInUp"
+                          style={{ 
+                            backgroundColor: 'rgba(21, 21, 21, 0.8)',
+                            animation: 'fadeInUp 0.6s ease-out'
+                          }}
                         >
                           {/* Clean background overlay - minimal design */}
                           <div className="absolute inset-0 bg-gradient-to-br from-black/20 via-red-900/10 to-black/30"></div>
