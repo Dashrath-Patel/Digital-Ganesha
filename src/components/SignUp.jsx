@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { useAuth } from '../contexts/AuthContext'
+import Captcha from './Captcha'
 
 const SignUp = ({ isOpen, onClose, onSwitchToLogin }) => {
   const [formData, setFormData] = useState({
@@ -10,6 +11,10 @@ const SignUp = ({ isOpen, onClose, onSwitchToLogin }) => {
   })
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [captchaValue, setCaptchaValue] = useState('')
+  const [isCaptchaValid, setIsCaptchaValid] = useState(false)
+  const [captchaError, setCaptchaError] = useState('')
+  const captchaRef = useRef(null)
   const { signup } = useAuth()
 
   const handleChange = (e) => {
@@ -20,10 +25,36 @@ const SignUp = ({ isOpen, onClose, onSwitchToLogin }) => {
     setError('')
   }
 
+  const handleCaptchaChange = (value) => {
+    setCaptchaValue(value)
+    setCaptchaError('')
+  }
+
+  const handleCaptchaValidate = (isValid) => {
+    setIsCaptchaValid(isValid)
+    // Don't show error while typing, only on submit
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     setIsLoading(true)
     setError('')
+    setCaptchaError('')
+
+    // Validate captcha on submit
+    const isValidCaptcha = captchaRef.current && captchaRef.current.validateCaptcha()
+    
+    if (!isValidCaptcha || captchaValue.length !== 5) {
+      setCaptchaError('Invalid captcha')
+      setIsLoading(false)
+      // Auto-refresh captcha after showing error
+      setTimeout(() => {
+        if (captchaRef.current) {
+          captchaRef.current.refreshCaptcha()
+        }
+      }, 1500)
+      return
+    }
 
     // Validation
     if (formData.password !== formData.confirmPassword) {
@@ -46,6 +77,8 @@ const SignUp = ({ isOpen, onClose, onSwitchToLogin }) => {
       })
       onClose()
       setFormData({ name: '', email: '', password: '', confirmPassword: '' })
+      setCaptchaValue('')
+      setIsCaptchaValid(false)
     } catch (err) {
       setError(err.message)
     } finally {
@@ -144,6 +177,13 @@ const SignUp = ({ isOpen, onClose, onSwitchToLogin }) => {
                 placeholder="Confirm your password"
               />
             </div>
+
+            <Captcha
+              ref={captchaRef}
+              onCaptchaChange={handleCaptchaChange}
+              onCaptchaValidate={handleCaptchaValidate}
+              error={captchaError}
+            />
 
             <button
               type="submit"

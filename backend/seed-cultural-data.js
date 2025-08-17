@@ -101,6 +101,44 @@ const mantrasData = [
     featured: true,
     order: 6,
     tags: ["rigveda", "ancient", "earliest", "vedic"]
+  },
+  {
+    title: "Ganesha Gayatri Mantra",
+    category: "mantras",
+    sanskrit: `ॐ एकदन्ताय विद्महे वक्रतुण्डाय धीमहि।
+तन्नो दन्ति प्रचोदयात्॥`,
+    translation: "Om, we meditate on the One-Tusked Lord, we contemplate the Curved-Trunk One. May that Ganesha inspire and illumine our mind and understanding.",
+    significance: "This Gayatri mantra dedicated to Ganesha enhances wisdom and removes mental obstacles.",
+    image: "Hero/om.svg",
+    source: "Tantric Tradition",
+    featured: true,
+    order: 7,
+    tags: ["gayatri", "wisdom", "mental", "illumination"]
+  },
+  {
+    title: "Ganesha Stotra by Mudgala Purana",
+    category: "mantras",
+    sanskrit: `गजानन भूतगणादि सेवितं कपित्थ जम्बू फल चारु भक्षणम्।
+उमासुतं शोकविनाशकारकं नमामि विघ्नेश्वर पादपङ्कजम्॥`,
+    translation: "I bow to the lotus feet of Ganesha, who has an elephant face, is served by Bhootaganas, enjoys wood apple and jamun fruits, is the son of Uma, and destroys all sorrows.",
+    significance: "A beautiful verse from Mudgala Purana highlighting Ganesha's divine qualities and his power to remove sorrows.",
+    image: "Hero/flower.png",
+    source: "Mudgala Purana",
+    featured: false,
+    order: 8,
+    tags: ["mudgala", "elephant face", "sorrow removal", "divine qualities"]
+  },
+  {
+    title: "Ganesha Beej Mantra",
+    category: "mantras",
+    sanskrit: `ॐ गं गणपतये नमः॥`,
+    translation: "Om Gam Ganapataye Namaha - Salutations to Lord Ganesha with the seed sound 'Gam'.",
+    significance: "The most powerful seed mantra of Ganesha. The sound 'Gam' represents the primordial vibration of Lord Ganesha and removes all obstacles instantly.",
+    image: "Hero/ganesh.svg",
+    source: "Tantric Texts",
+    featured: true,
+    order: 9,
+    tags: ["beej mantra", "seed sound", "powerful", "instant results"]
   }
 ]
 
@@ -148,10 +186,236 @@ const recipesData = [
       "Serve hot with ghee."
     ],
     significance: "A traditional Maharashtrian sweet bread offered to Lord Ganesha.",
-    videoId: "oTl_DYNAP0o",
-    featured: true,
+    videoId: "puran_poli_demo",
+    featured: false,
     order: 2,
     tags: ["puran poli", "maharashtrian", "sweet bread", "traditional"]
+  },
+  {
+    title: "Ukadiche Modak (Steamed Modak)",
+    category: "recipes",
+    ingredients: [
+      "2 cups rice flour",
+      "1 cup fresh grated coconut",
+      "3/4 cup jaggery",
+      "1/2 tsp cardamom powder",
+      "1 tbsp ghee",
+      "Salt to taste"
+    ],
+    instructions: [
+      "Boil water with salt and 1 tsp ghee.",
+      "Gradually add rice flour while stirring to avoid lumps.",
+      "Cook until dough forms, cover and cool.",
+      "For filling: Cook coconut with jaggery until thick.",
+      "Add cardamom powder and cool.",
+      "Shape modaks and steam for 12-15 minutes."
+    ],
+    significance: "Traditional steamed version of modaks, considered more authentic and healthy.",
+    videoId: "ukadiche_modak_demo",
+    featured: true,
+    order: 3,
+    tags: ["ukadiche", "steamed", "authentic", "healthy"]
+  },
+  {
+    title: "Rava Ladoo",
+    category: "recipes",
+    ingredients: [
+      "2 cups semolina (rava)",
+      "1 cup ghee",
+      "1 cup powdered sugar",
+      "1/2 cup mixed nuts",
+      "1/2 tsp cardamom powder",
+      "2 tbsp milk"
+    ],
+    instructions: [
+      "Roast semolina in ghee until golden.",
+      "Add chopped nuts and roast briefly.",
+      "Cool completely, then add sugar and cardamom.",
+      "Add milk gradually to bind the mixture.",
+      "Shape into round ladoos.",
+      "Let them set for 30 minutes before serving."
+    ],
+    significance: "Quick and easy sweet offering for Lord Ganesha, perfect for daily worship.",
+    videoId: "rava_ladoo_demo",
+    featured: false,
+    order: 4,
+    tags: ["rava ladoo", "quick", "easy", "daily worship"]
+  },
+  {
+    title: "Coconut Barfi",
+    category: "recipes",
+    ingredients: [
+      "3 cups fresh grated coconut",
+      "1 cup sugar",
+      "1/2 cup milk",
+      "1/4 tsp cardamom powder",
+      "Ghee for greasing",
+      "Chopped pistachios for garnish"
+    ],
+    instructions: [
+      "Cook coconut with milk on medium heat.",
+      "Add sugar and cook until mixture thickens.",
+      "Add cardamom powder and mix well.",
+      "Pour into greased tray and level.",
+      "Garnish with pistachios and let it set.",
+      "Cut into squares when cooled."
+    ],
+    significance: "White colored sweet symbolizing purity and devotion to Lord Ganesha.",
+    videoId: "coconut_barfi_demo",
+    featured: false,
+    order: 5,
+    tags: ["coconut barfi", "white", "purity", "devotion"]
+  },
+  {
+    title: "Kheer (Rice Pudding)",
+    category: "recipes",
+    ingredients: [
+      "1/2 cup basmati rice",
+      "4 cups full-fat milk",
+      "1/2 cup sugar",
+      "1/4 tsp cardamom powder",
+      "2 tbsp chopped almonds",
+      "2 tbsp raisins",
+      "1 tbsp ghee"
+    ],
+    instructions: [
+      "Wash and soak rice for 30 minutes.",
+      "Boil milk in heavy-bottomed pan.",
+      "Add rice and cook until soft and mushy.",
+      "Add sugar and cook until thick.",
+      "Add cardamom, nuts fried in ghee.",
+      "Serve warm or chilled."
+    ],
+    significance: "Sacred rice pudding offered to deities, represents abundance and prosperity.",
+    videoId: "kheer_demo",
+    featured: true,
+    order: 6,
+    tags: ["kheer", "rice pudding", "abundance", "prosperity"]
+  },
+  {
+    title: "Gur Til Ladoo (Jaggery Sesame Balls)",
+    category: "recipes",
+    ingredients: [
+      "2 cups sesame seeds",
+      "1 cup jaggery",
+      "1 tsp ghee",
+      "1/4 tsp cardamom powder",
+      "Pinch of salt"
+    ],
+    instructions: [
+      "Dry roast sesame seeds until golden.",
+      "Heat jaggery with little water until melted.",
+      "Cook to one-string consistency.",
+      "Add sesame seeds and cardamom.",
+      "Mix well and shape into balls while warm.",
+      "Store in airtight container."
+    ],
+    significance: "Winter special offering that provides warmth and energy, ideal for Makar Sankranti celebrations.",
+    videoId: "gur_til_ladoo_demo",
+    featured: false,
+    order: 7,
+    tags: ["jaggery", "sesame", "winter", "makar sankranti"]
+  },
+  {
+    title: "Besan Ladoo",
+    category: "recipes",
+    ingredients: [
+      "2 cups chickpea flour (besan)",
+      "1 cup ghee",
+      "1 cup powdered sugar",
+      "1/2 tsp cardamom powder",
+      "2 tbsp chopped almonds",
+      "2 tbsp raisins"
+    ],
+    instructions: [
+      "Roast besan in ghee on low heat until aromatic.",
+      "Color should change to golden brown.",
+      "Cool completely, then add sugar.",
+      "Add cardamom, nuts, and raisins.",
+      "Mix well and shape into ladoos.",
+      "Store in airtight container."
+    ],
+    significance: "Classic Indian sweet that's a favorite offering to Lord Ganesha during festivals.",
+    videoId: "besan_ladoo_demo",
+    featured: true,
+    order: 8,
+    tags: ["besan ladoo", "classic", "festivals", "favorite"]
+  },
+  {
+    title: "Shrikhand",
+    category: "recipes",
+    ingredients: [
+      "2 cups thick yogurt",
+      "1/2 cup powdered sugar",
+      "1/4 tsp cardamom powder",
+      "Pinch of saffron",
+      "2 tbsp warm milk",
+      "Chopped pistachios for garnish"
+    ],
+    instructions: [
+      "Hang yogurt in muslin cloth for 4-5 hours.",
+      "Remove whey completely to get thick hung curd.",
+      "Soak saffron in warm milk.",
+      "Mix hung curd with sugar until smooth.",
+      "Add cardamom and saffron milk.",
+      "Chill and garnish with nuts before serving."
+    ],
+    significance: "Cooling and pure offering perfect for summer festivals and special occasions.",
+    videoId: "shrikhand_demo",
+    featured: false,
+    order: 9,
+    tags: ["shrikhand", "cooling", "summer", "special occasions"]
+  },
+  {
+    title: "Motichoor Ladoo",
+    category: "recipes",
+    ingredients: [
+      "2 cups fine besan",
+      "1 cup sugar",
+      "3/4 cup water",
+      "Oil for frying",
+      "1/4 tsp cardamom powder",
+      "2 tbsp chopped almonds",
+      "Few drops orange food color"
+    ],
+    instructions: [
+      "Make smooth batter with besan and water.",
+      "Heat oil and make tiny droplets through perforated spoon.",
+      "Fry until light golden and drain.",
+      "Make sugar syrup of one-string consistency.",
+      "Mix fried besan pearls with syrup.",
+      "Add cardamom, color, and shape into ladoos."
+    ],
+    significance: "Festive sweet with beautiful texture, often offered during Ganesh Chaturthi celebrations.",
+    videoId: "motichoor_ladoo_demo",
+    featured: false,
+    order: 10,
+    tags: ["motichoor", "festive", "beautiful texture", "ganesh chaturthi"]
+  },
+  {
+    title: "Dry Fruit Modak",
+    category: "recipes",
+    ingredients: [
+      "1 cup mixed dry fruits (dates, almonds, cashews)",
+      "1/2 cup dessicated coconut",
+      "2 tbsp ghee",
+      "1/4 tsp cardamom powder",
+      "2 tbsp jaggery powder",
+      "Modak molds"
+    ],
+    instructions: [
+      "Soak dates and remove seeds.",
+      "Grind all dry fruits coarsely.",
+      "Heat ghee and roast the mixture briefly.",
+      "Add coconut and cardamom.",
+      "Add jaggery powder and mix well.",
+      "Press into modak molds and demold carefully."
+    ],
+    significance: "Healthy and nutritious version of modaks, perfect for health-conscious devotees.",
+    videoId: "dry_fruit_modak_demo",
+    featured: true,
+    order: 11,
+    tags: ["dry fruit", "healthy", "nutritious", "health conscious"]
   },
   {
     title: "Besan Laddu",
@@ -229,6 +493,24 @@ const traditionsData = [
     image: "Hero/om.svg",
     order: 3,
     tags: ["first worship", "ceremony", "obstacles", "blessings"]
+  },
+  {
+    title: "Ganesh Visarjan (Immersion Ceremony)",
+    category: "traditions",
+    description: "The ritualistic immersion of Ganesha idols in water bodies, marking the end of Ganesh Chaturthi festival.",
+    rituals: [
+      "Perform final aarti with family and community",
+      "Offer prayers and seek blessings for next year",
+      "Carry the idol in a grand procession",
+      "Immerse the idol in river, lake, or sea with 'Ganpati Bappa Morya, Mangal Murti Morya' chants",
+      "Distribute prasad and celebrate the divine journey"
+    ],
+    significance: "Symbolizes the cycle of creation and dissolution, teaching us about the impermanent nature of life while celebrating the eternal presence of the divine.",
+    videoId: "ganesh_visarjan_demo",
+    image: "Hero/ganesh.svg",
+    featured: true,
+    order: 4,
+    tags: ["visarjan", "immersion", "procession", "cycle of life", "community celebration"]
   }
 ]
 
@@ -284,6 +566,115 @@ const booksData = [
     featured: true,
     order: 3,
     tags: ["atharvashirsha", "vedic", "supreme brahman", "ultimate reality"]
+  },
+  {
+    title: "Vinayaka Chavithi Vratam",
+    category: "books",
+    author: "Traditional Texts",
+    description: "Complete guide to observing Ganesha Chaturthi festival with proper rituals, mantras, and procedures.",
+    chapters: [
+      "Significance of Ganesh Chaturthi",
+      "Puja Vidhi (Worship Procedures)",
+      "Daily Rituals for 11 Days",
+      "Visarjan (Immersion) Ceremony"
+    ],
+    significance: "Essential guide for devotees to properly observe the most important festival dedicated to Lord Ganesha.",
+    videoId: "chavithi_vratam_demo",
+    image: "Hero/ganesh.svg",
+    featured: false,
+    order: 4,
+    tags: ["chavithi", "festival", "rituals", "procedures", "11 days"]
+  },
+  {
+    title: "Sankashti Chaturthi Vrat Katha",
+    category: "books",
+    author: "Puranic Literature",
+    description: "Collection of stories and significance of monthly Sankashti Chaturthi fasting dedicated to Lord Ganesha.",
+    chapters: [
+      "Origin of Sankashti Vrat",
+      "Stories of Devotees",
+      "Proper Fasting Methods",
+      "Moon Sighting Significance"
+    ],
+    significance: "Understanding these stories helps devotees develop deeper faith and proper observance of monthly Ganesha fasting.",
+    videoId: "sankashti_katha_demo",
+    image: "Hero/diya.png",
+    featured: false,
+    order: 5,
+    tags: ["sankashti", "monthly fasting", "stories", "moon sighting"]
+  },
+  {
+    title: "Ganapati Sahasranama",
+    category: "books",
+    author: "Narada Purana",
+    description: "One thousand names of Lord Ganesha with their meanings and significance, revealing his various aspects and powers.",
+    chapters: [
+      "108 Primary Names",
+      "Names for Different Occasions",
+      "Names for Specific Blessings",
+      "Meditation on Each Name"
+    ],
+    significance: "Chanting these thousand names brings complete purification, removes all obstacles, and grants all desires.",
+    videoId: "sahasranama_demo",
+    image: "Hero/om.svg",
+    featured: true,
+    order: 6,
+    tags: ["sahasranama", "thousand names", "purification", "all desires"]
+  },
+  {
+    title: "Ganesha Gita",
+    category: "books",
+    author: "Ganesha Purana",
+    description: "Philosophical discourse by Lord Ganesha on dharma, wisdom, and the path to liberation, similar to Bhagavad Gita.",
+    chapters: [
+      "Nature of Reality",
+      "Path of Devotion",
+      "Wisdom and Knowledge",
+      "Liberation Through Service"
+    ],
+    significance: "Contains profound spiritual teachings directly from Lord Ganesha about achieving success in worldly and spiritual pursuits.",
+    videoId: "ganesha_gita_demo",
+    image: "Hero/ganesh.svg",
+    featured: true,
+    order: 7,
+    tags: ["ganesha gita", "philosophy", "dharma", "liberation", "teachings"]
+  },
+  {
+    title: "Vinayaka Vratam Stories",
+    category: "books",
+    author: "Various Traditional Sources",
+    description: "Collection of miraculous stories and experiences of devotees who observed Ganesha fasting and worship.",
+    chapters: [
+      "Ancient Kings and Ganesha",
+      "Modern Devotees' Experiences",
+      "Miraculous Interventions",
+      "Faith and Devotion Stories"
+    ],
+    significance: "These inspiring stories strengthen faith and demonstrate the power of sincere devotion to Lord Ganesha.",
+    videoId: "vratam_stories_demo",
+    image: "Hero/flower.png",
+    featured: false,
+    order: 8,
+    tags: ["vratam stories", "miraculous", "devotees", "faith", "experiences"]
+  },
+  {
+    title: "Ganesha Pancharatnam by Adi Shankaracharya",
+    category: "books",
+    author: "Adi Shankaracharya",
+    description: "Five beautiful verses in praise of Lord Ganesha, considered one of the most powerful hymns for beginning any work.",
+    chapters: [
+      "First Verse - Mudakara (Giver of Joy)",
+      "Second Verse - Vighna Vinashaka (Obstacle Remover)",
+      "Third Verse - Sarva Mangala (All Auspiciousness)",
+      "Fourth Verse - Sarva Siddhi (All Accomplishments)",
+      "Fifth Verse - Final Salutations"
+    ],
+    significance: "These five verses encapsulate the complete essence of Ganesha worship and are essential for students and professionals.",
+    videoId: "pancharatnam_demo",
+    image: "Hero/om.svg",
+    featured: true,
+    order: 9,
+    tags: ["pancharatnam", "shankaracharya", "five verses", "students", "professionals"]
   }
 ]
 
@@ -329,6 +720,61 @@ const bhajansData = [
     significance: "Traditional shloka that removes obstacles and brings prosperity.",
     order: 4,
     tags: ["vakratunda", "shloka", "melodious", "prosperity"]
+  },
+  {
+    title: "Morya Re Bappa Morya Re",
+    category: "bhajans",
+    artist: "Ajay Atul",
+    videoId: "morya_re_demo",
+    description: "Modern energetic bhajan celebrating Lord Ganesha",
+    significance: "Contemporary celebration song that connects modern youth with traditional devotion to Ganesha.",
+    featured: true,
+    order: 5,
+    tags: ["morya re", "modern", "energetic", "youth connection"]
+  },
+  {
+    title: "Jai Ganesh Jai Ganesh Deva",
+    category: "bhajans",
+    artist: "Lata Mangeshkar",
+    videoId: "jai_ganesh_demo",
+    description: "Classical devotional bhajan with traditional melody",
+    significance: "Timeless bhajan that has been sung for generations, expressing pure devotion and surrender to Lord Ganesha.",
+    featured: true,
+    order: 6,
+    tags: ["jai ganesh", "classical", "lata mangeshkar", "timeless", "devotion"]
+  },
+  {
+    title: "Shendur Lal Chadhayo",
+    category: "bhajans",
+    artist: "Usha Mangeshkar",
+    videoId: "shendur_lal_demo",
+    description: "Beautiful bhajan about adorning Ganesha with red sindoor",
+    significance: "Describes the beautiful decoration of Lord Ganesha and expresses the devotee's love and reverence.",
+    featured: false,
+    order: 7,
+    tags: ["shendur lal", "decoration", "sindoor", "love", "reverence"]
+  },
+  {
+    title: "Deva Shree Ganesha",
+    category: "bhajans",
+    artist: "Ajay Gogavale",
+    videoId: "deva_shree_demo",
+    description: "Powerful and dynamic bhajan from popular culture",
+    significance: "Modern composition that beautifully blends traditional devotion with contemporary musical arrangements.",
+    featured: true,
+    order: 8,
+    tags: ["deva shree", "powerful", "dynamic", "modern", "contemporary"]
+  },
+  {
+    title: "Ekadantaya Vakratundaya",
+    category: "bhajans",
+    artist: "Hariharan",
+    videoId: "ekadantaya_demo",
+    description: "Sanskrit hymn praising Ganesha's divine attributes",
+    significance: "Sacred hymn that describes various divine qualities of Lord Ganesha and invokes his blessings for wisdom.",
+    featured: false,
+    order: 9,
+    tags: ["ekadantaya", "sanskrit hymn", "divine attributes", "wisdom", "hariharan"]
   }
 ]
 

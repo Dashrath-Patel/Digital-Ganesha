@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { useAuth } from '../contexts/AuthContext'
+import Captcha from './Captcha'
 
 const Login = ({ isOpen, onClose, onSwitchToSignup }) => {
   const [formData, setFormData] = useState({
@@ -8,6 +9,10 @@ const Login = ({ isOpen, onClose, onSwitchToSignup }) => {
   })
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [captchaValue, setCaptchaValue] = useState('')
+  const [isCaptchaValid, setIsCaptchaValid] = useState(false)
+  const [captchaError, setCaptchaError] = useState('')
+  const captchaRef = useRef(null)
   const { login } = useAuth()
 
   const handleChange = (e) => {
@@ -18,15 +23,43 @@ const Login = ({ isOpen, onClose, onSwitchToSignup }) => {
     setError('')
   }
 
+  const handleCaptchaChange = (value) => {
+    setCaptchaValue(value)
+    setCaptchaError('')
+  }
+
+  const handleCaptchaValidate = (isValid) => {
+    setIsCaptchaValid(isValid)
+    // Don't show error while typing, only on submit
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     setIsLoading(true)
     setError('')
+    setCaptchaError('')
+
+    // Validate captcha on submit
+    const isValidCaptcha = captchaRef.current && captchaRef.current.validateCaptcha()
+    
+    if (!isValidCaptcha || captchaValue.length !== 5) {
+      setCaptchaError('Invalid captcha')
+      setIsLoading(false)
+      // Auto-refresh captcha after showing error
+      setTimeout(() => {
+        if (captchaRef.current) {
+          captchaRef.current.refreshCaptcha()
+        }
+      }, 1500)
+      return
+    }
 
     try {
       await login(formData.email, formData.password)
       onClose()
       setFormData({ email: '', password: '' })
+      setCaptchaValue('')
+      setIsCaptchaValid(false)
     } catch (err) {
       setError(err.message)
     } finally {
@@ -92,6 +125,13 @@ const Login = ({ isOpen, onClose, onSwitchToSignup }) => {
                 placeholder="Enter your password"
               />
             </div>
+
+            <Captcha
+              ref={captchaRef}
+              onCaptchaChange={handleCaptchaChange}
+              onCaptchaValidate={handleCaptchaValidate}
+              error={captchaError}
+            />
 
             <button
               type="submit"

@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import GoogleAuthService from '../services/GoogleAuthService'
 import GaneshaImage from '../assets/Ganesh.jpeg'
 import Header from '../components/Header'
+import Captcha from '../components/Captcha'
 
 const SignUpPage = () => {
   const [formData, setFormData] = useState({
@@ -16,6 +17,10 @@ const SignUpPage = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [agreeToTerms, setAgreeToTerms] = useState(false)
   const [isGoogleConfigured, setIsGoogleConfigured] = useState(false)
+  const [captchaValue, setCaptchaValue] = useState('')
+  const [isCaptchaValid, setIsCaptchaValid] = useState(false)
+  const [captchaError, setCaptchaError] = useState('')
+  const captchaRef = useRef(null)
   const [passwordStrength, setPasswordStrength] = useState({
     score: 0,
     feedback: '',
@@ -218,10 +223,36 @@ const SignUpPage = () => {
     setError('')
   }
 
+  const handleCaptchaChange = (value) => {
+    setCaptchaValue(value)
+    setCaptchaError('')
+  }
+
+  const handleCaptchaValidate = (isValid) => {
+    setIsCaptchaValid(isValid)
+    // Don't show error while typing, only on submit
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     setIsLoading(true)
     setError('')
+    setCaptchaError('')
+
+    // Validate captcha on submit
+    const isValidCaptcha = captchaRef.current && captchaRef.current.validateCaptcha()
+    
+    if (!isValidCaptcha || captchaValue.length !== 5) {
+      setCaptchaError('Invalid captcha')
+      setIsLoading(false)
+      // Auto-refresh captcha after showing error
+      setTimeout(() => {
+        if (captchaRef.current) {
+          captchaRef.current.refreshCaptcha()
+        }
+      }, 1500)
+      return
+    }
 
     // Validation
     if (!agreeToTerms) {
@@ -252,6 +283,8 @@ const SignUpPage = () => {
       await signup(formData)
       navigate('/')
       setFormData({ firstName: '', lastName: '', email: '', password: '' })
+      setCaptchaValue('')
+      setIsCaptchaValid(false)
     } catch (err) {
       setError(err.message)
     } finally {
@@ -487,6 +520,16 @@ const SignUpPage = () => {
                       <p className="text-xs text-yellow-200/80 mt-1">{passwordStrength.feedback}</p>
                     </div>
                   )}
+                </div>
+
+                {/* Captcha Component */}
+                <div>
+                  <Captcha
+                    ref={captchaRef}
+                    onCaptchaChange={handleCaptchaChange}
+                    onCaptchaValidate={handleCaptchaValidate}
+                    error={captchaError}
+                  />
                 </div>
 
                 <div className="flex items-center">
