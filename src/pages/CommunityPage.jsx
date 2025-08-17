@@ -1,14 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import Header from '../components/Header';
-import AdvancedGalleryUploader from '../components/AdvancedGalleryUploader';
 import GalleryViewer from '../components/GalleryViewer';
 import MessageService from '../services/MessageService';
 import EventService from '../services/EventService';
-import { useAuth } from '../contexts/AuthContext';
 
 const CommunityPage = () => {
-  const { user } = useAuth();
   const [searchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState('message');
   const [isLoading, setIsLoading] = useState(true);
@@ -322,18 +319,27 @@ const CommunityPage = () => {
           </div>
         );
 
-      case 'gallery':                                                                                                                   
+      case 'gallery':
         return (
           <div className="space-y-8">
-            {/* Admin Upload Section */}
-            {user && (user.role === 'admin' || user.isAdmin || user.email?.includes('admin')) && (
-              <div className="mb-8">
-                <AdvancedGalleryUploader />
-              </div>
-            )}
-            
-            {/* Gallery Viewer for All Users */}
-            <GalleryViewer />
+            <div className="text-center mb-12">
+              <h3 className="text-4xl md:text-5xl font-bold text-golden mb-4">Community Gallery</h3>
+              <p className="text-golden-light text-lg max-w-2xl mx-auto">
+                Cherished moments and beautiful memories from our community celebrations
+              </p>
+              <div className="w-24 h-1 bg-gradient-to-r from-golden to-golden-light mx-auto mt-4 rounded-full"></div>
+            </div>
+
+            {/* Real Gallery Component */}
+            <GalleryViewer 
+              showFilters={true}
+              showPagination={true}
+              layout="grid"
+              columns={4}
+              itemsPerPage={12}
+              allowDelete={false}
+              showUploader={false}
+            />
           </div>
         );
 

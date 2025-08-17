@@ -2,15 +2,14 @@ import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 const Hero = ({ firstLine, secondLine, isFirstLineAnimating, isSecondLineAnimating, currentMantraIndex, mantraTranslations }) => {
+  const navigate = useNavigate()
   const [currentSlide, setCurrentSlide] = useState(0)
   const [randomOrder, setRandomOrder] = useState([])
   const titleRef = useRef(null)
   const imageRef = useRef(null)
-  const navigate = useNavigate()
-  
-  // Function to handle Gallery button click
+
+  // Handle Gallery button click
   const handleGalleryClick = () => {
-    // Navigate to Community page with gallery tab active
     navigate('/community?tab=gallery')
   }
   
@@ -225,7 +224,7 @@ const Hero = ({ firstLine, secondLine, isFirstLineAnimating, isSecondLineAnimati
             </button>
             <button 
               onClick={handleGalleryClick}
-              className="border-2 border-golden text-golden px-8 md:px-10 py-3 md:py-4 rounded-full text-base md:text-lg font-semibold hover:bg-golden hover:text-red-900 transition-all duration-300 transform hover:scale-105 flex items-center space-x-2 cursor-pointer"
+              className="border-2 border-golden text-golden px-8 md:px-10 py-3 md:py-4 rounded-full text-base md:text-lg font-semibold hover:bg-golden hover:text-red-900 transition-all duration-300 transform hover:scale-105 flex items-center space-x-2"
             >
               <span>📿</span>
               <span>Gallery</span>

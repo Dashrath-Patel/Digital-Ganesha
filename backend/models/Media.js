@@ -1,11 +1,12 @@
 import mongoose from 'mongoose';
 
-// Media Schema for database tracking
+// Media Schema for ImageKit Integration
 const mediaSchema = new mongoose.Schema({
     // Basic Information
     originalName: {
         type: String,
-        required: [true, 'Original filename is required']
+        required: [true, 'Original filename is required'],
+        trim: true
     },
     filename: {
         type: String,
@@ -103,6 +104,7 @@ mediaSchema.index({ event: 1, createdAt: -1 });
 mediaSchema.index({ category: 1, type: 1 });
 mediaSchema.index({ isPublic: 1, createdAt: -1 });
 mediaSchema.index({ tags: 1 });
+mediaSchema.index({ fileId: 1 });
 
 // Create and export the model
 const Media = mongoose.model('Media', mediaSchema);

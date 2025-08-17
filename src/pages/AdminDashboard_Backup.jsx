@@ -412,23 +412,24 @@ const AdminDashboard = () => {
               </div>
             </>
           )}
-        </div>
 
-        {/* Edit User Modal */}
-        {showModal && selectedUser && (
-          <UserEditModal
-            user={selectedUser}
-            mandals={mandals}
-            onClose={() => {
-              setShowModal(false)
-              setSelectedUser(null)
-            }}
-            onRoleChange={handleRoleChange}
-            onCommitteeAssignment={handleCommitteeAssignment}
-            onRemoveFromCommittee={handleRemoveFromCommittee}
-          />
-        )}
+        </div>
       </div>
+
+      {/* Edit User Modal */}
+      {showModal && selectedUser && (
+        <UserEditModal
+          user={selectedUser}
+          mandals={mandals}
+          onClose={() => {
+            setShowModal(false)
+            setSelectedUser(null)
+          }}
+          onRoleChange={handleRoleChange}
+          onCommitteeAssignment={handleCommitteeAssignment}
+          onRemoveFromCommittee={handleRemoveFromCommittee}
+        />
+      )}
     </div>
   )
 }

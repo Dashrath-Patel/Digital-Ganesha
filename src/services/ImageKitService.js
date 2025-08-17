@@ -6,98 +6,7 @@ class ImageKitService {
     }
 
     /**
-     * Upload gallery photos with category
-     * @param {FileList|Array} files - Files to upload
-     * @param {string} category - Gallery category
-     * @returns {Promise} Upload response
-     */
-    async uploadGalleryPhotos(files, category) {
-        try {
-            const formData = new FormData();
-            
-            // Add files
-            for (let i = 0; i < files.length; i++) {
-                formData.append('photos', files[i]);
-            }
-            
-            // Add category
-            formData.append('category', category);
-
-            const token = localStorage.getItem('accessToken');
-            const response = await fetch(`${this.baseURL}/media/gallery/upload`, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                },
-                body: formData
-            });
-
-            const result = await response.json();
-            if (!response.ok) {
-                throw new Error(result.message || 'Upload failed');
-            }
-            
-            return result;
-        } catch (error) {
-            console.error('Gallery upload error:', error);
-            throw error;
-        }
-    }
-
-    /**
-     * Get gallery photos by category
-     * @param {string} category - Gallery category
-     * @param {Object} options - Query options
-     * @returns {Promise} Photos data
-     */
-    async getGalleryPhotos(category, options = {}) {
-        try {
-            const { limit = 20, skip = 0 } = options;
-            const response = await fetch(
-                `${this.baseURL}/media/gallery/${category}?limit=${limit}&skip=${skip}`
-            );
-
-            const result = await response.json();
-            if (!response.ok) {
-                throw new Error(result.message || 'Failed to fetch photos');
-            }
-            
-            return result.data;
-        } catch (error) {
-            console.error('Gallery fetch error:', error);
-            throw error;
-        }
-    }
-
-    /**
-     * Delete gallery photo
-     * @param {string} fileId - File ID to delete
-     * @returns {Promise} Delete response
-     */
-    async deleteGalleryPhoto(fileId) {
-        try {
-            const token = localStorage.getItem('accessToken');
-            const response = await fetch(`${this.baseURL}/media/gallery/${fileId}`, {
-                method: 'DELETE',
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-
-            const result = await response.json();
-            if (!response.ok) {
-                throw new Error(result.message || 'Delete failed');
-            }
-            
-            return result;
-        } catch (error) {
-            console.error('Gallery delete error:', error);
-            throw error;
-        }
-    }
-
-    /**
-     * Upload single file (legacy method)
+     * Upload single file
      * @param {File} file - File object from input
      * @param {Object} options - Upload options
      * @returns {Promise} Upload response
@@ -117,8 +26,8 @@ class ImageKitService {
             if (options.mandal) formData.append('mandal', options.mandal);
             if (options.event) formData.append('event', options.event);
 
-            const token = localStorage.getItem('accessToken');
-            const response = await fetch(`${this.baseURL}/media/upload`, {
+            const token = localStorage.getItem('token');
+            const response = await fetch(`${this.baseURL}/mediakit/upload`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -133,74 +42,6 @@ class ImageKitService {
                 success: false,
                 error: error.message
             };
-        }
-    }
-
-    /**
-     * Upload image (alias for uploadFile)
-     */
-    async uploadImage(file, options = {}) {
-        return this.uploadFile(file, options);
-    }
-
-    /**
-     * List files with filters
-     * @param {Object} options - Filter options
-     * @returns {Promise} Files list
-     */
-    async listFiles(options = {}) {
-        try {
-            const queryParams = new URLSearchParams();
-            
-            if (options.tags) {
-                if (Array.isArray(options.tags)) {
-                    queryParams.append('tags', options.tags.join(','));
-                } else {
-                    queryParams.append('tags', options.tags);
-                }
-            }
-            if (options.limit) queryParams.append('limit', options.limit);
-            if (options.skip) queryParams.append('skip', options.skip);
-            if (options.sort) queryParams.append('sort', options.sort);
-
-            const response = await fetch(`${this.baseURL}/media/list?${queryParams}`);
-            const result = await response.json();
-            
-            if (!response.ok) {
-                throw new Error(result.message || 'Failed to list files');
-            }
-            
-            return result.data?.files || [];
-        } catch (error) {
-            console.error('List files error:', error);
-            throw error;
-        }
-    }
-
-    /**
-     * Delete image
-     * @param {string} fileId - File ID to delete
-     * @returns {Promise} Delete response
-     */
-    async deleteImage(fileId) {
-        try {
-            const token = localStorage.getItem('accessToken');
-            const response = await fetch(`${this.baseURL}/media/delete/${fileId}`, {
-                method: 'DELETE',
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-
-            const result = await response.json();
-            if (!response.ok) {
-                throw new Error(result.message || 'Delete failed');
-            }
-            
-            return result;
-        } catch (error) {
-            console.error('Delete error:', error);
-            throw error;
         }
     }
 
@@ -405,8 +246,8 @@ class ImageKitService {
      */
     validateFile(file, options = {}) {
         const {
-            maxSize = 5 * 1024 * 1024, // 5MB
-            allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'],
+            maxSize = 50 * 1024 * 1024, // 50MB
+            allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'video/mp4', 'video/avi', 'video/mov'],
             maxImageWidth = 5000,
             maxImageHeight = 5000
         } = options;

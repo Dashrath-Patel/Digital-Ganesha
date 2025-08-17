@@ -1,4 +1,5 @@
 import express from 'express';
+import mongoose from 'mongoose';
 import multer from 'multer';
 import MediaService from '../services/MediaService.js';
 import { authenticateToken } from '../middleware/auth.js';
