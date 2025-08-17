@@ -440,4 +440,54 @@ router.post('/generate-url', async (req, res) => {
     }
 });
 
+// @route   PUT /api/media/:id
+// @desc    Update media metadata
+// @access  Protected
+router.put('/:id', authenticateToken, async (req, res) => {
+    try {
+        const { title, description, category, tags, isPublic } = req.body;
+        
+        const mediaDoc = await Media.findById(req.params.id);
+        
+        if (!mediaDoc) {
+            return res.status(404).json({
+                success: false,
+                message: 'Media not found'
+            });
+        }
+
+        // Check ownership or admin privileges
+        if (mediaDoc.uploadedBy.toString() !== req.user.userId && req.user.role !== 'admin') {
+            return res.status(403).json({
+                success: false,
+                message: 'Access denied. You can only update your own media.'
+            });
+        }
+
+        // Update fields
+        if (title !== undefined) mediaDoc.title = title;
+        if (description !== undefined) mediaDoc.description = description;
+        if (category !== undefined) mediaDoc.category = category;
+        if (tags !== undefined) {
+            mediaDoc.tags = Array.isArray(tags) ? tags : tags.split(',').map(tag => tag.trim());
+        }
+        if (isPublic !== undefined) mediaDoc.isPublic = isPublic;
+
+        await mediaDoc.save();
+
+        res.status(200).json({
+            success: true,
+            message: 'Media updated successfully',
+            data: mediaDoc
+        });
+    } catch (error) {
+        console.error('Update media error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Server error during update',
+            error: error.message
+        });
+    }
+});
+
 export default router;
