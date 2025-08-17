@@ -339,6 +339,8 @@ const CommunityPage = () => {
               itemsPerPage={12}
               allowDelete={false}
               showUploader={false}
+              autoRefresh={true}
+              autoRefreshInterval={60000}
             />
           </div>
         );
