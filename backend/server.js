@@ -15,6 +15,7 @@ import userRoutes from './routes/users.js'
 import mandalRoutes from './routes/mandals.js'
 import eventRoutes from './routes/events.js'
 import mediaRoutes from './routes/media.js'
+import mediakitRoutes from './routes/media_imagekit.js'
 import notificationRoutes from './routes/notifications.js'
 import analyticsRoutes from './routes/analytics.js'
 import adminRoutes from './routes/admin.js'
@@ -118,7 +119,8 @@ app.use('/api/auth', authRoutes)
 app.use('/api/users', authenticateToken, userRoutes)
 app.use('/api/mandals', mandalRoutes)
 app.use('/api/events', eventRoutes)
-app.use('/api/media', authenticateToken, mediaRoutes)
+app.use('/api/media', mediakitRoutes) // ImageKit media routes (includes gallery routes)
+// Note: Regular media routes are included in media_imagekit.js now
 app.use('/api/notifications', authenticateToken, notificationRoutes)
 app.use('/api/analytics', authenticateToken, analyticsRoutes)
 app.use('/api/admin', authenticateToken, adminRoutes)

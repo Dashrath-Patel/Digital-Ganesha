@@ -7,8 +7,8 @@ const Features = () => {
   const features = [
     {
       icon: "🗺️",
-      title: "Smart Mandal Locator",
-      description: "Find nearby Ganesh mandals with real-time updates, crowd density, and navigation support.",
+      title: "Mandal Locator",
+      description: "Find KTYA mandal with real-time updates and navigation support.",
       color: "from-blue-500 to-cyan-500",
       path: "/mandal-locator"
     },
@@ -18,13 +18,6 @@ const Features = () => {
       description: "Experience 360° virtual tours and participate in live aarti ceremonies from anywhere.",
       color: "from-purple-500 to-pink-500",
       path: "/virtual-darshan"
-    },
-    {
-      icon: "🌱",
-      title: "Eco-Friendly Tracker",
-      description: "Promote sustainable celebrations with eco-friendly mandal recommendations and tips.",
-      color: "from-green-500 to-emerald-500",
-      path: null
     },
     {
       icon: "📚",
@@ -39,13 +32,6 @@ const Features = () => {
       description: "Connect with devotees, organize events, coordinate volunteers, and share experiences.",
       color: "from-indigo-500 to-purple-500",
       path: "/community"
-    },
-    {
-      icon: "🎨",
-      title: "Artisan Marketplace",
-      description: "Support local artisans and discover authentic handcrafted Ganesha idols and decorations.",
-      color: "from-yellow-500 to-orange-500",
-      path: null
     }
   ]
 

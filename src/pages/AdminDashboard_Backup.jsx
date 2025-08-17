@@ -99,6 +99,20 @@ const AdminDashboard = () => {
     }
   }
 
+  const openEditModal = (userData) => {
+    setSelectedUser(userData)
+    setShowModal(true)
+  }
+
+  const handleToggleStatus = async (userId, newStatus) => {
+    try {
+      await adminAPI.toggleUserStatus(userId, newStatus)
+      fetchUsers() // Refresh the list
+    } catch (err) {
+      setError(err.message)
+    }
+  }
+
   if (!isAdmin) {
     return (
       <div className="relative">
@@ -398,318 +412,23 @@ const AdminDashboard = () => {
               </div>
             </>
           )}
+        </div>
 
-      {/* Tab Content */}
-      <div className="flex-1">
-        {activeTab === 'users' && (
-          <div className="space-y-6">
-            {/* Stats Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <div className="bg-gradient-to-br from-red-900/80 to-amber-900/80 backdrop-blur-sm rounded-xl p-6 border border-yellow-500/30 transform hover:scale-105 transition-all duration-300">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-golden-light text-sm">Total Users</p>
-                    <p className="text-2xl font-bold text-golden">{stats.totalUsers || 0}</p>
-                  </div>
-                  <div className="text-3xl">👥</div>
-                </div>
-              </div>
-              
-              <div className="bg-gradient-to-br from-red-900/80 to-amber-900/80 backdrop-blur-sm rounded-xl p-6 border border-yellow-500/30 transform hover:scale-105 transition-all duration-300">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-golden-light text-sm">Committee Members</p>
-                    <p className="text-2xl font-bold text-golden">{stats.committeeMembers || 0}</p>
-                  </div>
-                  <div className="text-3xl">🏛️</div>
-                </div>
-              </div>
-              
-              <div className="bg-gradient-to-br from-red-900/80 to-amber-900/80 backdrop-blur-sm rounded-xl p-6 border border-yellow-500/30 transform hover:scale-105 transition-all duration-300">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-golden-light text-sm">Active Mandals</p>
-                    <p className="text-2xl font-bold text-golden">{stats.activeMandals || 0}</p>
-                  </div>
-                  <div className="text-3xl">🏺</div>
-                </div>
-              </div>
-              
-              <div className="bg-gradient-to-br from-red-900/80 to-amber-900/80 backdrop-blur-sm rounded-xl p-6 border border-yellow-500/30 transform hover:scale-105 transition-all duration-300">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-golden-light text-sm">New This Month</p>
-                    <p className="text-2xl font-bold text-golden">{stats.newUsersThisMonth || 0}</p>
-                  </div>
-                  <div className="text-3xl">📈</div>
-                </div>
-              </div>
-            </div>
-
-            {/* Enhanced Search Section */}
-            <div className="bg-gradient-to-br from-red-900/80 to-amber-900/80 backdrop-blur-sm rounded-2xl p-6 border border-yellow-500/40 shadow-xl">
-              <div className="flex flex-col md:flex-row gap-4 items-center">
-                <div className="flex-1 max-w-md">
-                  <input
-                    type="text"
-                    placeholder="Search users by name or email..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full px-4 py-2 bg-red-950/50 border border-yellow-500/30 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent text-golden placeholder-golden/50"
-                  />
-                </div>
-                <button
-                  onClick={() => fetchUsers()}
-                  className="bg-gradient-to-r from-yellow-600 to-yellow-500 text-red-900 px-6 py-2 rounded-lg font-semibold hover:from-yellow-500 hover:to-yellow-400 transition-all duration-300"
-                >
-                  🔍 Search
-                </button>
-              </div>
-            </div>
-
-            {/* Error Message */}
-            {error && (
-              <div className="bg-red-800/50 border border-red-500/50 text-red-300 px-4 py-3 rounded-lg">
-                <span className="mr-2">⚠️</span>
-                {error}
-              </div>
-            )}
-
-            {/* Users Table */}
-            <div className="bg-gradient-to-br from-red-900/80 to-amber-900/80 backdrop-blur-sm rounded-xl border border-yellow-500/30 overflow-hidden">
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                <thead className="bg-red-950/50 border-b border-yellow-500/30">
-                  <tr>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-golden">User</th>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-golden">Role</th>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-golden">Committee</th>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-golden">Status</th>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-golden">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {loading ? (
-                    <tr>
-                      <td colSpan="5" className="px-6 py-8 text-center text-golden-light">
-                        <div className="flex items-center justify-center">
-                          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-golden"></div>
-                          <span className="ml-2">Loading users...</span>
-                        </div>
-                      </td>
-                    </tr>
-                  ) : users.length === 0 ? (
-                    <tr>
-                      <td colSpan="5" className="px-6 py-8 text-center text-golden-light">
-                        No users found
-                      </td>
-                    </tr>
-                  ) : (
-                    users.map((user) => (
-                      <tr key={user._id} className="border-b border-yellow-500/20 hover:bg-red-950/30">
-                        <td className="px-6 py-4">
-                          <div className="flex items-center">
-                            <div className="w-10 h-10 bg-gradient-to-br from-yellow-600 to-yellow-500 rounded-full flex items-center justify-center text-red-900 font-bold text-sm mr-3">
-                              {user.firstName?.[0]}{user.lastName?.[0]}
-                            </div>
-                            <div>
-                              <div className="text-golden font-medium">{user.firstName} {user.lastName}</div>
-                              <div className="text-golden-light text-sm">{user.email}</div>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4">
-                          <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                            user.role === USER_ROLES.ADMIN || user.role === USER_ROLES.SUPER_ADMIN
-                              ? 'bg-purple-900/50 text-purple-300 border border-purple-500/30'
-                              : user.role === USER_ROLES.COMMITTEE_MEMBER
-                              ? 'bg-blue-900/50 text-blue-300 border border-blue-500/30'
-                              : 'bg-gray-900/50 text-gray-300 border border-gray-500/30'
-                          }`}>
-                            {user.role?.replace('_', ' ').toUpperCase()}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4">
-                          {user.isCommitteeMember ? (
-                            <div>
-                              <div className="text-golden text-sm font-medium">
-                                {user.committeeRole?.replace('_', ' ').toUpperCase()}
-                              </div>
-                              {user.mandal && (
-                                <div className="text-golden-light text-xs">{user.mandal.name}</div>
-                              )}
-                            </div>
-                          ) : (
-                            <span className="text-golden-light text-sm">Not a member</span>
-                          )}
-                        </td>
-                        <td className="px-6 py-4">
-                          <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                            user.isActive
-                              ? 'bg-green-900/50 text-green-300 border border-green-500/30'
-                              : 'bg-red-900/50 text-red-300 border border-red-500/30'
-                          }`}>
-                            {user.isActive ? 'Active' : 'Inactive'}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4">
-                          <div className="flex space-x-2">
-                            <button
-                              onClick={() => {
-                                setSelectedUser(user)
-                                setShowModal(true)
-                              }}
-                              className="bg-blue-600/20 hover:bg-blue-500/30 text-blue-300 border border-blue-500/30 px-3 py-1 rounded text-xs font-medium transition-colors"
-                            >
-                              Edit
-                            </button>
-                            <button
-                              onClick={() => handleToggleUserStatus(user._id, user.isActive)}
-                              className={`px-3 py-1 rounded text-xs font-medium transition-colors ${
-                                user.isActive
-                                  ? 'bg-red-600/20 hover:bg-red-500/30 text-red-300 border border-red-500/30'
-                                  : 'bg-green-600/20 hover:bg-green-500/30 text-green-300 border border-green-500/30'
-                              }`}
-                            >
-                              {user.isActive ? 'Block' : 'Activate'}
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
-            </div>
-
-            {/* Pagination */}
-            {totalPages > 1 && (
-              <div className="px-6 py-4 border-t border-yellow-500/30">
-                <div className="flex items-center justify-between">
-                  <div className="text-sm text-golden-light">
-                    Page {currentPage} of {totalPages}
-                  </div>
-                  <div className="flex space-x-2">
-                    <button
-                      onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-                      disabled={currentPage === 1}
-                      className="px-3 py-1 bg-yellow-600/20 text-yellow-300 border border-yellow-500/30 rounded disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      Previous
-                    </button>
-                    <button
-                      onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
-                      disabled={currentPage === totalPages}
-                      className="px-3 py-1 bg-yellow-600/20 text-yellow-300 border border-yellow-500/30 rounded disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      Next
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Analytics Tab */}
-        {activeTab === 'analytics' && (
-          <div className="space-y-6">
-            <div className="bg-gradient-to-br from-red-900/80 to-amber-900/80 backdrop-blur-sm rounded-xl p-8 border border-yellow-500/30">
-              <div className="text-center">
-                <div className="text-6xl mb-4">📊</div>
-                <h3 className="text-2xl font-bold text-golden mb-2">Analytics Dashboard</h3>
-                <p className="text-golden-light">Advanced analytics and reporting features coming soon...</p>
-              </div>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="bg-gradient-to-br from-red-900/80 to-amber-900/80 backdrop-blur-sm rounded-xl p-6 border border-yellow-500/30">
-                <h4 className="text-lg font-semibold text-golden mb-4 flex items-center">
-                  📈 User Growth
-                </h4>
-                <p className="text-golden-light">Track user registration trends over time</p>
-              </div>
-              
-              <div className="bg-gradient-to-br from-red-900/80 to-amber-900/80 backdrop-blur-sm rounded-xl p-6 border border-yellow-500/30">
-                <h4 className="text-lg font-semibold text-golden mb-4 flex items-center">
-                  🏛️ Committee Activity
-                </h4>
-                <p className="text-golden-light">Monitor committee member engagement</p>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Settings Tab */}
-        {activeTab === 'settings' && (
-          <div className="space-y-6">
-            <div className="bg-gradient-to-br from-red-900/80 to-amber-900/80 backdrop-blur-sm rounded-xl p-8 border border-yellow-500/30">
-              <div className="text-center">
-                <div className="text-6xl mb-4">⚙️</div>
-                <h3 className="text-2xl font-bold text-golden mb-2">System Settings</h3>
-                <p className="text-golden-light">Configure system preferences and permissions</p>
-              </div>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="bg-gradient-to-br from-red-900/80 to-amber-900/80 backdrop-blur-sm rounded-xl p-6 border border-yellow-500/30">
-                <h4 className="text-lg font-semibold text-golden mb-4 flex items-center">
-                  🔒 Security Settings
-                </h4>
-                <p className="text-golden-light mb-4">Manage authentication and access controls</p>
-                <button className="bg-yellow-600/20 hover:bg-yellow-500/30 text-yellow-300 border border-yellow-500/30 px-4 py-2 rounded">
-                  Configure
-                </button>
-              </div>
-              
-              <div className="bg-gradient-to-br from-red-900/80 to-amber-900/80 backdrop-blur-sm rounded-xl p-6 border border-yellow-500/30">
-                <h4 className="text-lg font-semibold text-golden mb-4 flex items-center">
-                  📧 Email Settings
-                </h4>
-                <p className="text-golden-light mb-4">Configure email notifications and templates</p>
-                <button className="bg-yellow-600/20 hover:bg-yellow-500/30 text-yellow-300 border border-yellow-500/30 px-4 py-2 rounded">
-                  Configure
-                </button>
-              </div>
-              
-              <div className="bg-gradient-to-br from-red-900/80 to-amber-900/80 backdrop-blur-sm rounded-xl p-6 border border-yellow-500/30">
-                <h4 className="text-lg font-semibold text-golden mb-4 flex items-center">
-                  🏛️ Mandal Management
-                </h4>
-                <p className="text-golden-light mb-4">Add, edit, or remove mandal organizations</p>
-                <button className="bg-yellow-600/20 hover:bg-yellow-500/30 text-yellow-300 border border-yellow-500/30 px-4 py-2 rounded">
-                  Manage
-                </button>
-              </div>
-              
-              <div className="bg-gradient-to-br from-red-900/80 to-amber-900/80 backdrop-blur-sm rounded-xl p-6 border border-yellow-500/30">
-                <h4 className="text-lg font-semibold text-golden mb-4 flex items-center">
-                  🎨 Theme Settings
-                </h4>
-                <p className="text-golden-light mb-4">Customize the application appearance</p>
-                <button className="bg-yellow-600/20 hover:bg-yellow-500/30 text-yellow-300 border border-yellow-500/30 px-4 py-2 rounded">
-                  Customize
-                </button>
-              </div>
-            </div>
-          </div>
+        {/* Edit User Modal */}
+        {showModal && selectedUser && (
+          <UserEditModal
+            user={selectedUser}
+            mandals={mandals}
+            onClose={() => {
+              setShowModal(false)
+              setSelectedUser(null)
+            }}
+            onRoleChange={handleRoleChange}
+            onCommitteeAssignment={handleCommitteeAssignment}
+            onRemoveFromCommittee={handleRemoveFromCommittee}
+          />
         )}
       </div>
-
-      {/* Edit User Modal */}
-      {showModal && selectedUser && (
-        <UserEditModal
-          user={selectedUser}
-          mandals={mandals}
-          onClose={() => {
-            setShowModal(false)
-            setSelectedUser(null)
-          }}
-          onRoleChange={handleRoleChange}
-          onCommitteeAssignment={handleCommitteeAssignment}
-          onRemoveFromCommittee={handleRemoveFromCommittee}
-        />
-      )}
     </div>
   )
 }
