@@ -105,6 +105,7 @@ const Login = ({ isOpen, onClose, onSwitchToSignup }) => {
                 value={formData.email}
                 onChange={handleChange}
                 required
+                autoComplete="email"
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
                 placeholder="Enter your email"
               />
@@ -121,6 +122,7 @@ const Login = ({ isOpen, onClose, onSwitchToSignup }) => {
                 value={formData.password}
                 onChange={handleChange}
                 required
+                autoComplete="current-password"
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
                 placeholder="Enter your password"
               />
