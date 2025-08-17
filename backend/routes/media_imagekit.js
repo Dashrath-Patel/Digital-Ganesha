@@ -285,7 +285,7 @@ router.delete('/:id', authenticateToken, async (req, res) => {
 router.get('/:id', async (req, res) => {
     try {
         const mediaDoc = await Media.findById(req.params.id)
-            .populate('uploadedBy', 'name email')
+            .populate('uploadedBy', 'firstName lastName name email role isCommitteeMember committeeRole')
             .populate('mandal', 'name')
             .populate('event', 'name');
         
@@ -372,7 +372,7 @@ router.get('/', async (req, res) => {
         }
         
         const mediaFiles = await Media.find(query)
-            .populate('uploadedBy', 'name email')
+            .populate('uploadedBy', 'firstName lastName name email role isCommitteeMember committeeRole')
             .populate('mandal', 'name')
             .populate('event', 'name')
             .sort({ createdAt: -1 })
