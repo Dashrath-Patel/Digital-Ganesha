@@ -122,6 +122,7 @@ const LoginPage = () => {
                     value={formData.email}
                     onChange={handleChange}
                     required
+                    autoComplete="email"
                     className="w-full px-4 py-3 bg-red-900/50 border border-yellow-500/30 rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 text-yellow-100 placeholder-yellow-300/50 backdrop-blur-sm transition-all"
                     placeholder="Enter your email"
                   />
@@ -139,6 +140,7 @@ const LoginPage = () => {
                     value={formData.password}
                     onChange={handleChange}
                     required
+                    autoComplete="current-password"
                     className="w-full px-4 py-3 bg-red-900/50 border border-yellow-500/30 rounded-xl focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 text-yellow-100 placeholder-yellow-300/50 backdrop-blur-sm transition-all"
                     placeholder="Enter your password"
                   />
