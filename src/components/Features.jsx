@@ -20,13 +20,6 @@ const Features = () => {
       path: "/virtual-darshan"
     },
     {
-      icon: "🌱",
-      title: "Eco-Friendly Tracker",
-      description: "Promote sustainable celebrations with eco-friendly mandal recommendations and tips.",
-      color: "from-green-500 to-emerald-500",
-      path: null
-    },
-    {
       icon: "📚",
       title: "Cultural Learning",
       description: "Explore interactive stories, traditional recipes, and learn about Ganesha's significance.",
@@ -39,13 +32,6 @@ const Features = () => {
       description: "Connect with devotees, organize events, coordinate volunteers, and share experiences.",
       color: "from-indigo-500 to-purple-500",
       path: "/community"
-    },
-    {
-      icon: "🎨",
-      title: "Artisan Marketplace",
-      description: "Support local artisans and discover authentic handcrafted Ganesha idols and decorations.",
-      color: "from-yellow-500 to-orange-500",
-      path: null
     }
   ]
 
