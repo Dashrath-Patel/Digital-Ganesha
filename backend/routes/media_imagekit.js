@@ -1,8 +1,8 @@
 import express from 'express';
+import mongoose from 'mongoose';
 import multer from 'multer';
 import MediaService from '../services/MediaService.js';
 import { authenticateToken } from '../middleware/auth.js';
-import Media from '../models/Media.js';
 
 const router = express.Router();
 
@@ -27,277 +27,113 @@ const upload = multer({
     }
 });
 
-// Gallery-specific multer configuration for stricter validation
-const galleryUpload = multer({
-    storage: storage,
-    limits: {
-        fileSize: 5 * 1024 * 1024, // 5MB limit for gallery
+// Media Schema for database tracking
+const mediaSchema = new mongoose.Schema({
+    // Basic Information
+    originalName: {
+        type: String,
+        required: [true, 'Original filename is required']
     },
-    fileFilter: (req, file, cb) => {
-        // Only allow specific image types for gallery
-        const allowedTypes = /jpeg|jpg|png/;
-        const extname = allowedTypes.test(file.originalname.toLowerCase());
-        const mimetype = file.mimetype === 'image/jpeg' || file.mimetype === 'image/jpg' || file.mimetype === 'image/png';
-
-        if (mimetype && extname) {
-            return cb(null, true);
-        } else {
-            cb(new Error('Only JPEG, JPG, and PNG formats are allowed for gallery photos!'));
-        }
-    }
-});
-
-// @route   POST /api/media/gallery/upload
-// @desc    Upload gallery photos with category management
-// @access  Admin only
-router.post('/gallery/upload', authenticateToken, galleryUpload.array('photos', 10), async (req, res) => {
-    console.log('Gallery upload request received');
-    console.log('User info:', req.user);
-    console.log('Files received:', req.files?.length || 0);
-    console.log('Category:', req.body.category);
+    filename: {
+        type: String,
+        required: [true, 'Filename is required']
+    },
+    url: {
+        type: String,
+        required: [true, 'File URL is required']
+    },
+    fileId: {
+        type: String,
+        required: [true, 'ImageKit file ID is required'],
+        unique: true
+    },
     
-    try {
-        // Check if user is admin
-        if (!req.user.isAdmin && req.user.role !== 'admin') {
-            return res.status(403).json({
-                success: false,
-                message: 'Admin access required'
-            });
-        }
-
-        if (!req.files || req.files.length === 0) {
-            return res.status(400).json({
-                success: false,
-                message: 'No files uploaded'
-            });
-        }
-
-        const { category } = req.body;
-        
-        if (!category) {
-            return res.status(400).json({
-                success: false,
-                message: 'Category is required'
-            });
-        }
-
-        const allowedCategories = ['ganesh-chaturthi', 'community-volunteers', 'cultural-programs'];
-        if (!allowedCategories.includes(category)) {
-            return res.status(400).json({
-                success: false,
-                message: 'Invalid category'
-            });
-        }
-
-        // Check category photo limit
-        const existingPhotos = await Media.find({
-            tags: { $in: [`gallery:${category}`] }
-        }).countDocuments();
-
-        const MAX_PHOTOS_PER_CATEGORY = 20;
-        if (existingPhotos + req.files.length > MAX_PHOTOS_PER_CATEGORY) {
-            return res.status(400).json({
-                success: false,
-                message: `Cannot upload ${req.files.length} files. Category limit is ${MAX_PHOTOS_PER_CATEGORY} photos. Current: ${existingPhotos}`
-            });
-        }
-
-        const uploadResults = [];
-        const errors = [];
-
-        for (const file of req.files) {
-            try {
-                const fileName = `gallery-${category}-${Date.now()}-${file.originalname}`;
-                const folder = `/gallery/${category}`;
-                const tags = [`gallery:${category}`, 'community-gallery'];
-
-                // Upload to ImageKit
-                const uploadResult = await MediaService.uploadImage(
-                    file.buffer,
-                    fileName,
-                    folder,
-                    tags
-                );
-
-                if (!uploadResult.success) {
-                    errors.push(`Failed to upload ${file.originalname}: ${uploadResult.error}`);
-                    continue;
-                }
-
-                // Save to database
-                const mediaDoc = new Media({
-                    title: file.originalname.replace(/\.[^/.]+$/, ""), // Remove extension from title
-                    originalName: file.originalname,
-                    filename: uploadResult.data.name,
-                    url: uploadResult.data.url,
-                    fileId: uploadResult.data.fileId,
-                    mimeType: file.mimetype,
-                    size: file.size,
-                    type: 'image',
-                    category: 'event-gallery', // Using an existing category from the enum
-                    tags: [`gallery:${category}`, 'community-gallery', category],
-                    uploadedBy: req.user.userId,
-                    isPublic: true
-                });
-
-                console.log('About to save media doc:', {
-                    title: mediaDoc.title,
-                    fileId: mediaDoc.fileId,
-                    url: mediaDoc.url,
-                    tags: mediaDoc.tags,
-                    uploadedBy: mediaDoc.uploadedBy
-                });
-
-                const savedMedia = await mediaDoc.save();
-                console.log('Media saved successfully:', savedMedia._id);
-                uploadResults.push({
-                    fileId: uploadResult.data.fileId,
-                    url: uploadResult.data.url,
-                    fileName: file.originalname
-                });
-
-            } catch (error) {
-                console.error(`Failed to upload ${file.originalname}:`, error);
-                errors.push({
-                    fileName: file.originalname,
-                    error: error.message
-                });
-            }
-        }
-
-        res.json({
-            success: true,
-            message: `Successfully uploaded ${uploadResults.length} photo(s) to ${category}`,
-            data: {
-                uploaded: uploadResults,
-                errors: errors,
-                category: category,
-                total: uploadResults.length
-            }
-        });
-
-    } catch (error) {
-        console.error('Gallery upload error:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Gallery upload failed',
-            error: error.message
-        });
+    // File Details
+    mimeType: {
+        type: String,
+        required: [true, 'MIME type is required']
+    },
+    size: {
+        type: Number,
+        required: [true, 'File size is required']
+    },
+    
+    // Categorization
+    type: {
+        type: String,
+        enum: ['image', 'video'],
+        required: [true, 'Media type is required']
+    },
+    category: {
+        type: String,
+        enum: [
+            'profile-avatar', 'profile-cover', 'mandal-logo', 'mandal-cover',
+            'event-banner', 'event-gallery', 'festival-photos', 'ritual-videos',
+            'promotional', 'social', 'other'
+        ],
+        required: [true, 'Category is required']
+    },
+    folder: {
+        type: String,
+        default: 'ganesha-uploads'
+    },
+    
+    // Ownership & Context
+    uploadedBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: [true, 'Uploader is required']
+    },
+    mandal: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Mandal'
+    },
+    event: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Event'
+    },
+    
+    // Metadata
+    title: {
+        type: String,
+        trim: true,
+        maxlength: [200, 'Title cannot exceed 200 characters']
+    },
+    description: {
+        type: String,
+        maxlength: [1000, 'Description cannot exceed 1000 characters']
+    },
+    tags: [String],
+    
+    // Access Control
+    isPublic: {
+        type: Boolean,
+        default: true
+    },
+    
+    // Usage Statistics
+    stats: {
+        views: { type: Number, default: 0 },
+        downloads: { type: Number, default: 0 },
+        shares: { type: Number, default: 0 }
     }
+}, {
+    timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true }
 });
 
-// @route   GET /api/media/gallery/:category
-// @desc    Get gallery photos by category
-// @access  Public
-router.get('/gallery/:category', async (req, res) => {
-    try {
-        const { category } = req.params;
-        const { limit = 20, skip = 0 } = req.query;
+// Indexes
+mediaSchema.index({ uploadedBy: 1, createdAt: -1 });
+mediaSchema.index({ mandal: 1, createdAt: -1 });
+mediaSchema.index({ event: 1, createdAt: -1 });
+mediaSchema.index({ category: 1, type: 1 });
+mediaSchema.index({ isPublic: 1, createdAt: -1 });
+mediaSchema.index({ tags: 1 });
+mediaSchema.index({ fileId: 1 });
 
-        const allowedCategories = ['ganesh-chaturthi', 'community-volunteers', 'cultural-programs'];
-        if (!allowedCategories.includes(category)) {
-            return res.status(400).json({
-                success: false,
-                message: 'Invalid category'
-            });
-        }
-
-        console.log(`Fetching gallery photos for category: ${category}, limit: ${limit}, skip: ${skip}`);
-
-        const photos = await Media.find({
-            tags: { $in: [`gallery:${category}`] }
-        })
-        .sort({ createdAt: -1 })
-        .limit(parseInt(limit))
-        .skip(parseInt(skip))
-        .select('title fileId filename url createdAt uploadedBy tags');
-
-        console.log(`Found ${photos.length} photos for category ${category}`);
-        console.log('Sample photo data:', photos[0] || 'No photos found');
-
-        const total = await Media.find({
-            tags: { $in: [`gallery:${category}`] }
-        }).countDocuments();
-
-        res.json({
-            success: true,
-            data: {
-                photos,
-                category,
-                total,
-                page: Math.floor(skip / limit) + 1,
-                hasMore: skip + photos.length < total
-            }
-        });
-
-    } catch (error) {
-        console.error('Gallery fetch error:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Failed to fetch gallery photos',
-            error: error.message
-        });
-    }
-});
-
-// @route   DELETE /api/media/gallery/:fileId
-// @desc    Delete gallery photo
-// @access  Admin only
-router.delete('/gallery/:fileId', authenticateToken, async (req, res) => {
-    try {
-        console.log('Delete request received for fileId:', req.params.fileId);
-        console.log('User info:', req.user);
-        
-        // Check if user is admin
-        if (req.user.role !== 'admin') {
-            return res.status(403).json({
-                success: false,
-                message: 'Admin access required'
-            });
-        }
-
-        const { fileId } = req.params;
-
-        // Find the media document
-        const media = await Media.findOne({ fileId });
-        if (!media) {
-            console.log('Media not found in database for fileId:', fileId);
-            return res.status(404).json({
-                success: false,
-                message: 'Photo not found'
-            });
-        }
-
-        console.log('Found media document:', media._id);
-
-        // Delete from ImageKit
-        try {
-            await MediaService.deleteFile(fileId);
-            console.log('Deleted from ImageKit successfully');
-        } catch (imagekitError) {
-            console.error('ImageKit delete failed:', imagekitError);
-            // Continue with database deletion even if ImageKit fails
-        }
-
-        // Delete from database (hard delete)
-        await Media.findByIdAndDelete(media._id);
-        console.log('Deleted from database successfully');
-
-        res.json({
-            success: true,
-            message: 'Photo deleted successfully',
-            data: { fileId }
-        });
-
-    } catch (error) {
-        console.error('Gallery delete error:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Failed to delete photo',
-            error: error.message
-        });
-    }
-});
+// Create the model
+const Media = mongoose.model('Media', mediaSchema);
 
 // @route   POST /api/media/upload
 // @desc    Upload single file to ImageKit

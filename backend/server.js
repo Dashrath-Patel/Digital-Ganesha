@@ -119,8 +119,8 @@ app.use('/api/auth', authRoutes)
 app.use('/api/users', authenticateToken, userRoutes)
 app.use('/api/mandals', mandalRoutes)
 app.use('/api/events', eventRoutes)
-app.use('/api/media', mediakitRoutes) // ImageKit media routes (includes gallery routes)
-// Note: Regular media routes are included in media_imagekit.js now
+app.use('/api/media', authenticateToken, mediaRoutes)
+app.use('/api/mediakit', mediakitRoutes) // ImageKit media routes
 app.use('/api/notifications', authenticateToken, notificationRoutes)
 app.use('/api/analytics', authenticateToken, analyticsRoutes)
 app.use('/api/admin', authenticateToken, adminRoutes)
