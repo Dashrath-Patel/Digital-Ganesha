@@ -3,10 +3,13 @@ import { useAuth } from '../contexts/AuthContext'
 import { adminAPI, COMMITTEE_ROLES, USER_ROLES } from '../services/AdminService'
 import MessageService from '../services/MessageService'
 import { EventService } from '../services/api/EventService'
+import PhotoUploadService from '../services/PhotoUploadService'
+import { useToast } from '../contexts/ToastContext'
 import Header from '../components/Header'
 
 const AdminDashboard = () => {
   const { user } = useAuth()
+  const { showToast } = useToast()
   const [users, setUsers] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -21,12 +24,14 @@ const AdminDashboard = () => {
   const [messages, setMessages] = useState([])
   const [events, setEvents] = useState([])
   const [galleryPhotos, setGalleryPhotos] = useState([])
-  const [awards, setAwards] = useState([])
   const [showMessageModal, setShowMessageModal] = useState(false)
   const [showEventModal, setShowEventModal] = useState(false)
   const [showGalleryModal, setShowGalleryModal] = useState(false)
-  const [showAwardModal, setShowAwardModal] = useState(false)
   const [editingItem, setEditingItem] = useState(null)
+  const [galleryRefreshTrigger, setGalleryRefreshTrigger] = useState(0)
+  const [galleryLastRefresh, setGalleryLastRefresh] = useState(Date.now())
+  const [galleryLoading, setGalleryLoading] = useState(false)
+  const [currentTime, setCurrentTime] = useState(Date.now())
 
   useEffect(() => {
     fetchUsers()
@@ -34,7 +39,17 @@ const AdminDashboard = () => {
     fetchMandals()
     fetchMessages()
     fetchEvents()
+    fetchGalleryPhotos()
   }, [currentPage, searchTerm])
+
+  // Update current time every second for accurate "time ago" display
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTime(Date.now())
+    }, 1000)
+
+    return () => clearInterval(interval)
+  }, [])
 
   const fetchUsers = async () => {
     try {
@@ -106,6 +121,50 @@ const AdminDashboard = () => {
     }
   }
 
+  const fetchGalleryPhotos = async () => {
+    try {
+      setGalleryLoading(true)
+      const response = await PhotoUploadService.getMediaList({
+        page: 1,
+        limit: 50,
+        type: 'image',
+        isPublic: true
+      })
+      
+      if (response.success) {
+        setGalleryPhotos(response.data.media || [])
+        setGalleryLastRefresh(Date.now())
+      } else {
+        console.error('Failed to fetch gallery photos:', response.error)
+        setGalleryPhotos([])
+      }
+    } catch (err) {
+      console.error('Failed to fetch gallery photos:', err)
+      setGalleryPhotos([])
+    } finally {
+      setGalleryLoading(false)
+    }
+  }
+
+  // Manual refresh for gallery
+  const handleGalleryRefresh = () => {
+    setGalleryRefreshTrigger(prev => prev + 1)
+    fetchGalleryPhotos()
+  }
+
+  // Format last refresh time for gallery
+  const formatGalleryLastRefresh = () => {
+    const diff = currentTime - galleryLastRefresh
+    const minutes = Math.floor(diff / 60000)
+    const seconds = Math.floor((diff % 60000) / 1000)
+    
+    if (minutes > 0) {
+      return `${minutes}m ago`
+    } else {
+      return `${seconds}s ago`
+    }
+  }
+
   const handleSaveMessage = async (messageData) => {
     try {
       console.log('Current user:', user);
@@ -154,6 +213,109 @@ const AdminDashboard = () => {
     } catch (err) {
       console.error('Failed to toggle message status:', err)
       setError(err.message || 'Failed to toggle message status')
+    }
+  }
+
+  // Gallery photo functions
+  const handleSaveGalleryPhoto = async (photoData) => {
+    try {
+      if (editingItem) {
+        // Check if user wants to replace the image
+        if (photoData.imageFile) {
+          // Delete the old photo and upload a new one
+          showToast('Replacing photo...', 'info')
+          
+          // Delete the old photo
+          const deleteResult = await PhotoUploadService.deleteMedia(editingItem._id || editingItem.id)
+          
+          if (deleteResult.success) {
+            // Upload the new photo with the same metadata
+            const uploadResult = await PhotoUploadService.uploadPhoto(photoData.imageFile, {
+              title: photoData.title,
+              category: photoData.category,
+              description: photoData.description || `Photo uploaded: ${photoData.title}`,
+              folder: 'community-gallery',
+              tags: [photoData.category, 'community'],
+              isPublic: true
+            })
+
+            if (uploadResult.success) {
+              showToast('Photo replaced successfully!', 'success')
+              // Refresh the gallery photos list
+              await fetchGalleryPhotos()
+              // Reset editing state
+              setEditingItem(null)
+            } else {
+              showToast(uploadResult.error || 'Failed to upload new photo', 'error')
+            }
+          } else {
+            showToast(deleteResult.error || 'Failed to delete old photo', 'error')
+          }
+        } else {
+          // Update existing photo metadata only
+          const updateResult = await PhotoUploadService.updateMedia(editingItem._id || editingItem.id, {
+            title: photoData.title,
+            category: photoData.category,
+            description: photoData.description || ''
+          })
+
+          if (updateResult.success) {
+            showToast('Photo updated successfully!', 'success')
+            // Refresh the gallery photos list
+            await fetchGalleryPhotos()
+            // Reset editing state
+            setEditingItem(null)
+          } else {
+            showToast(updateResult.error || 'Failed to update photo', 'error')
+          }
+        }
+      } else {
+        // New photo upload
+        if (!photoData.imageFile) {
+          showToast('Please select an image file', 'error')
+          return
+        }
+
+        showToast('Uploading photo...', 'info')
+
+        const uploadResult = await PhotoUploadService.uploadPhoto(photoData.imageFile, {
+          title: photoData.title,
+          category: photoData.category,
+          description: photoData.description || `Photo uploaded: ${photoData.title}`,
+          folder: 'community-gallery',
+          tags: [photoData.category, 'community'],
+          isPublic: true
+        })
+
+        if (uploadResult.success) {
+          showToast('Photo uploaded successfully!', 'success')
+          // Refresh the gallery photos list
+          await fetchGalleryPhotos()
+        } else {
+          showToast(uploadResult.error || 'Failed to upload photo', 'error')
+        }
+      }
+    } catch (error) {
+      console.error('Gallery photo save error:', error)
+      showToast('An error occurred while saving the photo', 'error')
+    }
+  }
+
+  const handleDeleteGalleryPhoto = async (photoId) => {
+    if (window.confirm('Are you sure you want to delete this photo?')) {
+      try {
+        const deleteResult = await PhotoUploadService.deleteMedia(photoId)
+        
+        if (deleteResult.success) {
+          showToast('Photo deleted successfully!', 'success')
+          fetchGalleryPhotos()
+        } else {
+          showToast(deleteResult.error || 'Failed to delete photo', 'error')
+        }
+      } catch (error) {
+        console.error('Failed to delete photo:', error)
+        showToast('An error occurred while deleting the photo', 'error')
+      }
     }
   }
 
@@ -248,177 +410,349 @@ const AdminDashboard = () => {
   }
 
   return (
-    <div className="relative">
+    <div className="relative min-h-screen">
       <Header />
       
-      <div className="min-h-screen pt-16 px-4" style={{ backgroundColor: 'rgb(21, 21, 21)' }}>
-        {/* Subtle Spiritual Background */}
-        <div className="absolute inset-0 z-0" style={{ backgroundColor: 'rgba(160, 40, 40, 0.2)' }}>
-          <div className="absolute inset-0 opacity-20">
-            <div className="absolute top-32 left-10 text-2xl text-golden animate-float">🌺</div>
-            <div className="absolute top-32 right-10 text-2xl text-golden-light animate-float-delay">🌸</div>
-            <div className="absolute bottom-20 right-10 text-2xl text-golden-light opacity-30 animate-bounce delay-1000">🪔</div>
-          </div>
-        </div>
+      {/* Enhanced Background with Better Visual Appeal */}
+      <div className="fixed inset-0 bg-gradient-to-br from-gray-900 via-red-950/20 to-amber-950/30" />
+      <div className="fixed inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-amber-900/10 via-transparent to-transparent" />
+      
+      {/* Floating Background Elements */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-golden/5 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-amber-600/5 rounded-full blur-3xl animate-pulse delay-1000" />
+      </div>
 
-        <div className="relative z-10 max-w-6xl mx-auto">
-          {/* Compact Header */}
-          <div className="mb-6 text-center">
-            <div className="flex items-center justify-center mb-2">
-              <div className="text-4xl mr-3">🛡️</div>
-              <h1 className="text-3xl font-bold text-golden bg-gradient-to-r from-yellow-400 to-yellow-200 bg-clip-text text-transparent">
-                Admin Dashboard
-              </h1>
+      <div className="relative z-10 min-h-screen pt-20 pb-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Modern Header Section */}
+          <div className="mb-8">
+            <div className="text-center lg:text-left">
+              <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                <div>
+                  <div className="flex items-center justify-center lg:justify-start gap-3 mb-2">
+                    <div className="p-3 bg-gradient-to-br from-golden/20 to-amber-600/20 rounded-xl border border-golden/30">
+                      <span className="text-2xl">🛡️</span>
+                    </div>
+                    <div>
+                      <h1 className="text-3xl lg:text-4xl font-bold bg-gradient-to-r from-golden via-amber-400 to-golden-light bg-clip-text text-transparent">
+                        Admin Dashboard
+                      </h1>
+                      <p className="text-golden-light/80 text-sm">Welcome back, {user?.firstName}</p>
+                    </div>
+                  </div>
+                  <p className="text-golden-light/70 max-w-md mx-auto lg:mx-0">
+                    Manage your community platform with powerful admin tools
+                  </p>
+                </div>
+                
+                {/* Quick Stats Preview */}
+                <div className="flex gap-4 justify-center lg:justify-end">
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-golden">{stats.totalUsers || 0}</div>
+                    <div className="text-xs text-golden-light">Users</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-golden">{galleryPhotos.length || 0}</div>
+                    <div className="text-xs text-golden-light">Photos</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-golden">{events.length || 0}</div>
+                    <div className="text-xs text-golden-light">Events</div>
+                  </div>
+                </div>
+              </div>
             </div>
-            <p className="text-golden-light">Manage users and committee assignments</p>
           </div>
 
-          {/* Enhanced Tab Navigation */}
-          <div className="bg-gradient-to-br from-red-950/90 to-amber-900/90 backdrop-blur-sm rounded-xl p-1 border border-yellow-500/40 mb-6 shadow-lg">
-            <div className="grid grid-cols-2 md:grid-cols-6 gap-1">
-              {[
-                { id: 'users', label: 'Users', icon: '👥' },
-                { id: 'messages', label: 'Messages', icon: '📢' },
-                { id: 'events', label: 'Events', icon: '📅' },
-                { id: 'gallery', label: 'Gallery', icon: '📸' },
-                { id: 'awards', label: 'Awards', icon: '🏆' },
-                { id: 'analytics', label: 'Analytics', icon: '📊' }
-              ].map((tab) => (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`flex flex-col items-center justify-center space-y-1 py-3 px-2 rounded-lg font-medium transition-all duration-300 cursor-pointer ${
-                    activeTab === tab.id
-                      ? 'bg-gradient-to-r from-yellow-600 to-yellow-500 text-red-900 shadow-md'
-                      : 'text-golden hover:bg-red-800/40'
-                  }`}
+          {/* Enhanced Tab Navigation with Better Mobile Support */}
+          <div className="mb-8">
+            <div className="bg-gradient-to-r from-red-950/90 via-red-900/80 to-amber-900/90 backdrop-blur-xl rounded-2xl p-2 border border-golden/20 shadow-2xl">
+              {/* Mobile Dropdown for Small Screens */}
+              <div className="sm:hidden">
+                <select
+                  value={activeTab}
+                  onChange={(e) => setActiveTab(e.target.value)}
+                  className="w-full bg-red-950/50 border border-golden/30 rounded-xl px-4 py-3 text-golden focus:ring-2 focus:ring-golden/50 focus:border-golden"
                 >
-                  <span className="text-lg">{tab.icon}</span>
-                  <span className="text-xs">{tab.label}</span>
-                </button>
-              ))}
+                  <option value="users">👥 Users</option>
+                  <option value="messages">📢 Messages</option>
+                  <option value="events">📅 Events</option>
+                  <option value="gallery">📸 Gallery</option>
+                  {/* Awards and Analytics options removed */}
+                </select>
+              </div>
+              
+              {/* Desktop Tab Navigation */}
+              <div className="hidden sm:grid grid-cols-3 lg:grid-cols-6 gap-2">
+                {[
+                  { id: 'users', label: 'Users', icon: '👥', count: stats.totalUsers },
+                  { id: 'messages', label: 'Messages', icon: '📢', count: messages.length },
+                  { id: 'events', label: 'Events', icon: '📅', count: events.length },
+                  { id: 'gallery', label: 'Gallery', icon: '📸', count: galleryPhotos.length },
+                ].map((tab) => (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`group relative flex flex-col items-center justify-center p-4 rounded-xl font-medium transition-all duration-300 hover:scale-105 ${
+                      activeTab === tab.id
+                        ? 'bg-gradient-to-br from-golden to-amber-500 text-red-950 shadow-lg scale-105'
+                        : 'text-golden hover:bg-red-800/40 hover:border-golden/20'
+                    }`}
+                  >
+                    <span className="text-xl mb-1 group-hover:scale-110 transition-transform duration-200">{tab.icon}</span>
+                    <span className="text-sm font-semibold">{tab.label}</span>
+                    {tab.count !== undefined && (
+                      <span className={`text-xs mt-1 px-2 py-0.5 rounded-full ${
+                        activeTab === tab.id ? 'bg-red-950/20 text-red-950' : 'bg-golden/20 text-golden'
+                      }`}>
+                        {tab.count}
+                      </span>
+                    )}
+                    
+                    {/* Active indicator */}
+                    {activeTab === tab.id && (
+                      <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-8 h-1 bg-red-950 rounded-full" />
+                    )}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
 
-          {/* Tab Content */}
-          <div className="flex-1">
+          {/* Tab Content with Enhanced Design */}
+          <div className="space-y-6">
             {activeTab === 'users' && (
-              <div className="space-y-4">
-                {/* Compact Stats Cards */}
+              <div className="space-y-6">
+                {/* Enhanced Stats Cards with Better Mobile Layout */}
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                  <div className="bg-gradient-to-br from-red-900/80 to-amber-900/80 backdrop-blur-sm rounded-lg p-4 border border-yellow-500/30">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-golden-light text-xs">Total Users</p>
-                        <p className="text-lg font-bold text-golden">{stats.totalUsers || 0}</p>
-                      </div>
-                      <div className="text-2xl">👥</div>
-                    </div>
-                  </div>
-                  
-                  <div className="bg-gradient-to-br from-red-900/80 to-amber-900/80 backdrop-blur-sm rounded-lg p-4 border border-yellow-500/30">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-golden-light text-xs">Committee</p>
-                        <p className="text-lg font-bold text-golden">{stats.committeeMembers || 0}</p>
-                      </div>
-                      <div className="text-2xl">🏛️</div>
-                    </div>
-                  </div>
-                  
-                  <div className="bg-gradient-to-br from-red-900/80 to-amber-900/80 backdrop-blur-sm rounded-lg p-4 border border-yellow-500/30">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-golden-light text-xs">Mandals</p>
-                        <p className="text-lg font-bold text-golden">{stats.activeMandals || 0}</p>
-                      </div>
-                      <div className="text-2xl">🏺</div>
-                    </div>
-                  </div>
-                  
-                  <div className="bg-gradient-to-br from-red-900/80 to-amber-900/80 backdrop-blur-sm rounded-lg p-4 border border-yellow-500/30">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-golden-light text-xs">New Users</p>
-                        <p className="text-lg font-bold text-golden">{stats.newUsersThisMonth || 0}</p>
-                      </div>
-                      <div className="text-2xl">📈</div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Compact Search Section */}
-                <div className="bg-gradient-to-br from-red-900/80 to-amber-900/80 backdrop-blur-sm rounded-lg p-4 border border-yellow-500/40">
-                  <div className="flex gap-3 items-center">
-                    <input
-                      type="text"
-                      placeholder="Search users..."
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      className="flex-1 px-3 py-2 bg-red-950/50 border border-yellow-500/30 rounded-lg focus:ring-2 focus:ring-yellow-500 text-golden placeholder-golden/50 text-sm"
-                    />
-                    <button
-                      onClick={() => fetchUsers()}
-                      className="bg-gradient-to-r from-yellow-600 to-yellow-500 text-red-900 px-4 py-2 rounded-lg font-medium hover:from-yellow-500 hover:to-yellow-400 transition-all duration-300 text-sm"
+                  {[
+                    { 
+                      title: 'Total Users', 
+                      value: stats.totalUsers || 0, 
+                      icon: '👥', 
+                      color: 'from-blue-600/20 to-blue-800/20',
+                      border: 'border-blue-500/30'
+                    },
+                    { 
+                      title: 'Committee Members', 
+                      value: stats.committeeMembers || 0, 
+                      icon: '🏛️', 
+                      color: 'from-purple-600/20 to-purple-800/20',
+                      border: 'border-purple-500/30'
+                    },
+                    { 
+                      title: 'Active Mandals', 
+                      value: stats.activeMandals || 0, 
+                      icon: '🏺', 
+                      color: 'from-orange-600/20 to-orange-800/20',
+                      border: 'border-orange-500/30'
+                    },
+                    { 
+                      title: 'New This Month', 
+                      value: stats.newUsersThisMonth || 0, 
+                      icon: '📈', 
+                      color: 'from-green-600/20 to-green-800/20',
+                      border: 'border-green-500/30'
+                    }
+                  ].map((stat, index) => (
+                    <div 
+                      key={index}
+                      className={`bg-gradient-to-br ${stat.color} backdrop-blur-xl rounded-xl p-4 lg:p-6 border ${stat.border} hover:scale-105 transition-all duration-300 group`}
                     >
-                      🔍
-                    </button>
+                      <div className="flex items-center justify-between">
+                        <div className="flex-1">
+                          <p className="text-golden-light text-xs lg:text-sm font-medium">{stat.title}</p>
+                          <p className="text-xl lg:text-3xl font-bold text-golden mt-1 group-hover:scale-110 transition-transform duration-200">
+                            {stat.value}
+                          </p>
+                        </div>
+                        <div className="text-2xl lg:text-3xl opacity-70 group-hover:opacity-100 transition-opacity duration-200">
+                          {stat.icon}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Enhanced Search and Actions Section */}
+                <div className="bg-gradient-to-br from-red-950/80 to-amber-900/60 backdrop-blur-xl rounded-xl p-6 border border-golden/20 shadow-lg">
+                  <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+                    <div className="flex-1 w-full sm:max-w-md">
+                      <div className="relative">
+                        <input
+                          type="text"
+                          placeholder="Search users by name or email..."
+                          value={searchTerm}
+                          onChange={(e) => setSearchTerm(e.target.value)}
+                          className="w-full pl-10 pr-4 py-3 bg-red-950/50 border border-golden/30 rounded-xl focus:ring-2 focus:ring-golden/50 focus:border-golden text-golden placeholder-golden/60 text-sm transition-all duration-200"
+                        />
+                        <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-golden/60">
+                          🔍
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="flex gap-3 w-full sm:w-auto">
+                      <button
+                        onClick={() => fetchUsers()}
+                        className="flex-1 sm:flex-none bg-gradient-to-r from-golden to-amber-500 text-red-950 px-6 py-3 rounded-xl font-semibold hover:from-amber-500 hover:to-golden transition-all duration-300 hover:scale-105 shadow-lg"
+                      >
+                        <span className="hidden sm:inline">Search</span>
+                        <span className="sm:hidden">🔍 Search</span>
+                      </button>
+                      <button
+                        onClick={() => {
+                          setSearchTerm('')
+                          fetchUsers()
+                        }}
+                        className="px-4 py-3 bg-red-800/40 border border-golden/30 rounded-xl text-golden hover:bg-red-700/40 transition-all duration-300 hover:scale-105"
+                        title="Clear search"
+                      >
+                        ✕
+                      </button>
+                    </div>
                   </div>
                 </div>
 
-                {/* Error Message */}
+                {/* Error Message with Better Design */}
                 {error && (
-                  <div className="bg-red-800/50 border border-red-500/50 text-red-300 px-3 py-2 rounded-lg text-sm">
-                    <span className="mr-2">⚠️</span>
-                    {error}
+                  <div className="bg-gradient-to-r from-red-800/50 to-red-900/50 backdrop-blur-sm border border-red-500/50 text-red-300 px-4 py-3 rounded-xl text-sm flex items-center gap-3">
+                    <span className="text-lg">⚠️</span>
+                    <span>{error}</span>
                   </div>
                 )}
 
-                {/* Compact Users Table */}
-                <div className="bg-gradient-to-br from-red-900/80 to-amber-900/80 backdrop-blur-sm rounded-lg border border-yellow-500/30 overflow-hidden">
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-sm">
-                      <thead className="bg-red-950/50 border-b border-yellow-500/30">
+                {/* Modern Users Display - Cards for Mobile, Table for Desktop */}
+                <div className="bg-gradient-to-br from-red-950/80 to-amber-900/60 backdrop-blur-xl rounded-xl border border-golden/20 shadow-lg overflow-hidden">
+                  {/* Mobile Card View */}
+                  <div className="block lg:hidden">
+                    {loading ? (
+                      <div className="p-8 text-center">
+                        <div className="flex items-center justify-center gap-3 text-golden-light">
+                          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-golden"></div>
+                          <span>Loading users...</span>
+                        </div>
+                      </div>
+                    ) : users.length === 0 ? (
+                      <div className="p-8 text-center">
+                        <div className="text-4xl mb-4">👥</div>
+                        <p className="text-golden-light text-lg">No users found</p>
+                        <p className="text-golden-light/60 text-sm mt-1">
+                          {searchTerm ? 'Try adjusting your search terms' : 'Users will appear here when they register'}
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="p-4 space-y-4">
+                        {users.map((user) => (
+                          <div 
+                            key={user._id} 
+                            className="bg-gradient-to-r from-red-900/40 to-amber-900/40 backdrop-blur-sm rounded-xl p-4 border border-golden/20 hover:border-golden/40 transition-all duration-300"
+                          >
+                            <div className="flex items-start gap-4">
+                              <div className="w-12 h-12 bg-gradient-to-br from-golden to-amber-500 rounded-full flex items-center justify-center text-red-950 font-bold flex-shrink-0">
+                                {user.firstName?.[0]}{user.lastName?.[0]}
+                              </div>
+                              
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-start justify-between">
+                                  <div className="min-w-0">
+                                    <h3 className="text-golden font-semibold text-base truncate">
+                                      {user.firstName} {user.lastName}
+                                    </h3>
+                                    <p className="text-golden-light text-sm truncate">{user.email}</p>
+                                  </div>
+                                  
+                                  <button
+                                    onClick={() => {
+                                      setSelectedUser(user)
+                                      setShowModal(true)
+                                    }}
+                                    className="ml-2 p-2 bg-golden/20 rounded-lg text-golden hover:bg-golden/30 transition-colors duration-200 flex-shrink-0"
+                                  >
+                                    ⚙️
+                                  </button>
+                                </div>
+                                
+                                <div className="flex flex-wrap gap-2 mt-3">
+                                  <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-md ${
+                                    user.role === USER_ROLES.ADMIN
+                                      ? 'bg-purple-900/50 text-purple-300'
+                                      : user.role === USER_ROLES.COMMITTEE_MEMBER
+                                      ? 'bg-blue-900/50 text-blue-300'
+                                      : 'bg-gray-900/50 text-gray-300'
+                                  }`}>
+                                    {user.role?.replace('_', ' ').toUpperCase()}
+                                  </span>
+                                  
+                                  {user.isCommitteeMember && (
+                                    <span className="inline-flex px-2 py-1 text-xs font-medium rounded-md bg-amber-900/50 text-amber-300">
+                                      {user.committeeRole?.replace('_', ' ').toUpperCase()}
+                                    </span>
+                                  )}
+                                  
+                                  <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-md ${
+                                    user.isActive ? 'bg-green-900/50 text-green-300' : 'bg-red-900/50 text-red-300'
+                                  }`}>
+                                    {user.isActive ? 'ACTIVE' : 'INACTIVE'}
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Desktop Table View */}
+                  <div className="hidden lg:block overflow-x-auto">
+                    <table className="w-full">
+                      <thead className="bg-red-950/60 border-b border-golden/30">
                         <tr>
-                          <th className="px-4 py-2 text-left text-golden font-medium">User</th>
-                          <th className="px-4 py-2 text-left text-golden font-medium">Role</th>
-                          <th className="px-4 py-2 text-left text-golden font-medium">Committee</th>
-                          <th className="px-4 py-2 text-left text-golden font-medium">Status</th>
-                          <th className="px-4 py-2 text-left text-golden font-medium">Actions</th>
+                          <th className="px-6 py-4 text-left text-golden font-semibold text-sm">User</th>
+                          <th className="px-6 py-4 text-left text-golden font-semibold text-sm">Role</th>
+                          <th className="px-6 py-4 text-left text-golden font-semibold text-sm">Committee</th>
+                          <th className="px-6 py-4 text-left text-golden font-semibold text-sm">Status</th>
+                          <th className="px-6 py-4 text-left text-golden font-semibold text-sm">Actions</th>
                         </tr>
                       </thead>
                       <tbody>
                         {loading ? (
                           <tr>
-                            <td colSpan="5" className="px-4 py-6 text-center text-golden-light">
-                              <div className="flex items-center justify-center text-sm">
-                                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-golden"></div>
-                                <span className="ml-2">Loading...</span>
+                            <td colSpan="5" className="px-6 py-12 text-center text-golden-light">
+                              <div className="flex items-center justify-center gap-3">
+                                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-golden"></div>
+                                <span className="text-lg">Loading users...</span>
                               </div>
                             </td>
                           </tr>
                         ) : users.length === 0 ? (
                           <tr>
-                            <td colSpan="5" className="px-4 py-6 text-center text-golden-light text-sm">
-                              No users found
+                            <td colSpan="5" className="px-6 py-12 text-center">
+                              <div className="text-5xl mb-4">👥</div>
+                              <p className="text-golden-light text-lg">No users found</p>
+                              <p className="text-golden-light/60 text-sm mt-1">
+                                {searchTerm ? 'Try adjusting your search terms' : 'Users will appear here when they register'}
+                              </p>
                             </td>
                           </tr>
                         ) : (
                           users.map((user) => (
-                            <tr key={user._id} className="border-b border-yellow-500/20 hover:bg-red-950/30">
-                              <td className="px-4 py-3">
-                                <div className="flex items-center">
-                                  <div className="w-8 h-8 bg-gradient-to-br from-yellow-600 to-yellow-500 rounded-full flex items-center justify-center text-red-900 font-bold text-xs mr-2">
+                            <tr key={user._id} className="border-b border-golden/10 hover:bg-red-950/30 transition-colors duration-200">
+                              <td className="px-6 py-4">
+                                <div className="flex items-center gap-4">
+                                  <div className="w-10 h-10 bg-gradient-to-br from-golden to-amber-500 rounded-full flex items-center justify-center text-red-950 font-bold flex-shrink-0">
                                     {user.firstName?.[0]}{user.lastName?.[0]}
                                   </div>
-                                  <div>
-                                    <div className="text-golden font-medium text-sm">{user.firstName} {user.lastName}</div>
-                                    <div className="text-golden-light text-xs">{user.email}</div>
+                                  <div className="min-w-0">
+                                    <div className="text-golden font-semibold">{user.firstName} {user.lastName}</div>
+                                    <div className="text-golden-light text-sm truncate">{user.email}</div>
                                   </div>
                                 </div>
                               </td>
-                              <td className="px-4 py-3">
-                                <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-md ${
+                              <td className="px-6 py-4">
+                                <span className={`inline-flex px-3 py-1 text-sm font-medium rounded-full ${
                                   user.role === USER_ROLES.ADMIN
                                     ? 'bg-purple-900/50 text-purple-300'
                                     : user.role === USER_ROLES.COMMITTEE_MEMBER
@@ -428,22 +762,22 @@ const AdminDashboard = () => {
                                   {user.role?.replace('_', ' ').toUpperCase()}
                                 </span>
                               </td>
-                              <td className="px-4 py-3">
+                              <td className="px-6 py-4">
                                 {user.isCommitteeMember ? (
                                   <div>
-                                    <div className="text-golden text-xs font-medium">
+                                    <div className="text-golden font-medium">
                                       {user.committeeRole?.replace('_', ' ').toUpperCase()}
                                     </div>
                                     {user.mandal && (
-                                      <div className="text-golden-light text-xs">{user.mandal.name}</div>
+                                      <div className="text-golden-light text-sm">{user.mandal.name}</div>
                                     )}
                                   </div>
                                 ) : (
-                                  <span className="text-golden-light text-xs">Not a member</span>
+                                  <span className="text-golden-light">Not a member</span>
                                 )}
                               </td>
-                              <td className="px-4 py-3">
-                                <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-md ${
+                              <td className="px-6 py-4">
+                                <span className={`inline-flex px-3 py-1 text-sm font-medium rounded-full ${
                                   user.isActive
                                     ? 'bg-green-900/50 text-green-300'
                                     : 'bg-red-900/50 text-red-300'
@@ -451,26 +785,26 @@ const AdminDashboard = () => {
                                   {user.isActive ? 'Active' : 'Inactive'}
                                 </span>
                               </td>
-                              <td className="px-4 py-3">
-                                <div className="flex space-x-1">
+                              <td className="px-6 py-4">
+                                <div className="flex gap-2">
                                   <button
                                     onClick={() => {
                                       setSelectedUser(user)
                                       setShowModal(true)
                                     }}
-                                    className="bg-blue-600/20 hover:bg-blue-500/30 text-blue-300 px-2 py-1 rounded text-xs transition-colors"
+                                    className="bg-golden/20 hover:bg-golden/30 text-golden px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 hover:scale-105"
                                     title="Edit User"
                                   >
-                                    ✏️
+                                    ⚙️ Edit
                                   </button>
                                   <button
                                     onClick={() => handleToggleUserStatus(user._id, user.isActive)}
-                                    className={`px-2 py-1 rounded text-xs transition-colors ${
+                                    className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 hover:scale-105 ${
                                       user.isActive
-                                        ? 'bg-red-600/20 hover:bg-red-500/30 text-red-300'
-                                        : 'bg-green-600/20 hover:bg-green-500/30 text-green-300'
+                                        ? 'bg-red-800/40 hover:bg-red-700/50 text-red-300'
+                                        : 'bg-green-800/40 hover:bg-green-700/50 text-green-300'
                                     }`}
-                                    title={user.isActive ? 'Block User' : 'Activate User'}
+                                    title={user.isActive ? 'Deactivate User' : 'Activate User'}
                                   >
                                     {user.isActive ? '🚫' : '✅'}
                                   </button>
@@ -482,63 +816,60 @@ const AdminDashboard = () => {
                       </tbody>
                     </table>
                   </div>
+                </div>
 
-                  {/* Compact Pagination */}
-                  {totalPages > 1 && (
-                    <div className="px-4 py-3 border-t border-yellow-500/30">
-                      <div className="flex items-center justify-between text-sm">
-                        <div className="text-golden-light">
-                          Page {currentPage} of {totalPages}
+                {/* Enhanced Pagination */}
+                {totalPages > 1 && (
+                  <div className="bg-gradient-to-br from-red-950/80 to-amber-900/60 backdrop-blur-xl rounded-xl p-4 border border-golden/20">
+                    <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+                      <div className="text-golden-light text-sm">
+                        Showing page <span className="text-golden font-semibold">{currentPage}</span> of{' '}
+                        <span className="text-golden font-semibold">{totalPages}</span>
+                      </div>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                          disabled={currentPage === 1}
+                          className="flex items-center gap-2 px-4 py-2 bg-golden/20 border border-golden/30 rounded-lg text-golden hover:bg-golden/30 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105"
+                        >
+                          ← Previous
+                        </button>
+                        
+                        {/* Page numbers for larger screens */}
+                        <div className="hidden sm:flex gap-1">
+                          {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                            const page = Math.max(1, Math.min(totalPages - 4, currentPage - 2)) + i
+                            return (
+                              <button
+                                key={page}
+                                onClick={() => setCurrentPage(page)}
+                                className={`w-10 h-10 rounded-lg font-medium transition-all duration-200 hover:scale-105 ${
+                                  page === currentPage
+                                    ? 'bg-golden text-red-950 shadow-lg'
+                                    : 'bg-golden/20 text-golden hover:bg-golden/30'
+                                }`}
+                              >
+                                {page}
+                              </button>
+                            )
+                          })}
                         </div>
-                        <div className="flex space-x-1">
-                          <button
-                            onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-                            disabled={currentPage === 1}
-                            className="px-2 py-1 bg-yellow-600/20 text-yellow-300 border border-yellow-500/30 rounded text-xs disabled:opacity-50 disabled:cursor-not-allowed"
-                          >
-                            ← Prev
-                          </button>
-                          <button
-                            onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
-                            disabled={currentPage === totalPages}
-                            className="px-2 py-1 bg-yellow-600/20 text-yellow-300 border border-yellow-500/30 rounded text-xs disabled:opacity-50 disabled:cursor-not-allowed"
-                          >
-                            Next →
-                          </button>
-                        </div>
+                        
+                        <button
+                          onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+                          disabled={currentPage === totalPages}
+                          className="flex items-center gap-2 px-4 py-2 bg-golden/20 border border-golden/30 rounded-lg text-golden hover:bg-golden/30 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105"
+                        >
+                          Next →
+                        </button>
                       </div>
                     </div>
-                  )}
-                </div>
+                  </div>
+                )}
               </div>
             )}
 
-            {/* Compact Analytics Tab */}
-            {activeTab === 'analytics' && (
-              <div className="space-y-4">
-                <div className="bg-gradient-to-br from-red-900/80 to-amber-900/80 backdrop-blur-sm rounded-lg p-6 border border-yellow-500/30 text-center">
-                  <div className="text-4xl mb-2">📊</div>
-                  <h3 className="text-lg font-bold text-golden mb-1">Analytics Dashboard</h3>
-                  <p className="text-golden-light text-sm">Advanced analytics coming soon...</p>
-                </div>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="bg-gradient-to-br from-red-900/80 to-amber-900/80 backdrop-blur-sm rounded-lg p-4 border border-yellow-500/30">
-                    <h4 className="text-sm font-semibold text-golden mb-2 flex items-center">
-                      📈 User Growth
-                    </h4>
-                    <p className="text-golden-light text-xs">Track user registration trends</p>
-                  </div>
-                  
-                  <div className="bg-gradient-to-br from-red-900/80 to-amber-900/80 backdrop-blur-sm rounded-lg p-4 border border-yellow-500/30">
-                    <h4 className="text-sm font-semibold text-golden mb-2 flex items-center">
-                      🏛️ Committee Activity
-                    </h4>
-                    <p className="text-golden-light text-xs">Monitor member engagement</p>
-                  </div>
-                </div>
-              </div>
-            )}
+            {/* Analytics tab removed */}
 
             {/* Messages Management Tab */}
             {activeTab === 'messages' && (
@@ -900,87 +1231,189 @@ const AdminDashboard = () => {
               </div>
             )}
 
-            {/* Gallery Management Tab */}
+            {/* Enhanced Gallery Management Tab */}
             {activeTab === 'gallery' && (
               <div className="space-y-6">
-                <div className="flex justify-between items-center">
-                  <h3 className="text-xl font-bold text-golden">Community Gallery</h3>
-                  <button
-                    onClick={() => setShowGalleryModal(true)}
-                    className="bg-gradient-to-r from-yellow-600 to-yellow-500 text-red-900 px-4 py-2 rounded-lg font-semibold hover:from-yellow-500 hover:to-yellow-400 transition-all duration-300 cursor-pointer"
-                  >
-                    + Upload Photos
-                  </button>
-                </div>
-                
-                <div className="grid md:grid-cols-3 lg:grid-cols-4 gap-4">
-                  {galleryPhotos.map((photo) => (
-                    <div key={photo.id} className="bg-gradient-to-br from-red-900/80 to-amber-900/80 backdrop-blur-sm rounded-lg p-3 border border-yellow-500/30">
-                      <div className="aspect-square bg-red-800/40 rounded-lg mb-3 flex items-center justify-center">
-                        <span className="text-4xl">📸</span>
+                {/* Gallery Header with Better Mobile Layout */}
+                <div className="bg-gradient-to-br from-red-950/80 to-amber-900/60 backdrop-blur-xl rounded-xl p-6 border border-golden/20 shadow-lg">
+                  <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                    <div className="flex items-center gap-4">
+                      <div className="p-3 bg-golden/20 rounded-xl border border-golden/30">
+                        <span className="text-2xl">📸</span>
                       </div>
-                      <h5 className="text-golden text-sm font-semibold truncate">{photo.title}</h5>
-                      <p className="text-golden-light text-xs">{photo.category}</p>
-                      <div className="flex justify-between items-center mt-2">
-                        <span className="text-golden-light text-xs">{photo.date}</span>
-                        <div className="flex space-x-1">
-                          <button
-                            onClick={() => {setEditingItem(photo); setShowGalleryModal(true);}}
-                            className="text-yellow-400 hover:text-yellow-300 cursor-pointer text-sm"
-                          >
-                            ✏️
-                          </button>
-                          <button className="text-red-400 hover:text-red-300 cursor-pointer text-sm">🗑️</button>
+                      <div>
+                        <h3 className="text-xl lg:text-2xl font-bold text-golden">Community Gallery</h3>
+                        <div className="flex items-center gap-3 mt-1">
+                          <span className="text-golden-light text-sm">
+                            {galleryPhotos.length} {galleryPhotos.length === 1 ? 'photo' : 'photos'} uploaded
+                          </span>
+                          {galleryPhotos.length > 0 && (
+                            <span className="px-2 py-1 bg-golden/20 text-golden text-xs rounded-full font-medium">
+                              Active
+                            </span>
+                          )}
                         </div>
                       </div>
                     </div>
-                  ))}
+                    
+                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                      {/* Enhanced Refresh Button */}
+                      <button
+                        onClick={handleGalleryRefresh}
+                        disabled={galleryLoading}
+                        className="group flex items-center justify-center gap-3 px-4 py-3 bg-golden/20 border border-golden/40 rounded-xl text-golden hover:bg-golden/30 hover:border-golden transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105"
+                        title={`Refresh gallery to see latest changes. Last updated: ${formatGalleryLastRefresh()}`}
+                      >
+                        <span className={`text-lg ${galleryLoading ? 'animate-spin' : 'group-hover:rotate-180 transition-transform duration-500'}`}>
+                          🔄
+                        </span>
+                        <div className="text-left">
+                          <div className="text-sm font-medium">Refresh</div>
+                          <div className="text-xs text-golden/70">{formatGalleryLastRefresh()}</div>
+                        </div>
+                      </button>
+                      
+                      {/* Enhanced Upload Button */}
+                      <button
+                        onClick={() => {
+                          setEditingItem(null)
+                          setShowGalleryModal(true)
+                        }}
+                        className="group flex items-center justify-center gap-3 bg-gradient-to-r from-golden to-amber-500 text-red-950 px-6 py-3 rounded-xl font-semibold hover:from-amber-500 hover:to-golden transition-all duration-300 hover:scale-105 shadow-lg"
+                      >
+                        <span className="text-lg group-hover:scale-110 transition-transform duration-200">📤</span>
+                        <span>Upload Photos</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Gallery Content with Loading Overlay */}
+                <div className="relative">
+                  {galleryLoading && (
+                    <div className="absolute inset-0 bg-black/50 backdrop-blur-sm z-20 flex items-center justify-center rounded-xl">
+                      <div className="bg-gradient-to-br from-red-950/95 to-amber-900/95 backdrop-blur-sm border border-golden/40 rounded-xl p-6 text-center shadow-2xl">
+                        <div className="text-golden text-2xl mb-3 animate-spin">🔄</div>
+                        <p className="text-golden font-medium">Refreshing gallery...</p>
+                        <p className="text-golden-light text-sm mt-1">Please wait</p>
+                      </div>
+                    </div>
+                  )}
+                  
+                  {/* Enhanced Gallery Grid */}
+                  <div className="bg-gradient-to-br from-red-950/80 to-amber-900/60 backdrop-blur-xl rounded-xl border border-golden/20 shadow-lg overflow-hidden">
+                    {galleryPhotos.length === 0 ? (
+                      <div className="p-12 text-center">
+                        <div className="max-w-md mx-auto">
+                          <div className="w-24 h-24 mx-auto mb-6 bg-golden/10 rounded-full flex items-center justify-center">
+                            <span className="text-4xl">📸</span>
+                          </div>
+                          <h4 className="text-xl font-semibold text-golden mb-3">No Photos Yet</h4>
+                          <p className="text-golden-light mb-6 text-sm leading-relaxed">
+                            Share your community moments by uploading photos to the gallery. 
+                            Members will be able to view and enjoy these memories.
+                          </p>
+                          <button
+                            onClick={() => {
+                              setEditingItem(null)
+                              setShowGalleryModal(true)
+                            }}
+                            className="inline-flex items-center gap-3 bg-gradient-to-r from-golden to-amber-500 text-red-950 px-6 py-3 rounded-xl font-semibold hover:from-amber-500 hover:to-golden transition-all duration-300 hover:scale-105 shadow-lg"
+                          >
+                            <span className="text-lg">📤</span>
+                            Upload First Photo
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="p-6">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                          {galleryPhotos.map((photo) => (
+                            <div 
+                              key={photo._id || photo.id} 
+                              className="group bg-gradient-to-br from-red-900/40 to-amber-900/40 backdrop-blur-sm rounded-xl overflow-hidden border border-golden/20 hover:border-golden/40 transition-all duration-300 hover:scale-[1.02] hover:shadow-xl"
+                            >
+                              {/* Photo Container */}
+                              <div className="relative aspect-square overflow-hidden bg-red-800/20">
+                                {photo.url ? (
+                                  <img 
+                                    src={photo.url} 
+                                    alt={photo.title || 'Gallery photo'}
+                                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                                    onError={(e) => {
+                                      e.target.style.display = 'none';
+                                      e.target.nextSibling.style.display = 'flex';
+                                    }}
+                                  />
+                                ) : null}
+                                <div 
+                                  className="w-full h-full flex items-center justify-center text-6xl text-golden/40" 
+                                  style={{display: photo.url ? 'none' : 'flex'}}
+                                >
+                                  📸
+                                </div>
+                                
+                                {/* Hover Overlay */}
+                                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                                  <div className="flex gap-2">
+                                    <button
+                                      onClick={() => {
+                                        setEditingItem(photo)
+                                        setShowGalleryModal(true)
+                                      }}
+                                      className="p-2 bg-golden/90 text-red-950 rounded-lg hover:bg-golden transition-colors duration-200 font-semibold"
+                                      title="Edit Photo"
+                                    >
+                                      ✏️
+                                    </button>
+                                    <button
+                                      onClick={() => handleDeleteGalleryPhoto(photo._id || photo.id)}
+                                      className="p-2 bg-red-600/90 text-white rounded-lg hover:bg-red-500 transition-colors duration-200 font-semibold"
+                                      title="Delete Photo"
+                                    >
+                                      🗑️
+                                    </button>
+                                  </div>
+                                </div>
+                              </div>
+                              
+                              {/* Photo Info */}
+                              <div className="p-4">
+                                <h5 className="text-golden font-semibold text-sm mb-1 truncate" title={photo.title || 'Untitled'}>
+                                  {photo.title || 'Untitled'}
+                                </h5>
+                                <div className="flex items-center justify-between text-xs">
+                                  <span className="text-golden-light capitalize">
+                                    {PhotoUploadService.mapCategoryToFrontend(photo.category) || 'General'}
+                                  </span>
+                                  <span className="text-golden-light/60">
+                                    {photo.createdAt ? new Date(photo.createdAt).toLocaleDateString() : 'Unknown'}
+                                  </span>
+                                </div>
+                                
+                                {/* Photo Stats */}
+                                <div className="flex items-center gap-4 mt-3 pt-3 border-t border-golden/10">
+                                  <div className="flex items-center gap-1 text-xs text-golden-light">
+                                    <span>👁️</span>
+                                    <span>{photo.views || 0}</span>
+                                  </div>
+                                  <div className="flex items-center gap-1 text-xs text-golden-light">
+                                    <span>💾</span>
+                                    <span>{photo.size ? `${(photo.size / 1024 / 1024).toFixed(1)}MB` : '0MB'}</span>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             )}
 
-            {/* Awards Management Tab */}
-            {activeTab === 'awards' && (
-              <div className="space-y-6">
-                <div className="flex justify-between items-center">
-                  <h3 className="text-xl font-bold text-golden">Community Awards</h3>
-                  <button
-                    onClick={() => setShowAwardModal(true)}
-                    className="bg-gradient-to-r from-yellow-600 to-yellow-500 text-red-900 px-4 py-2 rounded-lg font-semibold hover:from-yellow-500 hover:to-yellow-400 transition-all duration-300 cursor-pointer"
-                  >
-                    + Create Award
-                  </button>
-                </div>
-                
-                <div className="grid md:grid-cols-2 gap-4">
-                  {awards.map((award) => (
-                    <div key={award.id} className="bg-gradient-to-br from-red-900/80 to-amber-900/80 backdrop-blur-sm rounded-lg p-4 border border-yellow-500/30">
-                      <div className="flex justify-between items-start">
-                        <div className="flex-1">
-                          <div className="flex items-center space-x-2 mb-2">
-                            <span className="text-2xl">{award.icon}</span>
-                            <h4 className="text-golden font-semibold">{award.title}</h4>
-                          </div>
-                          <p className="text-golden-light text-sm">🏆 {award.category}</p>
-                          <p className="text-golden-light text-sm">👤 {award.recipient}</p>
-                          <p className="text-golden-light text-sm">📅 {award.year}</p>
-                          <p className="text-golden-light/80 text-xs mt-2 line-clamp-2">{award.description}</p>
-                        </div>
-                        <div className="flex space-x-2">
-                          <button
-                            onClick={() => {setEditingItem(award); setShowAwardModal(true);}}
-                            className="text-yellow-400 hover:text-yellow-300 cursor-pointer"
-                          >
-                            ✏️
-                          </button>
-                          <button className="text-red-400 hover:text-red-300 cursor-pointer">🗑️</button>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
+            {/* Awards tab removed */}
 
             {/* Compact Settings Tab */}
             {activeTab === 'settings' && (
@@ -1110,9 +1543,8 @@ const AdminDashboard = () => {
             setShowGalleryModal(false)
             setEditingItem(null)
           }}
-          onSave={(photoData) => {
-            // Handle save logic
-            console.log('Saving photo:', photoData)
+          onSave={async (photoData) => {
+            await handleSaveGalleryPhoto(photoData)
             setShowGalleryModal(false)
             setEditingItem(null)
           }}
@@ -1649,17 +2081,17 @@ const EventModal = ({ event, onClose, onSave }) => {
 // Gallery Modal Component
 const GalleryModal = ({ photo, onClose, onSave }) => {
   const [title, setTitle] = useState(photo?.title || '')
-  const [category, setCategory] = useState(photo?.category || 'Festivals')
-  const [date, setDate] = useState(photo?.date || new Date().toISOString().split('T')[0])
+  const [category, setCategory] = useState(photo?.category ? PhotoUploadService.mapCategoryToFrontend(photo.category) : 'Festivals')
+  const [description, setDescription] = useState(photo?.description || '')
   const [imageFile, setImageFile] = useState(null)
 
   const handleSubmit = (e) => {
     e.preventDefault()
     onSave({
-      id: photo?.id || Date.now(),
+      id: photo?._id || photo?.id || Date.now(),
       title,
       category,
-      date,
+      description,
       imageFile
     })
   }
@@ -1692,32 +2124,32 @@ const GalleryModal = ({ photo, onClose, onSave }) => {
             />
           </div>
           
-          <div className="grid md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-golden text-sm font-semibold mb-2">Category</label>
-              <select
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-                className="w-full bg-red-900/40 border border-golden/30 rounded-lg px-4 py-3 text-golden-light focus:border-golden focus:outline-none"
-                required
-              >
-                <option value="Festivals">Festivals</option>
-                <option value="Community Events">Community Events</option>
-                <option value="Volunteers">Volunteers</option>
-                <option value="Behind the Scenes">Behind the Scenes</option>
-              </select>
-            </div>
-            
-            <div>
-              <label className="block text-golden text-sm font-semibold mb-2">Date</label>
-              <input
-                type="date"
-                value={date}
-                onChange={(e) => setDate(e.target.value)}
-                className="w-full bg-red-900/40 border border-golden/30 rounded-lg px-4 py-3 text-golden-light focus:border-golden focus:outline-none"
-                required
-              />
-            </div>
+          <div>
+            <label className="block text-golden text-sm font-semibold mb-2">Category</label>
+            <select
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              className="w-full bg-red-900/40 border border-golden/30 rounded-lg px-4 py-3 text-golden-light focus:border-golden focus:outline-none"
+              required
+            >
+              <option value="Festivals">Festivals</option>
+              <option value="Community Events">Community Events</option>
+              <option value="Volunteers">Volunteers</option>
+              <option value="Behind the Scenes">Behind the Scenes</option>
+              <option value="Cultural Activities">Cultural Activities</option>
+              <option value="Worship">Worship</option>
+            </select>
+          </div>
+          
+          <div>
+            <label className="block text-golden text-sm font-semibold mb-2">Description (Optional)</label>
+            <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              className="w-full bg-red-900/40 border border-golden/30 rounded-lg px-4 py-3 text-golden-light placeholder-golden/50 focus:border-golden focus:outline-none"
+              placeholder="Enter photo description..."
+              rows="3"
+            />
           </div>
           
           <div>
@@ -1729,6 +2161,11 @@ const GalleryModal = ({ photo, onClose, onSave }) => {
               className="w-full bg-red-900/40 border border-golden/30 rounded-lg px-4 py-3 text-golden-light file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-golden/20 file:text-golden hover:file:bg-golden/30 focus:border-golden focus:outline-none"
               required={!photo}
             />
+            {photo && (
+              <div className="mt-2 text-golden-light text-sm">
+                Leave empty to keep current photo, select new file to replace
+              </div>
+            )}
           </div>
           
           <div className="flex space-x-4 pt-4">
