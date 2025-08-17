@@ -29,7 +29,7 @@ const VirtualDarshanPage = () => {
   // Configuration for live streaming
   const liveStreamConfig = {
     // Replace with your actual YouTube channel ID
-    youtubeChannelId: 'UCl7q1eR1E98WGxeb9tHGyVg', // Example: 'UCxxxxxxxxxxxxxxxxxxxxxxx'
+    youtubeChannelId: '------------------', // Example: 'UCxxxxxxxxxxxxxxxxxxxxxxx'
     manualLiveStatus: false, // Set to true for testing
   };
 
