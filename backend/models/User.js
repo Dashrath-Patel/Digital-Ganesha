@@ -50,13 +50,6 @@ const userSchema = new mongoose.Schema({
     }
   },
   
-  // Social Login IDs
-  googleId: {
-    type: String,
-    unique: true,
-    sparse: true // Allow multiple null values
-  },
-  
   phone: {
     type: String,
     trim: true,
