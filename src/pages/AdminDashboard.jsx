@@ -6,6 +6,8 @@ import { EventService } from '../services/api/EventService'
 import PhotoUploadService from '../services/PhotoUploadService'
 import { useToast } from '../contexts/ToastContext'
 import Header from '../components/Header'
+import TwoFactorAuthManager from '../components/TwoFactorAuthManager'
+import UserProfileUpdate from '../components/UserProfileUpdate'
 
 const AdminDashboard = () => {
   const { user } = useAuth()
@@ -19,7 +21,6 @@ const AdminDashboard = () => {
   const [stats, setStats] = useState({})
   const [showModal, setShowModal] = useState(false)
   const [selectedUser, setSelectedUser] = useState(null)
-  const [mandals, setMandals] = useState([])
   const [activeTab, setActiveTab] = useState('users')
   const [messages, setMessages] = useState([])
   const [events, setEvents] = useState([])
@@ -32,12 +33,12 @@ const AdminDashboard = () => {
   const [galleryLastRefresh, setGalleryLastRefresh] = useState(Date.now())
   const [galleryLoading, setGalleryLoading] = useState(false)
   const [currentTime, setCurrentTime] = useState(Date.now())
+  const [show2FASection, setShow2FASection] = useState(false)
   // Removed: showAwardModal state (Awards feature removed)
 
   useEffect(() => {
     fetchUsers()
     fetchStats()
-    fetchMandals()
     fetchMessages()
     fetchEvents()
     fetchGalleryPhotos()
@@ -95,15 +96,6 @@ const AdminDashboard = () => {
     } catch (err) {
       console.error('Failed to fetch events:', err)
       setEvents([])
-    }
-  }
-
-  const fetchMandals = async () => {
-    try {
-      // Assuming we have an API to fetch mandals
-      setMandals([])
-    } catch (err) {
-      console.error('Failed to fetch mandals:', err)
     }
   }
 
@@ -367,9 +359,9 @@ const AdminDashboard = () => {
     }
   }
 
-  const handleCommitteeAssignment = async (userId, committeeRole, mandalId) => {
+  const handleCommitteeAssignment = async (userId, committeeRole, notes) => {
     try {
-      await adminAPI.assignToCommittee(userId, committeeRole, mandalId)
+      await adminAPI.assignToCommittee(userId, committeeRole, notes)
       fetchUsers()
       setShowModal(false)
       setSelectedUser(null)
@@ -466,6 +458,7 @@ const AdminDashboard = () => {
                     <option value="messages">📢 Messages</option>
                     <option value="events">📅 Events</option>
                     <option value="gallery">📸 Gallery</option>
+                    <option value="settings">⚙️ Settings</option>
                   </select>
                 </div>
                 
@@ -476,6 +469,7 @@ const AdminDashboard = () => {
                     { id: 'messages', label: 'Messages', icon: '📢', count: messages.length },
                     { id: 'events', label: 'Events', icon: '📅', count: events.length },
                     { id: 'gallery', label: 'Gallery', icon: '📸', count: galleryPhotos.length },
+                    { id: 'settings', label: 'Settings', icon: '⚙️' },
                   ].map((tab) => (
                     <button
                       key={tab.id}
@@ -702,8 +696,8 @@ const AdminDashboard = () => {
                                     <div className="text-golden font-medium">
                                       {user.committeeRole?.replace('_', ' ').toUpperCase()}
                                     </div>
-                                    {user.mandal && (
-                                      <div className="text-golden-light text-sm">{user.mandal.name}</div>
+                                    {user.isCommitteeMember && (
+                                      <div className="text-golden-light text-sm font-medium">Committee Member</div>
                                     )}
                                   </div>
                                 ) : (
@@ -1349,56 +1343,114 @@ const AdminDashboard = () => {
 
             {/* Awards tab removed */}
 
-            {/* Compact Settings Tab */}
+            {/* Enhanced Settings Tab */}
             {activeTab === 'settings' && (
-              <div className="space-y-4">
-                <div className="bg-gradient-to-br from-red-900/80 to-amber-900/80 backdrop-blur-sm rounded-lg p-6 border border-yellow-500/30 text-center">
-                  <div className="text-4xl mb-2">⚙️</div>
-                  <h3 className="text-lg font-bold text-golden mb-1">System Settings</h3>
-                  <p className="text-golden-light text-sm">Configure system preferences</p>
+              <div className="space-y-6">
+                {/* Settings Header */}
+                <div className="bg-gradient-to-br from-red-900/90 to-amber-900/90 backdrop-blur-sm rounded-xl p-8 border border-yellow-500/40 shadow-xl">
+                  <div className="flex items-center justify-center mb-4">
+                    <div className="p-4 bg-yellow-500/20 rounded-full border-2 border-yellow-500/30">
+                      <div className="text-5xl">⚙️</div>
+                    </div>
+                  </div>
+                  <h3 className="text-2xl font-bold text-golden text-center mb-2">System Settings</h3>
+                  <p className="text-golden-light text-center max-w-md mx-auto">
+                    Configure your admin account settings and security preferences
+                  </p>
                 </div>
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  <div className="bg-gradient-to-br from-red-900/80 to-amber-900/80 backdrop-blur-sm rounded-lg p-4 border border-yellow-500/30">
-                    <h4 className="text-sm font-semibold text-golden mb-2 flex items-center">
-                      🔒 Security
-                    </h4>
-                    <p className="text-golden-light text-xs mb-3">Authentication & access controls</p>
-                    <button className="bg-yellow-600/20 hover:bg-yellow-500/30 text-yellow-300 px-3 py-1 rounded text-xs">
-                      Configure
-                    </button>
+                <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+                  {/* Security Settings Card */}
+                  <div className="bg-gradient-to-br from-red-900/80 to-amber-900/80 backdrop-blur-sm rounded-xl p-6 border border-yellow-500/30 shadow-lg hover:shadow-xl transition-all duration-300">
+                    <div className="flex items-start space-x-4">
+                      <div className="p-3 bg-red-500/20 rounded-lg border border-red-500/30 flex-shrink-0">
+                        <div className="text-2xl">🔐</div>
+                      </div>
+                      <div className="flex-1">
+                        <h4 className="text-lg font-semibold text-golden mb-2">Security & Authentication</h4>
+                        <p className="text-golden-light text-sm mb-4">
+                          Manage your account security settings and two-factor authentication
+                        </p>
+                        
+                        {/* 2FA Status Indicator */}
+                        <div className="flex items-center space-x-2 mb-4">
+                          <div className="flex items-center space-x-2 px-3 py-1 rounded-full bg-green-500/20 border border-green-500/30">
+                            <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                            <span className="text-green-400 text-xs font-medium">2FA Enabled</span>
+                          </div>
+                        </div>
+                        
+                        <button 
+                          onClick={() => setShow2FASection(!show2FASection)}
+                          className="w-full bg-gradient-to-r from-yellow-600/80 to-yellow-500/80 hover:from-yellow-500 hover:to-yellow-400 text-red-900 px-4 py-3 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg flex items-center justify-center space-x-2"
+                        >
+                          <span>{show2FASection ? '🔒 Hide 2FA Settings' : '🛡️ Manage 2FA'}</span>
+                        </button>
+                      </div>
+                    </div>
                   </div>
                   
-                  <div className="bg-gradient-to-br from-red-900/80 to-amber-900/80 backdrop-blur-sm rounded-lg p-4 border border-yellow-500/30">
-                    <h4 className="text-sm font-semibold text-golden mb-2 flex items-center">
-                      📧 Email
-                    </h4>
-                    <p className="text-golden-light text-xs mb-3">Notifications & templates</p>
-                    <button className="bg-yellow-600/20 hover:bg-yellow-500/30 text-yellow-300 px-3 py-1 rounded text-xs">
-                      Configure
-                    </button>
-                  </div>
-                  
-                  <div className="bg-gradient-to-br from-red-900/80 to-amber-900/80 backdrop-blur-sm rounded-lg p-4 border border-yellow-500/30">
-                    <h4 className="text-sm font-semibold text-golden mb-2 flex items-center">
-                      🏛️ Mandals
-                    </h4>
-                    <p className="text-golden-light text-xs mb-3">Manage organizations</p>
-                    <button className="bg-yellow-600/20 hover:bg-yellow-500/30 text-yellow-300 px-3 py-1 rounded text-xs">
-                      Manage
-                    </button>
-                  </div>
-                  
-                  <div className="bg-gradient-to-br from-red-900/80 to-amber-900/80 backdrop-blur-sm rounded-xl p-6 border border-yellow-500/30">
-                    <h4 className="text-lg font-semibold text-golden mb-4 flex items-center">
-                      🎨 Theme Settings
-                    </h4>
-                    <p className="text-golden-light mb-4">Customize the application appearance</p>
-                    <button className="bg-yellow-600/20 hover:bg-yellow-500/30 text-yellow-300 border border-yellow-500/30 px-4 py-2 rounded">
-                      Customize
-                    </button>
+                  <div className="bg-gradient-to-br from-red-900/80 to-amber-900/80 backdrop-blur-sm rounded-xl p-6 border border-yellow-500/30 shadow-lg hover:shadow-xl transition-all duration-300">
+                    <div className="flex items-start space-x-4">
+                      <div className="p-3 bg-blue-500/20 rounded-lg border border-blue-500/30 flex-shrink-0">
+                        <div className="text-2xl">👤</div>
+                      </div>
+                      <div className="flex-1">
+                        <h4 className="text-lg font-semibold text-golden mb-2">Profile Management</h4>
+                        <p className="text-golden-light text-sm mb-4">
+                          Update your personal information, password, and contact details
+                        </p>
+                        
+                        {/* User Info Display */}
+                        <div className="bg-red-800/30 rounded-lg p-3 mb-4 border border-yellow-500/20">
+                          <div className="flex items-center space-x-3">
+                            <div className="w-10 h-10 bg-gradient-to-br from-yellow-600 to-yellow-500 rounded-full flex items-center justify-center text-red-900 font-bold">
+                              {user?.firstName?.charAt(0)?.toUpperCase()}{user?.lastName?.charAt(0)?.toUpperCase()}
+                            </div>
+                            <div>
+                              <div className="text-golden font-medium">{user?.firstName} {user?.lastName}</div>
+                              <div className="text-golden-light text-sm">{user?.email}</div>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <div className="text-golden-light text-xs opacity-80">
+                          Configure password, email, and name settings below
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
+
+                {/* Profile Update Section */}
+                <div className="bg-gradient-to-br from-red-900/80 to-amber-900/80 backdrop-blur-sm rounded-xl p-6 border border-yellow-500/30 shadow-lg">
+                  <div className="flex items-center space-x-3 mb-6">
+                    <div className="p-2 bg-yellow-500/20 rounded-lg border border-yellow-500/30">
+                      <div className="text-xl">✏️</div>
+                    </div>
+                    <div>
+                      <h4 className="text-lg font-semibold text-golden">Account Settings</h4>
+                      <p className="text-golden-light text-sm">Update your account information and preferences</p>
+                    </div>
+                  </div>
+                  <UserProfileUpdate />
+                </div>
+                
+                {/* Two-Factor Authentication Management */}
+                {show2FASection && (
+                  <div className="bg-gradient-to-br from-red-900/80 to-amber-900/80 backdrop-blur-sm rounded-xl p-6 border border-yellow-500/30 shadow-lg">
+                    <div className="flex items-center space-x-3 mb-6">
+                      <div className="p-2 bg-green-500/20 rounded-lg border border-green-500/30">
+                        <div className="text-xl">🔐</div>
+                      </div>
+                      <div>
+                        <h4 className="text-lg font-semibold text-golden">Two-Factor Authentication</h4>
+                        <p className="text-golden-light text-sm">Enhanced security for your admin account</p>
+                      </div>
+                    </div>
+                    <TwoFactorAuthManager />
+                  </div>
+                )}
               </div>
             )}
           </div>
@@ -1409,7 +1461,6 @@ const AdminDashboard = () => {
       {showModal && selectedUser && (
         <UserEditModal
           user={selectedUser}
-          mandals={mandals}
           onClose={() => {
             setShowModal(false)
             setSelectedUser(null)
@@ -1491,10 +1542,10 @@ const AdminDashboard = () => {
 }
 
 // Enhanced User Edit Modal Component
-const UserEditModal = ({ user, mandals, onClose, onRoleChange, onCommitteeAssignment, onRemoveFromCommittee }) => {
+const UserEditModal = ({ user, onClose, onRoleChange, onCommitteeAssignment, onRemoveFromCommittee }) => {
   const [selectedRole, setSelectedRole] = useState(user.role)
   const [selectedCommitteeRole, setSelectedCommitteeRole] = useState(user.committeeRole || '')
-  const [selectedMandal, setSelectedMandal] = useState(user.mandal?._id || '')
+  const [additionalNotes, setAdditionalNotes] = useState('')
   const [isCommitteeMember, setIsCommitteeMember] = useState(user.isCommitteeMember || false)
 
   const handleSubmit = (e) => {
@@ -1507,7 +1558,7 @@ const UserEditModal = ({ user, mandals, onClose, onRoleChange, onCommitteeAssign
     
     // Handle committee assignment
     if (isCommitteeMember && selectedCommitteeRole) {
-      onCommitteeAssignment(user._id, selectedCommitteeRole, selectedMandal)
+      onCommitteeAssignment(user._id, selectedCommitteeRole, additionalNotes)
     } else if (!isCommitteeMember && user.isCommitteeMember) {
       onRemoveFromCommittee(user._id)
     }
@@ -1589,7 +1640,7 @@ const UserEditModal = ({ user, mandals, onClose, onRoleChange, onCommitteeAssign
                         setIsCommitteeMember(e.target.checked)
                         if (!e.target.checked) {
                           setSelectedCommitteeRole('')
-                          setSelectedMandal('')
+                          setAdditionalNotes('')
                         }
                       }}
                       className="w-5 h-5 text-yellow-600 border-yellow-500/30 rounded focus:ring-yellow-500"
@@ -1622,19 +1673,14 @@ const UserEditModal = ({ user, mandals, onClose, onRoleChange, onCommitteeAssign
                       </div>
 
                       <div>
-                        <label className="block text-golden font-medium mb-2">Mandal Assignment (Optional)</label>
-                        <select
-                          value={selectedMandal}
-                          onChange={(e) => setSelectedMandal(e.target.value)}
-                          className="w-full px-4 py-3 bg-red-950/50 border border-yellow-500/30 rounded-lg focus:ring-2 focus:ring-yellow-500 text-golden"
-                        >
-                          <option value="">No specific mandal</option>
-                          {mandals.map((mandal) => (
-                            <option key={mandal._id} value={mandal._id}>
-                              {mandal.name}
-                            </option>
-                          ))}
-                        </select>
+                        <label className="block text-golden font-medium mb-2">Additional Details (Optional)</label>
+                        <textarea
+                          value={additionalNotes}
+                          onChange={(e) => setAdditionalNotes(e.target.value)}
+                          placeholder="Add any additional notes or details for this committee member..."
+                          className="w-full px-4 py-3 bg-red-950/50 border border-yellow-500/30 rounded-lg focus:ring-2 focus:ring-yellow-500 text-golden placeholder-golden-light/50 resize-none"
+                          rows={3}
+                        />
                       </div>
                     </div>
                   )}
