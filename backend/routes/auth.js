@@ -7,6 +7,7 @@ import { body, validationResult } from 'express-validator'
 import rateLimit from 'express-rate-limit'
 import { sendEmail } from '../utils/email.js'
 import { authenticateToken } from '../middleware/auth.js'
+import TwoFactorAuthService from '../services/TwoFactorAuthService.js'
 
 const router = express.Router()
 
@@ -190,10 +191,80 @@ router.post('/login', loginLimiter, loginValidation, async (req, res) => {
       })
     }
 
-    const { email, password, rememberMe = false } = req.body
+    const { email, password, twoFactorToken, isBackupCode = false, rememberMe = false } = req.body
 
     // Find user and check password
     const user = await User.findByCredentials(email, password)
+
+    // Check if 2FA is required for this user (admin only)
+    const requires2FA = TwoFactorAuthService.is2FARequired(user)
+
+    if (requires2FA) {
+      // 2FA is required, check if token is provided
+      if (!twoFactorToken) {
+        return res.status(200).json({
+          success: false,
+          requires2FA: true,
+          message: '2FA verification required',
+          data: {
+            userId: user._id,
+            email: user.email,
+            requires2FA: true
+          }
+        })
+      }
+
+      // Verify 2FA token
+      let is2FAValid = false
+
+      if (isBackupCode) {
+        // Verify backup code - need to get user with backup codes
+        const userWithBackupCodes = await User.findById(user._id).select('+twoFactorAuth.backupCodes')
+        const cleanedCode = TwoFactorAuthService.cleanBackupCode(twoFactorToken)
+        const verificationResult = TwoFactorAuthService.verifyBackupCode(
+          cleanedCode, 
+          userWithBackupCodes.twoFactorAuth.backupCodes
+        )
+
+        if (verificationResult.isValid) {
+          // Mark backup code as used
+          userWithBackupCodes.twoFactorAuth.backupCodes[verificationResult.codeIndex].used = true
+          userWithBackupCodes.twoFactorAuth.backupCodes[verificationResult.codeIndex].usedAt = new Date()
+          userWithBackupCodes.twoFactorAuth.lastUsed = new Date()
+          await userWithBackupCodes.save()
+          is2FAValid = true
+        }
+      } else {
+        // Verify TOTP token
+        if (twoFactorToken.length !== 6) {
+          return res.status(400).json({
+            success: false,
+            message: 'Please provide a valid 6-digit 2FA token'
+          })
+        }
+
+        // Get the secret for verification
+        const userWithSecret = await User.findById(user._id).select('+twoFactorAuth.secret')
+        is2FAValid = TwoFactorAuthService.verifyToken(twoFactorToken, userWithSecret.twoFactorAuth.secret)
+        
+        if (is2FAValid) {
+          userWithSecret.twoFactorAuth.lastUsed = new Date()
+          await userWithSecret.save()
+        }
+      }
+
+      if (!is2FAValid) {
+        return res.status(400).json({
+          success: false,
+          message: 'Invalid 2FA token or backup code',
+          requires2FA: true
+        })
+      }
+    }
+
+    // Update last login
+    user.lastLogin = new Date()
+    await user.save()
 
     // Generate tokens
     const { accessToken, refreshToken } = generateTokens(user._id)
@@ -208,6 +279,7 @@ router.post('/login', loginLimiter, loginValidation, async (req, res) => {
     delete userResponse.refreshTokens
     delete userResponse.passwordResetToken
     delete userResponse.passwordResetExpires
+    delete userResponse.twoFactorAuth
 
     res.json({
       success: true,
@@ -217,7 +289,8 @@ router.post('/login', loginLimiter, loginValidation, async (req, res) => {
         tokens: {
           accessToken,
           refreshToken
-        }
+        },
+        twoFactorVerified: requires2FA
       }
     })
 
