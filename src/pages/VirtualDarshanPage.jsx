@@ -86,6 +86,17 @@ const VirtualDarshanPage = () => {
     }
   };
 
+  // Function to handle section changes with scroll to top
+  const handleSectionChange = (sectionId) => {
+    setActiveSection(sectionId);
+    // Scroll to top of the content area smoothly
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: 'smooth'
+    });
+  };
+
   const renderSection = () => {
     switch (activeSection) {
       case 'temple-tour':
@@ -322,7 +333,7 @@ const VirtualDarshanPage = () => {
               ].map((tab) => (
                 <button
                   key={tab.id}
-                  onClick={() => setActiveSection(tab.id)}
+                  onClick={() => handleSectionChange(tab.id)}
                   className={`flex items-center justify-center space-x-2 py-3 px-4 rounded-xl font-semibold transition-all duration-300 ${
                     activeSection === tab.id
                       ? 'bg-golden text-red-900 shadow-lg'
