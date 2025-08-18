@@ -41,6 +41,11 @@ dotenv.config()
 const app = express()
 const httpServer = createServer(app)
 
+// Trust proxy for Render deployment
+if (process.env.NODE_ENV === 'production') {
+  app.set('trust proxy', 1)
+}
+
 // Initialize Socket.IO
 const io = new Server(httpServer, {
   cors: {
@@ -168,6 +173,22 @@ app.get('/health', (req, res) => {
     timestamp: new Date().toISOString(),
     environment: process.env.NODE_ENV,
     version: '1.0.0'
+  })
+})
+
+// Root endpoint
+app.get('/', (req, res) => {
+  res.status(200).json({
+    message: 'Digital Ganesha API Server',
+    status: 'active',
+    version: '1.0.0',
+    environment: process.env.NODE_ENV,
+    timestamp: new Date().toISOString(),
+    endpoints: {
+      health: '/health',
+      api_docs: '/api/docs',
+      api_base: '/api'
+    }
   })
 })
 
