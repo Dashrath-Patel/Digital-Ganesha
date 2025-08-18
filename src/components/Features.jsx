@@ -7,8 +7,8 @@ const Features = () => {
   const features = [
     {
       icon: "🗺️",
-      title: "Smart Mandal Locator",
-      description: "Find nearby Ganesh mandals with real-time updates, crowd density, and navigation support.",
+      title: "Mandal Locator",
+      description: "Find our mandal in real-time with google map navigation support.",
       color: "from-blue-500 to-cyan-500",
       path: "/mandal-locator"
     },
