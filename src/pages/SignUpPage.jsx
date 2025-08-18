@@ -363,7 +363,7 @@ const SignUpPage = () => {
               {/* Sacred Mantra */}
               <div className="text-center mb-8">
                 <h1 className="text-4xl font-bold mb-4">गणपति बप्पा मोरया</h1>
-                <p className="text-xl mb-2">Welcome to Digital Ganesha</p>
+                <p className="text-xl mb-2">Welcome to KTYA Platform</p>
                 <p className="text-white/80 text-lg">श्री गणेशाय नमः</p>
               </div>
 

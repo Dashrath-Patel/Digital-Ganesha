@@ -18,7 +18,7 @@ const DevelopersPage = () => {
       Qualification: "Graduate",
       specialization: "Python, React.js, Node.js",
       description: "Passionate about creating innovative web solutions with a focus on user experience and scalable architecture. Proposed the development of KTYA platform.",
-      skills: ["React.js", "Node.js", "MongoDB", "Express.js", "JavaScript", "Python"],
+      skills: ["React.js", "MongoDB", "Express.js", "JavaScript", "Python"],
       social: {
         github: "https://github.com/RabindraMishra-AIDS",
         linkedin: "https://www.linkedin.com/in/rabindra-mishra-18481427b/"
