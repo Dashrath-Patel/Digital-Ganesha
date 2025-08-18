@@ -50,24 +50,47 @@ export const authAPI = {
   },
 
   // Login user
-  login: async (email, password) => {
+  login: async (email, password, twoFactorToken = null, isBackupCode = false) => {
+    const body = { email, password }
+    
+    // Add 2FA parameters if provided
+    if (twoFactorToken) {
+      body.twoFactorToken = twoFactorToken
+      body.isBackupCode = isBackupCode
+    }
+    
     const response = await fetch(`${API_BASE_URL}/auth/login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ email, password })
+      body: JSON.stringify(body)
     })
     
-    const data = await handleResponse(response)
+    const data = await response.json()
+    
+    // Handle 2FA required response (success=false, requires2FA=true)
+    if (!response.ok || data.requires2FA) {
+      if (data.requires2FA) {
+        // This is a special case - not an error, but requires 2FA
+        return {
+          requires2FA: true,
+          userId: data.data?.userId,
+          email: data.data?.email,
+          message: data.message
+        }
+      } else {
+        throw new Error(data.message || 'Login failed')
+      }
+    }
     
     // Store tokens in localStorage
-    if (data.data.tokens) {
+    if (data.data && data.data.tokens) {
       localStorage.setItem('accessToken', data.data.tokens.accessToken)
       localStorage.setItem('refreshToken', data.data.tokens.refreshToken)
     }
     
-    return data.data.user
+    return data.data && data.data.user ? data.data.user : data
   },
 
   // Logout user
@@ -397,6 +420,43 @@ window.fetch = async (...args) => {
   return response
 }
 
+// Generic API client
+const api = {
+  get: async (endpoint) => {
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+      method: 'GET',
+      headers: getAuthHeaders()
+    })
+    return handleResponse(response)
+  },
+
+  post: async (endpoint, data = null) => {
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: data ? JSON.stringify(data) : null
+    })
+    return handleResponse(response)
+  },
+
+  put: async (endpoint, data = null) => {
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+      method: 'PUT',
+      headers: getAuthHeaders(),
+      body: data ? JSON.stringify(data) : null
+    })
+    return handleResponse(response)
+  },
+
+  delete: async (endpoint) => {
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders()
+    })
+    return handleResponse(response)
+  }
+}
+
 export default {
   auth: authAPI,
   users: usersAPI,
@@ -405,3 +465,6 @@ export default {
   media: mediaAPI,
   notifications: notificationsAPI
 }
+
+// Export generic api client separately
+export { api }
