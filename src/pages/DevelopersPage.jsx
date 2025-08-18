@@ -17,7 +17,7 @@ const DevelopersPage = () => {
       course: "B.Tech - AI&DS",
       Qualification: "Graduate",
       specialization: "Python, React.js, Node.js",
-      description: "Passionate about creating innovative web solutions with a focus on user experience and scalable architecture. Led the development of Digital Ganesha platform.",
+      description: "Passionate about creating innovative web solutions with a focus on user experience and scalable architecture. Proposed the development of KTYA platform.",
       skills: ["React.js", "Node.js", "MongoDB", "Express.js", "JavaScript", "Python"],
       social: {
         github: "https://github.com/RabindraMishra-AIDS",
@@ -49,7 +49,7 @@ const DevelopersPage = () => {
       course: "B.Tech - AI&DS",
       Qualification: "Graduate",
       specialization: "Frontend Development, UI/UX Design",
-      description: "Creative frontend developer with an eye for design. Crafted the beautiful and intuitive user interface that brings Digital Ganesha to life.",
+      description: "Creative frontend developer with an eye for design. Crafted the beautiful and intuitive user interface.",
       skills: ["React.js", "CSS3", "JavaScript", "Figma"],
       social: {
         github: "https://github.com/Ayp47098",
