@@ -66,6 +66,29 @@ const VirtualDarshanPage = () => {
     return () => clearInterval(interval);
   }, []);
 
+
+
+  const handleOfferingSelect = (offering) => {
+    setOfferings(prev => [...prev, { ...offering, timestamp: new Date() }]);
+    // Here you would integrate with payment gateway for paid offerings
+    if (offering.price !== 'Free') {
+      alert(`Offering ${offering.name} selected. Redirecting to payment...`);
+    } else {
+      alert(`${offering.name} offered successfully! 🙏`);
+    }
+  };
+
+  // Function to handle section changes with scroll to top
+  const handleSectionChange = (sectionId) => {
+    setActiveSection(sectionId);
+    // Scroll to top of the content area smoothly
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: 'smooth'
+    });
+  };
+
   const renderSection = () => {
     switch (activeSection) {
       case 'temple-tour':
@@ -256,8 +279,13 @@ const VirtualDarshanPage = () => {
               ].map((tab) => (
                 <button
                   key={tab.id}
+
                   onClick={() => setActiveSection(tab.id)}
                   className={`flex flex-col sm:flex-row items-center justify-center space-y-1 sm:space-y-0 sm:space-x-2 py-2 sm:py-3 px-2 sm:px-4 rounded-lg sm:rounded-xl font-semibold transition-all duration-300 text-xs sm:text-sm md:text-base ${
+
+                  onClick={() => handleSectionChange(tab.id)}
+                  className={`flex items-center justify-center space-x-2 py-3 px-4 rounded-xl font-semibold transition-all duration-300 ${
+
                     activeSection === tab.id
                       ? 'bg-golden text-red-900 shadow-lg'
                       : 'text-golden hover:bg-red-800/40'

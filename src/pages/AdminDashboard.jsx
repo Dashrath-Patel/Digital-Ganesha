@@ -199,6 +199,17 @@ const AdminDashboard = () => {
     }
   }
 
+  // Function to handle tab changes with scroll to top
+  const handleTabChange = (tabId) => {
+    setActiveTab(tabId);
+    // Scroll to top of the page smoothly
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: 'smooth'
+    });
+  };
+
   const handleToggleMessageStatus = async (messageId) => {
     try {
       await MessageService.toggleMessageStatus(messageId)
@@ -473,7 +484,7 @@ const AdminDashboard = () => {
                   ].map((tab) => (
                     <button
                       key={tab.id}
-                      onClick={() => setActiveTab(tab.id)}
+                      onClick={() => handleTabChange(tab.id)}
                       className={`relative flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-300 hover:scale-105 min-w-[100px] justify-center ${
                         activeTab === tab.id
                           ? 'bg-gradient-to-r from-golden to-amber-500 text-red-950 shadow-md border border-golden/60'
@@ -802,11 +813,12 @@ const AdminDashboard = () => {
             {/* Messages Management Tab */}
             {activeTab === 'messages' && (
               <div className="space-y-6">
-                <div className="flex justify-between items-center">
+                {/* Mobile-responsive header */}
+                <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
                   <h3 className="text-xl font-bold text-golden">Admin Messages</h3>
                   <button
                     onClick={() => setShowMessageModal(true)}
-                    className="bg-gradient-to-r from-yellow-600 to-yellow-500 text-red-900 px-4 py-2 rounded-lg font-semibold hover:from-yellow-500 hover:to-yellow-400 transition-all duration-300 cursor-pointer"
+                    className="bg-gradient-to-r from-yellow-600 to-yellow-500 text-red-900 px-4 py-2 rounded-lg font-semibold hover:from-yellow-500 hover:to-yellow-400 transition-all duration-300 cursor-pointer w-full sm:w-auto"
                   >
                     + Create Message
                   </button>
@@ -816,151 +828,156 @@ const AdminDashboard = () => {
                   {messages.map((message) => (
                     <div 
                       key={message._id || message.id} 
-                      className="group bg-gradient-to-r from-red-950/80 to-amber-950/80 backdrop-blur-lg rounded-xl p-4 border border-golden/20 hover:border-golden/40 transition-all duration-300 shadow-lg hover:shadow-xl"
+                      className="group bg-gradient-to-r from-red-950/80 to-amber-950/80 backdrop-blur-lg rounded-xl p-3 sm:p-4 border border-golden/20 hover:border-golden/40 transition-all duration-300 shadow-lg hover:shadow-xl"
                     >
-                      <div className="flex items-center justify-between">
-                        {/* Left Content */}
-                        <div className="flex-1 min-w-0">
-                          {/* Title with Tags */}
-                          <div className="flex items-center space-x-3 mb-2">
-                            <div className={`w-2 h-2 rounded-full flex-shrink-0 ${
-                              message.isActive ? 'bg-green-400 animate-pulse' : 'bg-red-400'
-                            }`}></div>
-                            <h4 className="text-lg font-semibold text-golden truncate">
-                              {message.title}
-                            </h4>
-                            
-                            {/* Author Tag */}
-                            <span className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-blue-500/20 text-blue-300 border border-blue-500/30 flex-shrink-0">
-                              <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                              </svg>
-                              {message.author}
-                            </span>
-                            
-                            {/* Category Tag */}
-                            {message.category && (
-                              <span className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-purple-500/20 text-purple-300 border border-purple-500/30 flex-shrink-0">
-                                <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
-                                </svg>
-                                {message.category}
-                              </span>
-                            )}
-
-                            {/* Status Tag */}
-                            <span className={`inline-flex items-center px-2 py-1 rounded-md text-xs font-medium flex-shrink-0 ${
-                              message.isActive 
-                                ? 'bg-green-500/20 text-green-400 border border-green-500/30' 
-                                : 'bg-red-500/20 text-red-400 border border-red-500/30'
-                            }`}>
-                              {message.isActive ? 'Active' : 'Inactive'}
-                            </span>
-                            
-                            {/* Priority Tag */}
-                            {message.priority && (
-                              <span className={`inline-flex items-center px-2 py-1 rounded-md text-xs font-medium flex-shrink-0 ${
-                                message.priority === 'urgent' ? 'bg-red-500/20 text-red-400 border border-red-500/30' :
-                                message.priority === 'high' ? 'bg-orange-500/20 text-orange-400 border border-orange-500/30' :
-                                message.priority === 'medium' ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30' :
-                                'bg-gray-500/20 text-gray-400 border border-gray-500/30'
-                              }`}>
-                                {message.priority.toUpperCase()}
-                              </span>
-                            )}
-                          </div>
-
-                          {/* Content and Meta */}
-                          <div className="flex items-center justify-between">
-                            <div className="flex-1 min-w-0">
-                              <p className="text-golden-light/80 text-sm truncate pr-4">
-                                {message.content}
-                              </p>
-                              <div className="flex items-center space-x-4 mt-1 text-xs text-golden-light/60">
-                                <span className="flex items-center space-x-1">
-                                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                  </svg>
-                                  <span>{new Date(message.date).toLocaleDateString('en-US', { 
-                                    month: 'short', 
-                                    day: 'numeric' 
-                                  })}</span>
-                                </span>
-                                {message.expiryDate && (
-                                  <span className="flex items-center space-x-1">
-                                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                    </svg>
-                                    <span>Expires {new Date(message.expiryDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
-                                  </span>
-                                )}
-                              </div>
+                      {/* Mobile-responsive layout */}
+                      <div className="flex flex-col space-y-3">
+                        {/* Top section - Status and Title */}
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center space-x-2 mb-2">
+                              <div className={`w-2 h-2 rounded-full flex-shrink-0 ${
+                                message.isActive ? 'bg-green-400 animate-pulse' : 'bg-red-400'
+                              }`}></div>
+                              <h4 className="text-base sm:text-lg font-semibold text-golden truncate">
+                                {message.title}
+                              </h4>
                             </div>
+                          </div>
+                          
+                          {/* Action Buttons - Always visible on mobile */}
+                          <div className="flex items-center space-x-1 sm:space-x-2 ml-2">
+                            <button
+                              onClick={() => {setEditingItem(message); setShowMessageModal(true);}}
+                              className="flex items-center justify-center w-8 h-8 sm:w-8 sm:h-8 bg-blue-500/30 hover:bg-blue-500/50 border border-blue-400/60 rounded-lg text-blue-300 hover:text-blue-200 transition-all duration-200"
+                              title="Edit Message"
+                            >
+                              <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                              </svg>
+                            </button>
+                            
+                            <button
+                              onClick={() => handleToggleMessageStatus(message._id || message.id)}
+                              className={`flex items-center justify-center w-8 h-8 sm:w-8 sm:h-8 border rounded-lg transition-all duration-200 ${
+                                message.isActive 
+                                  ? 'bg-orange-500/30 hover:bg-orange-500/50 border-orange-400/60 text-orange-300 hover:text-orange-200'
+                                  : 'bg-green-500/30 hover:bg-green-500/50 border-green-400/60 text-green-300 hover:text-green-200'
+                              }`}
+                              title={message.isActive ? 'Deactivate Message' : 'Activate Message'}
+                            >
+                              {message.isActive ? (
+                                <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                              ) : (
+                                <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h8m-5-8a3 3 0 11-6 0 3 3 0 016 0z" />
+                                </svg>
+                              )}
+                            </button>
+                            
+                            <button 
+                              onClick={() => handleDeleteMessage(message._id || message.id)}
+                              className="flex items-center justify-center w-8 h-8 sm:w-8 sm:h-8 bg-red-500/30 hover:bg-red-500/50 border border-red-400/60 rounded-lg text-red-300 hover:text-red-200 transition-all duration-200"
+                              title="Delete Message"
+                            >
+                              <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                              </svg>
+                            </button>
                           </div>
                         </div>
 
-                        {/* Action Buttons */}
-                        <div className="flex items-center space-x-2 ml-4">
-                          <button
-                            onClick={() => {setEditingItem(message); setShowMessageModal(true);}}
-                            className="flex items-center justify-center w-8 h-8 bg-blue-500/30 hover:bg-blue-500/50 border border-blue-400/60 rounded-lg text-blue-300 hover:text-blue-200 transition-all duration-200"
-                            title="Edit Message"
-                          >
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                        {/* Tags section - Mobile responsive wrap */}
+                        <div className="flex flex-wrap gap-2">
+                          {/* Author Tag */}
+                          <span className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-blue-500/20 text-blue-300 border border-blue-500/30">
+                            <svg className="w-3 h-3 mr-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                             </svg>
-                          </button>
+                            <span className="truncate max-w-20 sm:max-w-none">{message.author}</span>
+                          </span>
                           
-                          <button
-                            onClick={() => handleToggleMessageStatus(message._id || message.id)}
-                            className={`flex items-center justify-center w-8 h-8 border rounded-lg transition-all duration-200 ${
-                              message.isActive 
-                                ? 'bg-orange-500/30 hover:bg-orange-500/50 border-orange-400/60 text-orange-300 hover:text-orange-200'
-                                : 'bg-green-500/30 hover:bg-green-500/50 border-green-400/60 text-green-300 hover:text-green-200'
-                            }`}
-                            title={message.isActive ? 'Deactivate Message' : 'Activate Message'}
-                          >
-                            {message.isActive ? (
-                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          {/* Category Tag */}
+                          {message.category && (
+                            <span className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-purple-500/20 text-purple-300 border border-purple-500/30">
+                              <svg className="w-3 h-3 mr-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
                               </svg>
-                            ) : (
-                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h8m-5-8a3 3 0 11-6 0 3 3 0 016 0z" />
+                              <span className="truncate max-w-20 sm:max-w-none">{message.category}</span>
+                            </span>
+                          )}
+
+                          {/* Status Tag */}
+                          <span className={`inline-flex items-center px-2 py-1 rounded-md text-xs font-medium ${
+                            message.isActive 
+                              ? 'bg-green-500/20 text-green-400 border border-green-500/30' 
+                              : 'bg-red-500/20 text-red-400 border border-red-500/30'
+                          }`}>
+                            {message.isActive ? 'Active' : 'Inactive'}
+                          </span>
+                          
+                          {/* Priority Tag */}
+                          {message.priority && (
+                            <span className={`inline-flex items-center px-2 py-1 rounded-md text-xs font-medium ${
+                              message.priority === 'urgent' ? 'bg-red-500/20 text-red-400 border border-red-500/30' :
+                              message.priority === 'high' ? 'bg-orange-500/20 text-orange-400 border border-orange-500/30' :
+                              message.priority === 'medium' ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30' :
+                              'bg-gray-500/20 text-gray-400 border border-gray-500/30'
+                            }`}>
+                              {message.priority.toUpperCase()}
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Content section */}
+                        <div>
+                          <p className="text-golden-light/80 text-sm mb-2 line-clamp-2 sm:line-clamp-1">
+                            {message.content}
+                          </p>
+                          
+                          {/* Meta information */}
+                          <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-4 space-y-1 sm:space-y-0 text-xs text-golden-light/60">
+                            <span className="flex items-center space-x-1">
+                              <svg className="w-3 h-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                               </svg>
+                              <span>{new Date(message.date).toLocaleDateString('en-US', { 
+                                month: 'short', 
+                                day: 'numeric' 
+                              })}</span>
+                            </span>
+                            {message.expiryDate && (
+                              <span className="flex items-center space-x-1">
+                                <svg className="w-3 h-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                <span>Expires {new Date(message.expiryDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
+                              </span>
                             )}
-                          </button>
-                          
-                          <button 
-                            onClick={() => handleDeleteMessage(message._id || message.id)}
-                            className="flex items-center justify-center w-8 h-8 bg-red-500/30 hover:bg-red-500/50 border border-red-400/60 rounded-lg text-red-300 hover:text-red-200 transition-all duration-200"
-                            title="Delete Message"
-                          >
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                            </svg>
-                          </button>
+                          </div>
                         </div>
                       </div>
                     </div>
                   ))}
                   
                   {messages.length === 0 && (
-                    <div className="text-center py-12">
+                    <div className="text-center py-8 sm:py-12 px-4">
                       <div className="mb-4">
-                        <div className="w-16 h-16 mx-auto mb-3 bg-gradient-to-br from-golden/20 to-amber-500/20 rounded-full flex items-center justify-center">
-                          <svg className="w-8 h-8 text-golden/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-3 bg-gradient-to-br from-golden/20 to-amber-500/20 rounded-full flex items-center justify-center">
+                          <svg className="w-6 h-6 sm:w-8 sm:h-8 text-golden/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                           </svg>
                         </div>
                       </div>
-                      <h3 className="text-lg font-semibold text-golden mb-2">No Messages Yet</h3>
+                      <h3 className="text-base sm:text-lg font-semibold text-golden mb-2">No Messages Yet</h3>
                       <p className="text-golden-light/80 mb-4 text-sm max-w-md mx-auto">
                         Create your first community message to get started.
                       </p>
                       <button
                         onClick={() => setShowMessageModal(true)}
-                        className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-golden to-golden-light text-red-950 font-medium rounded-lg hover:from-golden-light hover:to-golden transition-all duration-300 text-sm"
+                        className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-golden to-golden-light text-red-950 font-medium rounded-lg hover:from-golden-light hover:to-golden transition-all duration-300 text-sm w-full sm:w-auto justify-center"
                       >
                         <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
@@ -1255,84 +1272,171 @@ const AdminDashboard = () => {
                       </div>
                     ) : (
                       <div className="p-6">
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                          {galleryPhotos.map((photo) => (
-                            <div 
-                              key={photo._id || photo.id} 
-                              className="group bg-gradient-to-br from-red-900/40 to-amber-900/40 backdrop-blur-sm rounded-xl overflow-hidden border border-golden/20 hover:border-golden/40 transition-all duration-300 hover:scale-[1.02] hover:shadow-xl"
-                            >
-                              {/* Photo Container */}
-                              <div className="relative aspect-square overflow-hidden bg-red-800/20">
-                                {photo.url ? (
-                                  <img 
-                                    src={photo.url} 
-                                    alt={photo.title || 'Gallery photo'}
-                                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                                    onError={(e) => {
-                                      e.target.style.display = 'none';
-                                      e.target.nextSibling.style.display = 'flex';
-                                    }}
-                                  />
-                                ) : null}
-                                <div 
-                                  className="w-full h-full flex items-center justify-center text-6xl text-golden/40" 
-                                  style={{display: photo.url ? 'none' : 'flex'}}
-                                >
-                                  📸
-                                </div>
-                                
-                                {/* Hover Overlay */}
-                                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                                  <div className="flex gap-2">
-                                    <button
-                                      onClick={() => {
-                                        setEditingItem(photo)
-                                        setShowGalleryModal(true)
+                        {/* Mobile Horizontal Scrolling - Only for mobile screens */}
+                        <div className="block sm:hidden">
+                          <div className="flex gap-4 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-4" 
+                               style={{scrollbarWidth: 'none', msOverflowStyle: 'none'}}>
+                            {galleryPhotos.map((photo) => (
+                              <div 
+                                key={photo._id || photo.id} 
+                                className="flex-none w-72 snap-center group bg-gradient-to-br from-red-900/40 to-amber-900/40 backdrop-blur-sm rounded-xl overflow-hidden border border-golden/20 hover:border-golden/40 transition-all duration-300 hover:scale-[1.02] hover:shadow-xl"
+                              >
+                                {/* Photo Container */}
+                                <div className="relative aspect-square overflow-hidden bg-red-800/20">
+                                  {photo.url ? (
+                                    <img 
+                                      src={photo.url} 
+                                      alt={photo.title || 'Gallery photo'}
+                                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                                      onError={(e) => {
+                                        e.target.style.display = 'none';
+                                        e.target.nextSibling.style.display = 'flex';
                                       }}
-                                      className="p-2 bg-golden/90 text-red-950 rounded-lg hover:bg-golden transition-colors duration-200 font-semibold"
-                                      title="Edit Photo"
-                                    >
-                                      ✏️
-                                    </button>
-                                    <button
-                                      onClick={() => handleDeleteGalleryPhoto(photo._id || photo.id)}
-                                      className="p-2 bg-red-600/90 text-white rounded-lg hover:bg-red-500 transition-colors duration-200 font-semibold"
-                                      title="Delete Photo"
-                                    >
-                                      🗑️
-                                    </button>
+                                    />
+                                  ) : null}
+                                  <div 
+                                    className="w-full h-full flex items-center justify-center text-6xl text-golden/40" 
+                                    style={{display: photo.url ? 'none' : 'flex'}}
+                                  >
+                                    📸
                                   </div>
-                                </div>
-                              </div>
-                              
-                              {/* Photo Info */}
-                              <div className="p-4">
-                                <h5 className="text-golden font-semibold text-sm mb-1 truncate" title={photo.title || 'Untitled'}>
-                                  {photo.title || 'Untitled'}
-                                </h5>
-                                <div className="flex items-center justify-between text-xs">
-                                  <span className="text-golden-light capitalize">
-                                    {PhotoUploadService.mapCategoryToFrontend(photo.category) || 'General'}
-                                  </span>
-                                  <span className="text-golden-light/60">
-                                    {photo.createdAt ? new Date(photo.createdAt).toLocaleDateString() : 'Unknown'}
-                                  </span>
+                                  
+                                  {/* Hover Overlay */}
+                                  <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                                    <div className="flex gap-2">
+                                      <button
+                                        onClick={() => {
+                                          setEditingItem(photo)
+                                          setShowGalleryModal(true)
+                                        }}
+                                        className="p-2 bg-golden/90 text-red-950 rounded-lg hover:bg-golden transition-colors duration-200 font-semibold"
+                                        title="Edit Photo"
+                                      >
+                                        ✏️
+                                      </button>
+                                      <button
+                                        onClick={() => handleDeleteGalleryPhoto(photo._id || photo.id)}
+                                        className="p-2 bg-red-600/90 text-white rounded-lg hover:bg-red-500 transition-colors duration-200 font-semibold"
+                                        title="Delete Photo"
+                                      >
+                                        🗑️
+                                      </button>
+                                    </div>
+                                  </div>
                                 </div>
                                 
-                                {/* Photo Stats */}
-                                <div className="flex items-center gap-4 mt-3 pt-3 border-t border-golden/10">
-                                  <div className="flex items-center gap-1 text-xs text-golden-light">
-                                    <span>👁️</span>
-                                    <span>{photo.views || 0}</span>
+                                {/* Photo Info */}
+                                <div className="p-4">
+                                  <h5 className="text-golden font-semibold text-sm mb-1 truncate" title={photo.title || 'Untitled'}>
+                                    {photo.title || 'Untitled'}
+                                  </h5>
+                                  <div className="flex items-center justify-between text-xs">
+                                    <span className="text-golden-light capitalize">
+                                      {PhotoUploadService.mapCategoryToFrontend(photo.category) || 'General'}
+                                    </span>
+                                    <span className="text-golden-light/60">
+                                      {photo.createdAt ? new Date(photo.createdAt).toLocaleDateString() : 'Unknown'}
+                                    </span>
                                   </div>
-                                  <div className="flex items-center gap-1 text-xs text-golden-light">
-                                    <span>💾</span>
-                                    <span>{photo.size ? `${(photo.size / 1024 / 1024).toFixed(1)}MB` : '0MB'}</span>
+                                  
+                                  {/* Photo Stats */}
+                                  <div className="flex items-center gap-4 mt-3 pt-3 border-t border-golden/10">
+                                    <div className="flex items-center gap-1 text-xs text-golden-light">
+                                      <span>👁️</span>
+                                      <span>{photo.views || 0}</span>
+                                    </div>
+                                    <div className="flex items-center gap-1 text-xs text-golden-light">
+                                      <span>💾</span>
+                                      <span>{photo.size ? `${(photo.size / 1024 / 1024).toFixed(1)}MB` : '0MB'}</span>
+                                    </div>
                                   </div>
                                 </div>
                               </div>
-                            </div>
-                          ))}
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Desktop Grid Layout - Hidden on mobile */}
+                        <div className="hidden sm:block">
+                          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                            {galleryPhotos.map((photo) => (
+                              <div 
+                                key={photo._id || photo.id} 
+                                className="group bg-gradient-to-br from-red-900/40 to-amber-900/40 backdrop-blur-sm rounded-xl overflow-hidden border border-golden/20 hover:border-golden/40 transition-all duration-300 hover:scale-[1.02] hover:shadow-xl"
+                              >
+                                {/* Photo Container */}
+                                <div className="relative aspect-square overflow-hidden bg-red-800/20">
+                                  {photo.url ? (
+                                    <img 
+                                      src={photo.url} 
+                                      alt={photo.title || 'Gallery photo'}
+                                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                                      onError={(e) => {
+                                        e.target.style.display = 'none';
+                                        e.target.nextSibling.style.display = 'flex';
+                                      }}
+                                    />
+                                  ) : null}
+                                  <div 
+                                    className="w-full h-full flex items-center justify-center text-6xl text-golden/40" 
+                                    style={{display: photo.url ? 'none' : 'flex'}}
+                                  >
+                                    📸
+                                  </div>
+                                  
+                                  {/* Hover Overlay */}
+                                  <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                                    <div className="flex gap-2">
+                                      <button
+                                        onClick={() => {
+                                          setEditingItem(photo)
+                                          setShowGalleryModal(true)
+                                        }}
+                                        className="p-2 bg-golden/90 text-red-950 rounded-lg hover:bg-golden transition-colors duration-200 font-semibold"
+                                        title="Edit Photo"
+                                      >
+                                        ✏️
+                                      </button>
+                                      <button
+                                        onClick={() => handleDeleteGalleryPhoto(photo._id || photo.id)}
+                                        className="p-2 bg-red-600/90 text-white rounded-lg hover:bg-red-500 transition-colors duration-200 font-semibold"
+                                        title="Delete Photo"
+                                      >
+                                        🗑️
+                                      </button>
+                                    </div>
+                                  </div>
+                                </div>
+                                
+                                {/* Photo Info */}
+                                <div className="p-4">
+                                  <h5 className="text-golden font-semibold text-sm mb-1 truncate" title={photo.title || 'Untitled'}>
+                                    {photo.title || 'Untitled'}
+                                  </h5>
+                                  <div className="flex items-center justify-between text-xs">
+                                    <span className="text-golden-light capitalize">
+                                      {PhotoUploadService.mapCategoryToFrontend(photo.category) || 'General'}
+                                    </span>
+                                    <span className="text-golden-light/60">
+                                      {photo.createdAt ? new Date(photo.createdAt).toLocaleDateString() : 'Unknown'}
+                                    </span>
+                                  </div>
+                                  
+                                  {/* Photo Stats */}
+                                  <div className="flex items-center gap-4 mt-3 pt-3 border-t border-golden/10">
+                                    <div className="flex items-center gap-1 text-xs text-golden-light">
+                                      <span>👁️</span>
+                                      <span>{photo.views || 0}</span>
+                                    </div>
+                                    <div className="flex items-center gap-1 text-xs text-golden-light">
+                                      <span>💾</span>
+                                      <span>{photo.size ? `${(photo.size / 1024 / 1024).toFixed(1)}MB` : '0MB'}</span>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
                         </div>
                       </div>
                     )}

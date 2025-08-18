@@ -75,6 +75,17 @@ const CommunityPage = () => {
     fetchEvents();
   }, []);
 
+  // Function to handle tab changes with scroll to top
+  const handleTabChange = (tabId) => {
+    setActiveTab(tabId);
+    // Scroll to top of the page smoothly
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: 'smooth'
+    });
+  };
+
   const tabs = [
     { id: 'message', name: "Admin's Message", icon: '📢' },
     { id: 'events', name: 'Upcoming Events', icon: '📅' },
@@ -326,8 +337,8 @@ const CommunityPage = () => {
               showFilters={true}
               showPagination={true}
               layout="grid"
-              columns={4} // More columns for smaller cards
-              itemsPerPage={12} // Increase items per page since cards are smaller
+              columns={3} // Better mobile responsiveness: 1 on mobile, 2 on sm, 3 on lg+
+              itemsPerPage={9} // Adjusted for better mobile experience
               allowDelete={false}
               showUploader={false}
               autoRefresh={true}
@@ -401,7 +412,7 @@ const CommunityPage = () => {
               {tabs.map((tab, index) => (
                 <button
                   key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
+                  onClick={() => handleTabChange(tab.id)}
                   className={`group relative flex items-center justify-center space-x-2 sm:space-x-3 px-4 sm:px-6 lg:px-8 py-3 sm:py-4 rounded-xl sm:rounded-2xl font-semibold transition-all duration-500 transform hover:scale-105 hover:-translate-y-1 cursor-pointer w-full sm:w-auto ${
                     activeTab === tab.id
                       ? 'bg-gradient-to-r from-golden to-golden-light text-red-950 shadow-2xl shadow-golden/50 border-2 border-golden/60'

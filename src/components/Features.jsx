@@ -44,7 +44,7 @@ const Features = () => {
   return (
     <section 
       id="features" 
-      className="py-20 relative"
+      className="py-16 sm:py-20 relative"
       style={{ backgroundColor: 'rgb(21, 21, 21)' }}
       aria-labelledby="features-heading"
     >
@@ -65,53 +65,53 @@ const Features = () => {
       <div className="absolute top-1/2 left-5 text-3xl opacity-20 animate-pulse delay-1000">🔱</div>
       <div className="absolute top-1/2 right-5 text-3xl opacity-20 animate-bounce delay-1200">🐚</div>
       
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}
-        <div className="text-center mb-16">
+        <div className="text-center mb-12 sm:mb-16">
           <h2 
             id="features-heading"
-            className="text-4xl md:text-5xl font-bold text-golden mb-6"
+            className="text-3xl sm:text-4xl md:text-5xl font-bold text-golden mb-4 sm:mb-6"
           >
             <span className="bg-gradient-to-r from-golden via-golden-light to-golden-dark bg-clip-text text-transparent">
               Our Digital Features
             </span>
           </h2>
-          <p className="text-xl text-golden-light max-w-3xl mx-auto leading-relaxed">
+          <p className="text-lg sm:text-xl text-golden-light max-w-3xl mx-auto leading-relaxed px-2">
             Experience the future of digital devotion with our cutting-edge platform designed for modern devotees
           </p>
         </div>
 
         {/* Features Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto" role="list">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 max-w-4xl mx-auto" role="list">
           {features.map((feature, index) => (
             <div
               key={index}
               role="listitem"
-              className={`group relative bg-white/20 dark:bg-gray-800/20 backdrop-blur-xl rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-3 border border-white/30 dark:border-gray-700/30 hover:border-white/50 dark:hover:border-gray-600/50 hover:bg-white/30 dark:hover:bg-gray-800/30 ${
+              className={`group relative bg-white/20 dark:bg-gray-800/20 backdrop-blur-xl rounded-2xl sm:rounded-3xl p-6 sm:p-8 shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-3 border border-white/30 dark:border-gray-700/30 hover:border-white/50 dark:hover:border-gray-600/50 hover:bg-white/30 dark:hover:bg-gray-800/30 ${
                 feature.path ? 'cursor-pointer' : ''
               }`}
               onClick={() => handleFeatureClick(feature.path)}
             >
               {/* Icon */}
               <div 
-                className={`w-20 h-20 bg-gradient-to-r from-yellow-600 to-yellow-500 rounded-3xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500 shadow-2xl backdrop-blur-sm border border-yellow-500/30`}
+                className={`w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-r from-yellow-600 to-yellow-500 rounded-2xl sm:rounded-3xl flex items-center justify-center mb-4 sm:mb-6 group-hover:scale-110 transition-transform duration-500 shadow-2xl backdrop-blur-sm border border-yellow-500/30`}
                 aria-hidden="true"
               >
-                <span className="text-3xl filter drop-shadow-lg text-red-900">{feature.icon}</span>
+                <span className="text-2xl sm:text-3xl filter drop-shadow-lg text-red-900">{feature.icon}</span>
               </div>
 
               {/* Content */}
-              <h3 className="text-xl font-bold text-golden mb-4 group-hover:text-golden-light transition-colors duration-500 filter drop-shadow-sm">
+              <h3 className="text-lg sm:text-xl font-bold text-golden mb-3 sm:mb-4 group-hover:text-golden-light transition-colors duration-500 filter drop-shadow-sm">
                 {feature.title}
               </h3>
-              <p className="text-golden-light leading-relaxed filter drop-shadow-sm">
+              <p className="text-sm sm:text-base text-golden-light leading-relaxed filter drop-shadow-sm">
                 {feature.description}
               </p>
 
               {/* Learn More Link */}
-              <div className="mt-6">
+              <div className="mt-4 sm:mt-6">
                 <button 
-                  className="text-golden-dark font-semibold hover:text-golden-light transition-colors duration-300 group-hover:translate-x-2 transform inline-flex items-center filter drop-shadow-sm"
+                  className="text-sm sm:text-base text-golden-dark font-semibold hover:text-golden-light transition-colors duration-300 group-hover:translate-x-2 transform inline-flex items-center filter drop-shadow-sm"
                   aria-label={`Learn more about ${feature.title}`}
                   onClick={(e) => {
                     e.stopPropagation();
@@ -119,7 +119,7 @@ const Features = () => {
                   }}
                 >
                   {feature.path ? 'Explore Now' : 'Learn More'}
-                  <svg className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <svg className="w-3 h-3 sm:w-4 sm:h-4 ml-2 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
                 </button>

@@ -83,7 +83,7 @@ const Contact = () => {
   ]
 
   return (
-    <section id="contact" className="py-20 relative" style={{ backgroundColor: 'rgb(21, 21, 21)' }}>
+    <section id="contact" className="py-16 sm:py-20 relative" style={{ backgroundColor: 'rgb(21, 21, 21)' }}>
       {/* Enhanced Spiritual Background - Without Circles */}
       <div className="absolute inset-0" style={{ backgroundColor: 'rgba(160, 40, 40, 0.3)' }}>
         {/* Floating Petals */}
@@ -101,44 +101,55 @@ const Contact = () => {
       <div className="absolute top-1/2 left-5 text-3xl opacity-20 animate-pulse delay-1000">🔱</div>
       <div className="absolute top-1/2 right-5 text-3xl opacity-20 animate-bounce delay-1200">🐚</div>
       
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}
-        <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-golden mb-6">
+        <div className="text-center mb-12 sm:mb-16">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-golden mb-4 sm:mb-6">
             <span className="bg-gradient-to-r from-golden via-golden-light to-golden-dark bg-clip-text text-transparent">
               Get In Touch
             </span>
           </h2>
-          <p className="text-xl text-golden-light max-w-3xl mx-auto leading-relaxed">
+          <p className="text-lg sm:text-xl text-golden-light max-w-3xl mx-auto leading-relaxed px-2">
             Have questions, suggestions, or want to partner with us? We'd love to hear from you!
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12">
           {/* Contact Information */}
-          <div className="space-y-8">
+          <div className="space-y-6 sm:space-y-8">
             <div>
-              <h3 className="text-2xl font-bold text-golden mb-6">Let's Connect</h3>
-              <p className="text-lg text-golden-light leading-relaxed mb-8">
+              <h3 className="text-xl sm:text-2xl font-bold text-golden mb-4 sm:mb-6">Let's Connect</h3>
+              <p className="text-base sm:text-lg text-golden-light leading-relaxed mb-6 sm:mb-8">
                 Whether you're a devotee looking for help, a mandal organizer wanting to join our platform,
                 or an artisan seeking to showcase your work, we're here to assist you.
               </p>
             </div>
 
             {/* Contact Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
               {contactInfo.map((info, index) => (
                 <div
                   key={index}
+
                   className="bg-gradient-to-br from-red-900/80 to-amber-900/80 backdrop-blur-sm rounded-2xl p-6 hover:shadow-2xl transition-all duration-300 transform hover:scale-105 group border border-yellow-500/30 shadow-lg"
+
+                  href={info.action}
+                  className="block bg-gradient-to-br from-red-900/80 to-amber-900/80 backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-6 hover:shadow-2xl transition-all duration-300 transform hover:scale-105 group border border-yellow-500/30 shadow-lg"
+
                 >
-                  <div className="text-3xl mb-4 group-hover:animate-bounce">{info.icon}</div>
-                  <h4 className="text-lg font-bold text-golden mb-2 group-hover:text-golden-light transition-colors duration-300">
+                  <div className="text-2xl sm:text-3xl mb-3 sm:mb-4 group-hover:animate-bounce">{info.icon}</div>
+                  <h4 className="text-base sm:text-lg font-bold text-golden mb-2 group-hover:text-golden-light transition-colors duration-300">
                     {info.title}
                   </h4>
+
                   <p className="text-golden-light text-sm mb-3">{info.description}</p>
                   <p className="text-yellow-300 font-semibold">{info.contact}</p>
                 </div>
+
+                  <p className="text-golden-light text-xs sm:text-sm mb-2 sm:mb-3">{info.description}</p>
+                  <p className="text-yellow-300 font-semibold text-sm sm:text-base">{info.contact}</p>
+                </a>
+
               ))}
             </div>
 
@@ -197,13 +208,13 @@ const Contact = () => {
           </div>
 
           {/* Contact Form */}
-          <div className="bg-gradient-to-br from-red-900/80 to-amber-900/80 backdrop-blur-sm rounded-2xl p-8 shadow-2xl border border-yellow-500/30">
-            <h3 className="text-2xl font-bold text-golden mb-6">Send Us a Message</h3>
+          <div className="bg-gradient-to-br from-red-900/80 to-amber-900/80 backdrop-blur-sm rounded-xl sm:rounded-2xl p-6 sm:p-8 shadow-2xl border border-yellow-500/30">
+            <h3 className="text-xl sm:text-2xl font-bold text-golden mb-4 sm:mb-6">Send Us a Message</h3>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
               {/* Status Message */}
               {submitStatus.message && (
-                <div className={`p-4 rounded-lg border ${
+                <div className={`p-3 sm:p-4 rounded-lg border text-sm sm:text-base ${
                   submitStatus.type === 'success' 
                     ? 'bg-green-900/30 border-green-500/50 text-green-300' 
                     : 'bg-red-900/30 border-red-500/50 text-red-300'
@@ -212,7 +223,7 @@ const Contact = () => {
                 </div>
               )}
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                 <div>
                   <label htmlFor="name" className="block text-sm font-medium text-golden-light mb-2">
                     Full Name *
@@ -304,39 +315,6 @@ const Contact = () => {
             <div className="mt-6 text-center">
               <p className="text-golden-light text-sm">
                 We typically respond within 24 hours during business days
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* FAQ Section */}
-        <div className="mt-20">
-          <h3 className="text-3xl font-bold text-center text-golden mb-12">
-            Frequently Asked Questions
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="bg-gradient-to-br from-red-900/80 to-amber-900/80 backdrop-blur-sm rounded-xl p-6 border border-yellow-500/30 shadow-lg">
-              <h4 className="text-lg font-bold text-golden mb-3">How do I register to KTYA mandal?</h4>
-              <p className="text-golden-light">
-                You can register to our mandal by contacting any of our KTYA committe members.
-              </p>
-            </div>
-            <div className="bg-gradient-to-br from-red-900/80 to-amber-900/80 backdrop-blur-sm rounded-xl p-6 border border-yellow-500/30 shadow-lg">
-              <h4 className="text-lg font-bold text-golden mb-3">Is the platform free to use?</h4>
-              <p className="text-golden-light">
-                Yes! Our basic features are completely free for devotees. We also offer premium features for mandal organizers and businesses.
-              </p>
-            </div>
-            <div className="bg-gradient-to-br from-red-900/80 to-amber-900/80 backdrop-blur-sm rounded-xl p-6 border border-yellow-500/30 shadow-lg">
-              <h4 className="text-lg font-bold text-golden mb-3">Can I sell my Ganesha idols here?</h4>
-              <p className="text-golden-light">
-                Absolutely! We support local artisans and craftspeople. You can create a seller profile and showcase your beautiful handcrafted Ganesha idols to our community.
-              </p>
-            </div>
-            <div className="bg-gradient-to-br from-red-900/80 to-amber-900/80 backdrop-blur-sm rounded-xl p-6 border border-yellow-500/30 shadow-lg">
-              <h4 className="text-lg font-bold text-golden mb-3">How do virtual darshan sessions work?</h4>
-              <p className="text-golden-light">
-                Our virtual darshan feature uses 360° cameras and live streaming linked to our Instagram Channel. You can participate in real-time aarti and prayers from anywhere.
               </p>
             </div>
           </div>
