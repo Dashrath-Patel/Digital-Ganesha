@@ -130,6 +130,8 @@ app.use(cors({
       'http://localhost:3000',
       'http://127.0.0.1:5173',
       'http://127.0.0.1:3000',
+      'https://digital-ganesha.vercel.app',
+      'https://digital-ganesha-ln80lcszq-dashrath-patels-projects.vercel.app',
       process.env.FRONTEND_URL,
       process.env.CORS_ORIGIN
     ].filter(Boolean) // Remove undefined values
@@ -143,6 +145,13 @@ app.use(cors({
       return callback(null, true)
     }
     
+    // For production, allow all vercel.app domains for this project
+    if (process.env.NODE_ENV === 'production' && origin && 
+        (origin.includes('digital-ganesha') && origin.includes('vercel.app'))) {
+      return callback(null, true)
+    }
+    
+    console.log(`CORS blocked origin: ${origin}`) // Debug log
     callback(new Error('Not allowed by CORS'))
   },
   credentials: true,
