@@ -331,11 +331,11 @@ const GalleryViewer = ({
     <div className="space-y-6">
       {/* Search and Filters */}
       {showFilters && (
-        <div className="space-y-4">
+        <div className="space-y-4 px-4 sm:px-0">
           {/* Single line with search and basic filters */}
-          <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
+          <div className="flex flex-col gap-4">
             {/* Search Bar */}
-            <div className="relative w-full lg:max-w-md">
+            <div className="relative w-full">
               <input
                 type="text"
                 placeholder="Search by title or description..."
@@ -357,14 +357,14 @@ const GalleryViewer = ({
             </div>
 
             {/* Essential filters only */}
-            <div className="flex flex-wrap items-center gap-3">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-3">
               {/* Category Filter - Only essential categories */}
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-2 justify-center sm:justify-start">
                 {['All', 'Festivals', 'Community Events', 'Cultural Programs'].map((cat) => (
                   <button
                     key={cat}
                     onClick={() => setSelectedCategory(cat === 'All' ? '' : cat)}
-                    className={`px-3 py-2 rounded-full border transition-all duration-300 text-xs sm:text-sm font-medium ${
+                    className={`px-3 py-2 rounded-full border transition-all duration-300 text-xs sm:text-sm font-medium whitespace-nowrap ${
                       (cat === 'All' && !selectedCategory) || selectedCategory === cat
                         ? 'bg-golden text-red-900 border-golden shadow-lg'
                         : 'bg-transparent text-golden border-golden/30 hover:border-golden hover:bg-golden/10'
@@ -379,7 +379,7 @@ const GalleryViewer = ({
               <button
                 onClick={handleRefresh}
                 disabled={loading}
-                className="flex items-center gap-2 px-3 py-2 bg-golden/20 border border-golden/40 rounded-lg text-golden hover:bg-golden/30 transition-all duration-300 disabled:opacity-50"
+                className="flex items-center justify-center gap-2 px-3 py-2 bg-golden/20 border border-golden/40 rounded-lg text-golden hover:bg-golden/30 transition-all duration-300 disabled:opacity-50 mx-auto sm:mx-0"
                 title="Refresh gallery"
               >
                 <span className={`text-sm ${loading ? 'animate-spin' : ''}`}>🔄</span>
@@ -447,125 +447,205 @@ const GalleryViewer = ({
           </div>
         </div>
       ) : (
-        <div className={getGridClasses()}>
-          {media.map((item) => (
-            <div
-              key={item._id}
-              className={`group relative bg-gradient-to-br from-red-900/40 via-amber-900/30 to-yellow-900/40 backdrop-blur-md rounded-2xl overflow-hidden border border-golden/20 hover:border-golden/50 transition-all duration-300 hover:shadow-xl hover:shadow-golden/20 cursor-pointer hover:scale-105 ${
-                layout === 'masonry' ? 'break-inside-avoid mb-4' : ''
-              }`}
-              onClick={() => handleImageClick(item)}
-            >
-              {/* Media Preview */}
-              <div className={`relative overflow-hidden ${layout === 'list' ? 'aspect-video' : 'aspect-[5/4]'}`}>
-
-                {item.type === 'video' ? (
-                  <div className="relative w-full h-full bg-gradient-to-br from-purple-900/50 to-blue-900/50 flex items-center justify-center">
-                    <div className="text-4xl text-white/80 transition-transform duration-300 group-hover:scale-110">🎥</div>
-                    <div className="absolute top-3 right-3 bg-purple-500/80 text-white px-2 py-1 rounded-full text-xs font-semibold">
-                      VIDEO
-                    </div>
-                  </div>
-                ) : (
-                  <img
-                    src={getOptimizedImageUrl(item.url, 300, 225, 80)} // Smaller dimensions for better performance
-                    alt={item.title || 'Gallery image'}
-                    className="w-full h-full object-cover transition-all duration-300 group-hover:scale-105"
-                    loading="lazy"
-                    onError={(e) => {
-                      e.target.src = '/api/placeholder/300/225';
-                    }}
-                  />
-                )}
-                
-                {/* Always Visible Category Badge */}
-                {item.category && (
-                  <div className="absolute top-3 left-3 z-10">
-                    <div className="bg-gradient-to-r from-golden to-yellow-400 text-red-900 px-3 py-1.5 rounded-full text-xs font-bold shadow-lg border border-yellow-300/50 backdrop-blur-sm">
-                      {PhotoUploadService.mapCategoryToFrontend(item.category)}
-                    </div>
-                  </div>
-                )}
-
-                {/* Hover Overlay Content */}
-                <div className="absolute inset-0 flex flex-col justify-between p-4 opacity-0 group-hover:opacity-100 transition-all duration-300">
-                  {/* Top Row */}
-                  <div className="flex justify-between items-start">
-                    {/* Spacer for category badge */}
-                    <div></div>
+        <>
+          {/* Mobile Horizontal Scroll View */}
+          <div className="md:hidden">
+            <div className="flex gap-4 overflow-x-auto scrollbar-hide snap-x snap-mandatory pb-4 px-4">
+              {media.map((item) => (
+                <div
+                  key={`mobile-${item._id}`}
+                  className="group relative bg-gradient-to-br from-red-900/40 via-amber-900/30 to-yellow-900/40 backdrop-blur-md rounded-2xl overflow-hidden border border-golden/20 hover:border-golden/50 transition-all duration-300 hover:shadow-xl hover:shadow-golden/20 cursor-pointer hover:scale-105 flex-none w-72 snap-center"
+                  onClick={() => handleImageClick(item)}
+                >
+                  {/* Media Preview */}
+                  <div className="relative overflow-hidden aspect-[5/4]">
+                    {item.type === 'video' ? (
+                      <div className="relative w-full h-full bg-gradient-to-br from-purple-900/50 to-blue-900/50 flex items-center justify-center">
+                        <div className="text-4xl text-white/80 transition-transform duration-300 group-hover:scale-110">🎥</div>
+                        <div className="absolute top-3 right-3 bg-purple-500/80 text-white px-2 py-1 rounded-full text-xs font-semibold">
+                          VIDEO
+                        </div>
+                      </div>
+                    ) : (
+                      <img
+                        src={getOptimizedImageUrl(item.url, 300, 225, 80)}
+                        alt={item.title || 'Gallery image'}
+                        className="w-full h-full object-cover transition-all duration-300 group-hover:scale-105"
+                        loading="lazy"
+                        onError={(e) => {
+                          e.target.src = '/api/placeholder/300/225';
+                        }}
+                      />
+                    )}
                     
+                    {/* Category Badge */}
+                    {item.category && (
+                      <div className="absolute top-3 left-3 z-10">
+                        <div className="bg-gradient-to-r from-golden to-yellow-400 text-red-900 px-3 py-1.5 rounded-full text-xs font-bold shadow-lg border border-yellow-300/50 backdrop-blur-sm">
+                          {PhotoUploadService.mapCategoryToFrontend(item.category)}
+                        </div>
+                      </div>
+                    )}
+
                     {/* Delete Button */}
                     {allowDelete && (user?.role === 'admin' || user?._id === item.uploadedBy) && (
-                      <button
-                        onClick={(e) => handleDeleteMedia(item._id, e)}
-                        className="w-9 h-9 bg-red-500/80 hover:bg-red-500 text-white rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-lg backdrop-blur-sm"
-                        title="Delete media"
-                      >
-                        🗑️
-                      </button>
+                      <div className="absolute top-3 right-3 z-10">
+                        <button
+                          onClick={(e) => handleDeleteMedia(item._id, e)}
+                          className="bg-red-500/80 hover:bg-red-500 text-white p-2 rounded-full transition-colors duration-200 backdrop-blur-sm border border-red-400/50"
+                        >
+                          🗑️
+                        </button>
+                      </div>
                     )}
-                  </div>
 
-                  {/* Bottom Info */}
-                  <div className="bg-black/40 backdrop-blur-sm rounded-xl p-3 -m-4 mt-auto">
-                    <h4 className="text-white font-bold text-sm mb-1 truncate">
-                      {item.title || 'Untitled'}
-                    </h4>
-                    <div className="flex items-center justify-between text-xs text-white/80">
-                      <span className="flex items-center gap-1">
-                        {item.type === 'video' ? '🎥' : '📷'} 
-                        {item.type}
-                      </span>
-                      <span>📅 {formatDate(item.createdAt)}</span>
+                    {/* Hover Overlay Content */}
+                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col justify-end p-4">
+                      <div className="text-white">
+                        {item.title && (
+                          <h4 className="font-bold text-lg mb-2 line-clamp-2">{item.title}</h4>
+                        )}
+                        <div className="flex justify-between items-end text-sm">
+                          <div>
+                            <p className="text-golden-light text-xs">
+                              {formatDate(item.createdAt)}
+                            </p>
+                            {item.description && (
+                              <p className="text-white/80 text-xs mt-1 line-clamp-2">
+                                {item.description}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                    {item.description && (
-                      <p className="text-white/70 text-xs mt-2 line-clamp-2 leading-relaxed">
-                        {item.description}
-                      </p>
-                    )}
                   </div>
                 </div>
-              </div>
-
-              {/* Media Info (Always Visible) */}
-              <div className="p-3">
-                <h4 className="text-golden font-bold text-xs mb-1 truncate">
-                  {item.title || 'Untitled'}
-                </h4>
-                
-                {/* Category Tag - More Prominent */}
-                {item.category && (
-                  <div className="mb-2">
-                    <span className="bg-gradient-to-r from-golden via-yellow-400 to-amber-400 text-red-900 px-2 py-0.5 rounded-full text-xs font-bold shadow-md">
-                      📂 {PhotoUploadService.mapCategoryToFrontend(item.category)}
-                    </span>
-                  </div>
-                )}
-                
-                <div className="flex items-center justify-between text-xs text-golden-light mb-1">
-                  <span className="flex items-center gap-1">
-                    {item.type === 'video' ? '🎥' : '📷'} 
-                    {item.type}
-                  </span>
-                  <span>📅 {formatDate(item.createdAt)}</span>
-                </div>
-                {item.description && (
-                  <p className="text-golden-light/80 text-xs leading-relaxed line-clamp-1">
-                    {item.description}
-                  </p>
-                )}
-                <div className="flex items-center justify-between mt-2 text-xs text-golden-light/60">
-                  {item.fileSize && (
-                    <span>📦 {formatFileSize(item.fileSize)}</span>
-                  )}
-                  {item.uploadedBy && (
-                    <span>👤 {formatUserRole(item.uploadedBy)}</span>
-                  )}
-                </div>
-              </div>
+              ))}
             </div>
-          ))}
-        </div>
+            
+            {/* Swipe Instruction for Mobile */}
+            <div className="text-center mt-4 px-4">
+              <p className="text-golden-light text-sm flex items-center justify-center gap-2">
+                <span>👆 Swipe horizontally to view more images</span>
+              </p>
+            </div>
+          </div>
+
+          {/* Desktop Grid View */}
+          <div className={`hidden md:block`}>
+            <div className={getGridClasses()}>
+            {media.map((item) => (
+              <div
+                key={`desktop-${item._id}`}
+                className={`group relative bg-gradient-to-br from-red-900/40 via-amber-900/30 to-yellow-900/40 backdrop-blur-md rounded-2xl overflow-hidden border border-golden/20 hover:border-golden/50 transition-all duration-300 hover:shadow-xl hover:shadow-golden/20 cursor-pointer hover:scale-105 ${
+                  layout === 'masonry' ? 'break-inside-avoid mb-4' : ''
+                }`}
+                onClick={() => handleImageClick(item)}
+              >
+                {/* Media Preview */}
+                <div className={`relative overflow-hidden ${layout === 'list' ? 'aspect-video' : 'aspect-[5/4]'}`}>
+                  {item.type === 'video' ? (
+                    <div className="relative w-full h-full bg-gradient-to-br from-purple-900/50 to-blue-900/50 flex items-center justify-center">
+                      <div className="text-4xl text-white/80 transition-transform duration-300 group-hover:scale-110">🎥</div>
+                      <div className="absolute top-3 right-3 bg-purple-500/80 text-white px-2 py-1 rounded-full text-xs font-semibold">
+                        VIDEO
+                      </div>
+                    </div>
+                  ) : (
+                    <img
+                      src={getOptimizedImageUrl(item.url, 300, 225, 80)}
+                      alt={item.title || 'Gallery image'}
+                      className="w-full h-full object-cover transition-all duration-300 group-hover:scale-105"
+                      loading="lazy"
+                      onError={(e) => {
+                        e.target.src = '/api/placeholder/300/225';
+                      }}
+                    />
+                  )}
+                  
+                  {/* Always Visible Category Badge */}
+                  {item.category && (
+                    <div className="absolute top-3 left-3 z-10">
+                      <div className="bg-gradient-to-r from-golden to-yellow-400 text-red-900 px-3 py-1.5 rounded-full text-xs font-bold shadow-lg border border-yellow-300/50 backdrop-blur-sm">
+                        {PhotoUploadService.mapCategoryToFrontend(item.category)}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Hover Overlay Content */}
+                  <div className="absolute inset-0 flex flex-col justify-between p-4 opacity-0 group-hover:opacity-100 transition-all duration-300">
+                    {/* Top Row */}
+                    <div className="flex justify-between items-start">
+                      {/* Spacer for category badge */}
+                      <div></div>
+                      
+                      {/* Delete Button */}
+                      {allowDelete && (user?.role === 'admin' || user?._id === item.uploadedBy) && (
+                        <button
+                          onClick={(e) => handleDeleteMedia(item._id, e)}
+                          className="w-9 h-9 bg-red-500/80 hover:bg-red-500 text-white rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-lg backdrop-blur-sm"
+                          title="Delete media"
+                        >
+                          🗑️
+                        </button>
+                      )}
+                    </div>
+
+                    {/* Bottom Info */}
+                    <div className="bg-black/40 backdrop-blur-sm rounded-xl p-3 -m-4 mt-auto">
+                      <h4 className="text-white font-bold text-sm mb-1 truncate">
+                        {item.title || 'Untitled'}
+                      </h4>
+                      <div className="flex items-center justify-between text-xs text-white/80">
+                        <span className="flex items-center gap-1">
+                          {item.type === 'video' ? '🎥' : '📷'} 
+                          {item.type}
+                        </span>
+                        <span>📅 {formatDate(item.createdAt)}</span>
+                      </div>
+                      {item.description && (
+                        <p className="text-white/70 text-xs mt-2 line-clamp-2 leading-relaxed">
+                          {item.description}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Media Info (Always Visible) */}
+                <div className="p-3">
+                  <h4 className="text-golden font-bold text-xs mb-1 truncate">
+                    {item.title || 'Untitled'}
+                  </h4>
+                  
+                  {/* Category Tag - More Prominent */}
+                  {item.category && (
+                    <div className="mb-2">
+                      <span className="bg-gradient-to-r from-golden via-yellow-400 to-amber-400 text-red-900 px-2 py-0.5 rounded-full text-xs font-bold shadow-md">
+                        📂 {PhotoUploadService.mapCategoryToFrontend(item.category)}
+                      </span>
+                    </div>
+                  )}
+                  
+                  <div className="flex items-center justify-between text-xs text-golden-light mb-1">
+                    <span className="flex items-center gap-1">
+                      {item.type === 'video' ? '🎥' : '📷'} 
+                      {item.type}
+                    </span>
+                    <span>📅 {formatDate(item.createdAt)}</span>
+                  </div>
+                  {item.description && (
+                    <p className="text-golden-light/80 text-xs leading-relaxed line-clamp-1">
+                      {item.description}
+                    </p>
+                  )}
+                </div>
+              </div>
+            ))}
+            </div>
+          </div>
+        </>
       )}
 
       {/* Pagination */}

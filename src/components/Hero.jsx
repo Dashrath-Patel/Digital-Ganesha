@@ -103,7 +103,7 @@ const Hero = ({ firstLine, secondLine, isFirstLineAnimating, isSecondLineAnimati
   }, [currentSlide])
 
   return (
-    <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20 pb-8 px-4" style={{ backgroundColor: 'rgb(21, 21, 21)'  }}>
+    <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden pt-16 sm:pt-20 pb-6 sm:pb-8 px-3 sm:px-4" style={{ backgroundColor: 'rgb(21, 21, 21)'  }}>
       {/* Enhanced Spiritual Background - With Circles */}
       <div className="absolute inset-0" style={{ backgroundColor: 'rgba(160, 40, 40, 0.3)' }}>
         {/* Mandala Pattern Background */}
@@ -125,21 +125,21 @@ const Hero = ({ firstLine, secondLine, isFirstLineAnimating, isSecondLineAnimati
       </div>
 
       {/* Enhanced Floating Spiritual Elements */}
-      <div className="absolute top-20 left-5 text-6xl opacity-20 animate-pulse">🕉️</div>
-      <div className="absolute top-20 right-5 text-6xl opacity-20 animate-pulse">🕉️</div>
-      <div className="absolute bottom-10 left-10 text-4xl opacity-30 animate-pulse delay-700">📿</div>
-      <div className="absolute bottom-10 right-5 text-5xl opacity-25 animate-bounce delay-500">🌺</div>
-      <div className="absolute top-1/2 left-5 text-3xl opacity-20 animate-pulse delay-1000">🔱</div>
-      <div className="absolute top-1/2 right-5 text-3xl opacity-20 animate-bounce delay-1200">🐚</div>
+      <div className="absolute top-20 left-5 text-6xl opacity-5 animate-pulse">🕉️</div>
+      <div className="absolute top-20 right-5 text-6xl opacity-5 animate-pulse">🕉️</div>
+      <div className="absolute bottom-10 left-10 text-4xl opacity-8 animate-pulse delay-700">📿</div>
+      <div className="absolute bottom-10 right-5 text-5xl opacity-8 animate-bounce delay-500">🌺</div>
+      <div className="absolute top-1/2 left-5 text-3xl opacity-5 animate-pulse delay-1000">🔱</div>
+      <div className="absolute top-1/2 right-5 text-3xl opacity-5 animate-bounce delay-1200">🐚</div>
 
       <div className="relative z-10 max-w-7xl mx-auto text-center">
-        <div className="space-y-8">
+        <div className="space-y-6 sm:space-y-8">
           {/* Divine Header */}
-          <div className="space-y-6">
+          <div className="space-y-4 sm:space-y-6">
             <div className="relative mx-auto" style={{ width: 'fit-content' }}>
               <div 
                 ref={imageRef}
-                className="w-28 h-28 md:w-36 md:h-36 lg:w-40 lg:h-40 mx-auto mb-4 animate-image-reveal drop-shadow-lg p-2"
+                className="w-24 h-24 sm:w-28 sm:h-28 md:w-36 md:h-36 lg:w-40 lg:h-40 mx-auto mb-3 sm:mb-4 animate-image-reveal drop-shadow-lg p-2"
               >
                 {slides[currentSlide].image.includes('.') ? (
                   <img 
@@ -148,31 +148,31 @@ const Hero = ({ firstLine, secondLine, isFirstLineAnimating, isSecondLineAnimati
                     className="w-full h-full object-contain rounded-lg"
                   />
                 ) : (
-                  <div className="text-6xl md:text-7xl lg:text-8xl flex items-center justify-center h-full">
+                  <div className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl flex items-center justify-center h-full">
                     {slides[currentSlide].image}
                   </div>
                 )}
               </div>
-              <div className="absolute -top-2 -left-2 text-xl md:text-2xl animate-pulse">🪔</div>
-              <div className="absolute -top-2 -right-2 text-xl md:text-2xl animate-pulse delay-300">🪔</div>
+              <div className="absolute -top-2 -left-2 text-lg sm:text-xl md:text-2xl animate-pulse">🪔</div>
+              <div className="absolute -top-2 -right-2 text-lg sm:text-xl md:text-2xl animate-pulse delay-300">🪔</div>
             </div>
             
             <h1 
               ref={titleRef}
-              className="text-3xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-golden leading-tight animate-image-reveal px-4"
+              className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-golden leading-tight animate-image-reveal px-2 sm:px-4"
             >
               <span className="bg-gradient-to-r from-golden via-golden-light to-golden-dark bg-clip-text text-transparent drop-shadow-sm">
                 {slides[currentSlide].title}
               </span>
             </h1>
             
-            <p className="text-lg md:text-xl lg:text-2xl text-golden-light max-w-3xl mx-auto leading-relaxed px-4">
+            <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-golden-light max-w-3xl mx-auto leading-relaxed px-3 sm:px-4">
               {slides[currentSlide].subtitle}
             </p>
             
             {/* Animated Sanskrit Mantra - Same as Signup Page */}
-            <div className="bg-white/20 backdrop-blur-md rounded-2xl p-6 border border-golden/30 text-center min-h-[140px] flex flex-col justify-center max-w-2xl mx-auto shadow-2xl">
-              <div className="text-lg font-medium mb-2 leading-relaxed min-h-[60px] flex flex-col items-center justify-center space-y-1">
+            <div className="bg-white/20 backdrop-blur-md rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-golden/30 text-center min-h-[120px] sm:min-h-[140px] flex flex-col justify-center max-w-2xl mx-auto shadow-2xl">
+              <div className="text-sm sm:text-lg font-medium mb-2 leading-relaxed min-h-[50px] sm:min-h-[60px] flex flex-col items-center justify-center space-y-1">
                 {/* First Line */}
                 <div className="w-full flex justify-center">
                   {firstLine && (
@@ -183,7 +183,7 @@ const Hero = ({ firstLine, secondLine, isFirstLineAnimating, isSecondLineAnimati
                         animationFillMode: 'forwards'
                       }}
                     >
-                      <span className="mantra-glow whitespace-nowrap block" style={{ color: 'rgb(255, 215, 0)' }}>
+                      <span className="mantra-glow whitespace-nowrap block text-sm sm:text-base md:text-lg" style={{ color: 'rgb(255, 215, 0)' }}>
                         {firstLine}
                       </span>
                     </div>
@@ -200,7 +200,7 @@ const Hero = ({ firstLine, secondLine, isFirstLineAnimating, isSecondLineAnimati
                         animationFillMode: 'forwards'
                       }}
                     >
-                      <span className="mantra-glow whitespace-nowrap block" style={{ color: 'rgb(255, 215, 0)' }}>
+                      <span className="mantra-glow whitespace-nowrap block text-sm sm:text-base md:text-lg" style={{ color: 'rgb(255, 215, 0)' }}>
                         {secondLine}
                       </span>
                     </div>
@@ -208,7 +208,7 @@ const Hero = ({ firstLine, secondLine, isFirstLineAnimating, isSecondLineAnimati
                 </div>
               </div>
               {mantraTranslations && mantraTranslations[currentMantraIndex] && (
-                <p className="text-golden-light text-sm mt-2">
+                <p className="text-golden-light text-xs sm:text-sm mt-2">
                   {mantraTranslations[currentMantraIndex]?.meaning}
                 </p>
               )}
@@ -216,28 +216,23 @@ const Hero = ({ firstLine, secondLine, isFirstLineAnimating, isSecondLineAnimati
           </div>
 
           {/* Divine CTA Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 md:gap-6 justify-center items-center px-4">
-            <button className="bg-gradient-to-r from-yellow-600 via-yellow-500 to-amber-500 text-red-900 px-8 md:px-10 py-3 md:py-4 rounded-full text-base md:text-lg font-semibold hover:from-yellow-500 hover:via-yellow-400 hover:to-amber-400 transition-all duration-300 shadow-2xl hover:shadow-yellow-500/30 transform hover:scale-105 hover:-translate-y-1 flex items-center space-x-2">
-              <span>🎪</span>
-              <span>Sacred Festivals</span>
-              <span>🙏</span>
-            </button>
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 md:gap-6 justify-center items-center px-3 sm:px-4">
             <button 
               onClick={handleGalleryClick}
-              className="border-2 border-golden text-golden px-8 md:px-10 py-3 md:py-4 rounded-full text-base md:text-lg font-semibold hover:bg-golden hover:text-red-900 transition-all duration-300 transform hover:scale-105 flex items-center space-x-2"
+              className="w-full sm:w-auto bg-gradient-to-r from-yellow-600 via-yellow-500 to-amber-500 text-red-900 px-6 sm:px-8 md:px-10 py-3 md:py-4 rounded-full text-sm sm:text-base md:text-lg font-semibold hover:from-yellow-500 hover:via-yellow-400 hover:to-amber-400 transition-all duration-300 shadow-2xl hover:shadow-yellow-500/30 transform hover:scale-105 hover:-translate-y-1 flex items-center justify-center space-x-2"
             >
               <span>📿</span>
-              <span>Gallery</span>
+              <span>Explore Gallery</span>
               <span>🪔</span>
             </button>
           </div>
 
           {/* Enhanced Slide Indicators */}
-          <div className="flex justify-center space-x-3 mt-8 md:mt-12">
+          <div className="flex justify-center space-x-2 sm:space-x-3 mt-6 sm:mt-8 md:mt-12">
             {slides.map((_, index) => (
               <button
                 key={index}
-                className={`w-3 h-3 md:w-4 md:h-4 rounded-full transition-all duration-300 border-2 ${
+                className={`w-2.5 h-2.5 sm:w-3 sm:h-3 md:w-4 md:h-4 rounded-full transition-all duration-300 border-2 ${
                   index === currentSlide 
                     ? 'bg-golden border-golden-dark scale-125 shadow-lg' 
                     : 'bg-golden/30 border-golden/60 hover:bg-golden/50'
@@ -250,13 +245,13 @@ const Hero = ({ firstLine, secondLine, isFirstLineAnimating, isSecondLineAnimati
       </div>
 
       {/* Enhanced Floating Spiritual Elements */}
-      <div className="absolute top-20 left-5 text-6xl opacity-20 animate-pulse">🕉️</div>
-      <div className="absolute top-20 right-5 text-6xl opacity-20 animate-pulse">🕉️</div>
+      <div className="absolute top-20 left-5 text-6xl opacity-5 animate-pulse">🕉️</div>
+      <div className="absolute top-20 right-5 text-6xl opacity-5 animate-pulse">🕉️</div>
       {/* <div className="absolute top-32 right-10 text-5xl opacity-25 animate-bounce delay-300">🪔</div> */}
-      <div className="absolute bottom-10 left-10 text-4xl opacity-30 animate-pulse delay-700">📿</div>
-      <div className="absolute bottom-10 right-5 text-5xl opacity-25 animate-bounce delay-500">🌺</div>
-      <div className="absolute top-5/9 left-5 text-3xl opacity-20 animate-pulse delay-1000">🔱</div>
-      <div className="absolute top-5/9 right-5 text-3xl opacity-20 animate-bounce delay-1200">🐚</div>
+      <div className="absolute bottom-10 left-10 text-4xl opacity-8 animate-pulse delay-700">📿</div>
+      <div className="absolute bottom-10 right-5 text-5xl opacity-8 animate-bounce delay-500">🌺</div>
+      <div className="absolute top-5/9 left-5 text-3xl opacity-5 animate-pulse delay-1000">🔱</div>
+      <div className="absolute top-5/9 right-5 text-3xl opacity-5 animate-bounce delay-1200">🐚</div>
     </section>
   )
 }

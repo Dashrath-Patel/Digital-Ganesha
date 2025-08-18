@@ -404,7 +404,7 @@ const CulturalLearningPage = () => {
                 )}
                 
                 {/* Card Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-8 cultural-mantras-grid scrollbar-hide">
                   {mantrasContent.map((mantra) => (
                     <div 
                       key={mantra._id} 
@@ -504,7 +504,7 @@ const CulturalLearningPage = () => {
                 </div>
               </div>
             ) : (
-              <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+              <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 cultural-recipes-grid scrollbar-hide">
                 {getDisplayedRecipes().map((recipe) => (
                   <div 
                     key={recipe._id} 
@@ -681,7 +681,7 @@ const CulturalLearningPage = () => {
                 </div>
               </div>
             ) : (
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 cultural-traditions-grid scrollbar-hide">
                 {traditionsContent.map((tradition) => (
                   <div 
                     key={tradition._id} 
@@ -820,7 +820,7 @@ const CulturalLearningPage = () => {
                 </div>
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 cultural-books-grid scrollbar-hide">
                 {displayedBooks.map((book) => (
                   <div 
                     key={book._id} 
@@ -962,12 +962,12 @@ const CulturalLearningPage = () => {
                 </div>
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 cultural-bhajans-grid scrollbar-hide">
                 {displayedBhajans.map((bhajan) => (
                   <div 
                     key={bhajan._id} 
                     className="group relative overflow-hidden rounded-3xl shadow-2xl hover:shadow-3xl transition-all duration-500 hover:scale-[1.02] transform bg-gradient-to-br from-black/60 via-black/50 to-black/40 backdrop-blur-md border border-golden/20"
-                    style={{ minHeight: '400px' }}
+                    style={{ minHeight: window.innerWidth < 768 ? '350px' : '400px' }}
                   >
                     {/* Clean YouTube Thumbnail Background */}
                     {bhajan.videoId && (
@@ -986,13 +986,13 @@ const CulturalLearningPage = () => {
                     
                     {/* Minimal background - removed pattern for cleaner look */}
                     
-                    <div className="relative z-10 p-8 h-full flex flex-col">
-                      <div className="flex items-start justify-between mb-6">
+                    <div className="relative z-10 p-6 md:p-8 h-full flex flex-col">
+                      <div className="flex items-start justify-between mb-4 md:mb-6">
                         <div className="flex-1">
-                          <h4 className="text-2xl font-bold text-golden mb-3 leading-tight group-hover:text-golden-light transition-colors duration-300">{bhajan.title}</h4>
+                          <h4 className="text-xl md:text-2xl font-bold text-golden mb-2 md:mb-3 leading-tight group-hover:text-golden-light transition-colors duration-300">{bhajan.title}</h4>
                           <p className="text-golden-light/80 text-sm font-medium mb-2">🎤 {bhajan.artist}</p>
                           {bhajan.category && (
-                            <span className="inline-block px-3 py-1 rounded-full text-xs font-bold bg-golden/20 text-golden border border-golden/30">
+                            <span className="inline-block px-2 md:px-3 py-1 rounded-full text-xs font-bold bg-golden/20 text-golden border border-golden/30">
                               {bhajan.category}
                             </span>
                           )}
@@ -1002,10 +1002,10 @@ const CulturalLearningPage = () => {
                             href={getYoutubeUrl(bhajan.videoId)}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="ml-4 group/play relative flex-shrink-0"
+                            className="ml-3 md:ml-4 group/play relative flex-shrink-0"
                             title="Play Divine Bhajan"
                           >
-                            <div className="relative w-24 h-18 rounded-xl overflow-hidden border-2 border-golden/50 group-hover/play:border-golden transition-all duration-300 group-hover/play:scale-110 transform">
+                            <div className="relative w-20 h-14 md:w-24 md:h-18 rounded-xl overflow-hidden border-2 border-golden/50 group-hover/play:border-golden transition-all duration-300 group-hover/play:scale-110 transform">
                               <img 
                                 src={getYoutubeThumbnail(bhajan.videoId, 'mqdefault')} 
                                 alt={`${bhajan.title} video`}
@@ -1016,8 +1016,8 @@ const CulturalLearningPage = () => {
                               />
                               <div className="absolute inset-0 bg-black/30 group-hover/play:bg-black/20 transition-colors duration-300"></div>
                               <div className="absolute inset-0 flex items-center justify-center">
-                                <div className="w-10 h-10 bg-red-600 rounded-full flex items-center justify-center group-hover/play:bg-red-500 transition-colors duration-300 shadow-lg">
-                                  <svg className="w-5 h-5 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24">
+                                <div className="w-8 h-8 md:w-10 md:h-10 bg-red-600 rounded-full flex items-center justify-center group-hover/play:bg-red-500 transition-colors duration-300 shadow-lg">
+                                  <svg className="w-4 h-4 md:w-5 md:h-5 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24">
                                     <path d="M8 5v14l11-7z"/>
                                   </svg>
                                 </div>
@@ -1027,15 +1027,15 @@ const CulturalLearningPage = () => {
                         )}
                       </div>
                       
-                      <div className="flex-1 space-y-5">
-                        <div className="bg-golden/10 backdrop-blur-md rounded-2xl p-5 border border-golden/20 group-hover:bg-golden/15 transition-colors duration-300">
+                      <div className="flex-1 space-y-3 md:space-y-5">
+                        <div className="bg-golden/10 backdrop-blur-md rounded-2xl p-4 md:p-5 border border-golden/20 group-hover:bg-golden/15 transition-colors duration-300">
                           <p className="text-golden-light text-sm leading-relaxed">{bhajan.description}</p>
                         </div>
                         
                         {bhajan.significance && (
-                          <div className="bg-golden/5 backdrop-blur-md rounded-2xl p-5 border border-golden/10 group-hover:bg-golden/10 transition-colors duration-300">
-                            <h5 className="text-lg font-bold text-golden mb-3 flex items-center">
-                              <svg className="w-5 h-5 mr-3 text-golden" fill="currentColor" viewBox="0 0 24 24">
+                          <div className="bg-golden/5 backdrop-blur-md rounded-2xl p-4 md:p-5 border border-golden/10 group-hover:bg-golden/10 transition-colors duration-300">
+                            <h5 className="text-base md:text-lg font-bold text-golden mb-2 md:mb-3 flex items-center">
+                              <svg className="w-4 h-4 md:w-5 md:h-5 mr-2 md:mr-3 text-golden" fill="currentColor" viewBox="0 0 24 24">
                                 <path d="M12 3V1L14.5 3.5L12 6V4C8.69 4 6 6.69 6 10S8.69 16 12 16 18 13.31 18 10H16C16 12.21 14.21 14 12 14S8 12.21 8 10 9.79 6 12 6Z"/>
                               </svg>
                               Spiritual Significance:
@@ -1150,29 +1150,30 @@ const CulturalLearningPage = () => {
       </section>
 
       {/* Clean Navigation Section - Fixed Layout */}
-      <section className="relative pb-12 px-4 z-10 bg-gradient-to-b from-transparent via-black/5 to-transparent">
+      <section className="relative pb-8 md:pb-12 px-2 md:px-4 z-10 bg-gradient-to-b from-transparent via-black/5 to-transparent">
         <div className="max-w-7xl mx-auto">
-          <div className="flex justify-center items-center gap-2 lg:gap-4 mb-16 flex-wrap">
+          <div className="flex justify-center items-center gap-1 md:gap-2 lg:gap-4 mb-8 md:mb-16 flex-wrap px-2">
             {categories.map((category) => (
               <button
                 key={category.id}
                 onClick={() => handleCategoryChange(category.id)}
                 disabled={categoryLoading[category.id]}
-                className={`group relative flex items-center space-x-2 px-4 lg:px-6 py-3 rounded-2xl font-bold transition-all duration-500 transform hover:scale-105 hover:-translate-y-1 whitespace-nowrap ${
+                className={`group relative flex items-center space-x-1 md:space-x-2 px-2 md:px-4 lg:px-6 py-2 md:py-3 rounded-xl md:rounded-2xl font-bold transition-all duration-500 transform hover:scale-105 hover:-translate-y-1 whitespace-nowrap text-xs md:text-sm lg:text-base ${
                   activeCategory === category.id
                     ? 'bg-gradient-to-r from-golden via-golden-light to-golden text-red-900 shadow-2xl shadow-golden/50 scale-105'
                     : 'bg-white/10 backdrop-blur-md text-golden hover:bg-white/20 border border-golden/30 hover:border-golden/50'
                 } ${categoryLoading[category.id] ? 'opacity-60 cursor-not-allowed' : 'hover:shadow-xl'}`}
               >
                 {/* Icon with enhanced styling */}
-                <span className={`text-lg lg:text-xl transform transition-transform group-hover:scale-125 ${
+                <span className={`text-sm md:text-lg lg:text-xl transform transition-transform group-hover:scale-125 ${
                   activeCategory === category.id ? 'animate-bounce' : ''
                 }`}>
                   {category.icon}
                 </span>
                 
                 {/* Category name */}
-                <span className="text-sm lg:text-base tracking-wide">{category.name}</span>
+                <span className="text-xs md:text-sm lg:text-base tracking-wide hidden sm:inline">{category.name}</span>
+                <span className="text-xs tracking-wide sm:hidden">{category.name.split(' ')[0]}</span>
                 
                 {/* Loading spinner */}
                 {categoryLoading[category.id] && (
@@ -1193,8 +1194,8 @@ const CulturalLearningPage = () => {
       </section>
 
       {/* Main Content Section with clean background */}
-      <section className="relative pb-20 px-4 z-10 bg-gradient-to-b from-transparent via-red-900/3 to-transparent">
-        <div className="max-w-7xl mx-auto bg-black/10 backdrop-blur-sm rounded-3xl p-8 border border-golden/10">
+      <section className="relative pb-12 md:pb-20 px-2 md:px-4 z-10 bg-gradient-to-b from-transparent via-red-900/3 to-transparent">
+        <div className="max-w-7xl mx-auto bg-black/10 backdrop-blur-sm rounded-2xl md:rounded-3xl p-4 md:p-8 border border-golden/10">
           {renderContent()}
         </div>
       </section>

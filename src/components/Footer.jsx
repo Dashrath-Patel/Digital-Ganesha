@@ -1,45 +1,77 @@
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+
 const Footer = () => {
   const currentYear = new Date().getFullYear()
+  const navigate = useNavigate()
+  const location = useLocation()
+
+  // Handle navigation with scroll to top
+  const handleNavClick = (href) => {
+    // Check if it's a hash link (internal section) or a route
+    if (href.startsWith('#')) {
+      const sectionId = href.substring(1); // Remove the # symbol
+      
+      // If we're not on the home page, navigate to home page first
+      if (location.pathname !== '/') {
+        navigate('/', { replace: true });
+        // Wait a bit for navigation to complete, then scroll
+        setTimeout(() => {
+          scrollToSection(sectionId);
+        }, 100);
+      } else {
+        // If we're already on home page, just scroll
+        scrollToSection(sectionId);
+      }
+    } else {
+      // It's a route, navigate directly (ScrollToTop component will handle scroll)
+      navigate(href);
+    }
+  };
+
+  const scrollToSection = (sectionId) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ 
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
+  };
 
   const footerSections = [
     {
       title: "Platform",
       links: [
         { name: "Features", href: "#features" },
-        { name: "Virtual Darshan", href: "#" },
+        { name: "Virtual Darshan", href: "/virtual-darshan" },
         { name: "Mandal Locator", href: "/mandal-locator" },
-        { name: "Community Hub", href: "#" },
-        { name: "Marketplace", href: "#" }
+        { name: "Community Hub", href: "/community" },
+        { name: "Cultural Learning", href: "/cultural-learning" }
       ]
     },
     {
-      title: "Resources",
+      title: "Account",
       links: [
-        { name: "About Ganesha", href: "#" },
-        { name: "Festival Guide", href: "#" },
-        { name: "Eco-Friendly Tips", href: "#" },
-        { name: "Traditional Recipes", href: "#" },
-        { name: "Prayer Collections", href: "#" }
+        { name: "Login", href: "/login" },
+        { name: "Sign Up", href: "/signup" }
       ]
     },
     {
       title: "Community",
       links: [
-        { name: "Join as Devotee", href: "#" },
-        { name: "Register Mandal", href: "#" },
-        { name: "Become Artisan", href: "#" },
-        { name: "Volunteer", href: "#" },
-        { name: "Partner with Us", href: "#" }
+        { name: "Join as Devotee", href: "/signup" },
+        { name: "Admin Messages", href: "/community?tab=message" },
+        { name: "Upcoming Events", href: "/community?tab=events" },
+        { name: "Photo Gallery", href: "/community?tab=gallery" },
+        { name: "Developer Info", href: "/developers" }
       ]
     },
     {
       title: "Support",
       links: [
-        { name: "Help Center", href: "#" },
         { name: "Contact Us", href: "#contact" },
-        { name: "Privacy Policy", href: "#" },
-        { name: "Terms of Service", href: "#" },
-        { name: "API Documentation", href: "#" }
+        { name: "About Us", href: "#about" },
+        { name: "Developers", href: "/developers" }
       ]
     }
   ]
@@ -68,7 +100,10 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-8">
           {/* Brand Section */}
           <div className="lg:col-span-2">
-            <div className="flex items-center space-x-3 mb-6">
+            <button 
+              onClick={() => handleNavClick('/')}
+              className="flex items-center space-x-3 mb-6 cursor-pointer hover:opacity-80 transition-opacity duration-200"
+            >
               <div className="w-12 h-12 bg-gradient-to-br from-yellow-600 to-yellow-500 rounded-full flex items-center justify-center overflow-hidden">
                 <img
                   src="/ganesha-navbar.jpg"
@@ -79,7 +114,7 @@ const Footer = () => {
               <span className="text-2xl font-bold text-golden">
                 कृष्णा टाउनशिपचा सम्राट
               </span>
-            </div>
+            </button>
 
             <p className="text-golden-light leading-relaxed mb-6 max-w-md">
               कृष्णा टाउनशिपमधील KTYA मंडळाच्या भक्तीने आणलेला हा देव,
@@ -145,12 +180,12 @@ const Footer = () => {
               <ul className="space-y-3">
                 {section.links.map((link, linkIndex) => (
                   <li key={linkIndex}>
-                    <a
-                      href={link.href}
-                      className="text-golden-light hover:text-golden transition-colors duration-200 hover:translate-x-1 transform inline-block"
+                    <button
+                      onClick={() => handleNavClick(link.href)}
+                      className="text-golden-light hover:text-golden transition-colors duration-200 hover:translate-x-1 transform inline-block cursor-pointer text-left"
                     >
                       {link.name}
-                    </a>
+                    </button>
                   </li>
                 ))}
               </ul>
@@ -162,22 +197,22 @@ const Footer = () => {
         <div className="mt-16 pt-8 border-t border-yellow-500/30">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <div>
-              <div className="text-3xl font-bold text-golden mb-2">4.5K+</div>
-              <div className="text-golden-light text-sm">Devotees Served</div>
+              <div className="text-3xl font-bold text-golden mb-2">5+</div>
+              <div className="text-golden-light text-sm">Platform Features</div>
             </div>
             <div>
-              <div className="text-3xl font-bold text-golden mb-2">100+</div>
-              <div className="text-golden-light text-sm">Active Members</div>
+              <div className="text-3xl font-bold text-golden mb-2">1</div>
+              <div className="text-golden-light text-sm">Active Mandal</div>
             </div>
             <div>
               <div className="text-3xl font-bold text-golden mb-2">
-                {new Date().getFullYear() - 1995}+
+                {new Date().getFullYear() - 2024}+
               </div>
-              <div className="text-golden-light text-sm">Years of Divine Blessings</div>
+              <div className="text-golden-light text-sm">Years Online</div>
             </div>
             <div>
               <div className="text-3xl font-bold text-green-400 mb-2">24/7</div>
-              <div className="text-golden-light text-sm">Acess Available</div>
+              <div className="text-golden-light text-sm">Access Available</div>
             </div>
           </div>
         </div>
@@ -192,25 +227,31 @@ const Footer = () => {
                 © {currentYear} KTYA . All rights reserved.
               </p>
               <div className="flex space-x-4 text-sm">
-                <a href="#" className="text-golden-light hover:text-golden transition-colors duration-200">
-                  Privacy Policy
-                </a>
+                <button 
+                  onClick={() => handleNavClick('/developers')}
+                  className="text-golden-light hover:text-golden transition-colors duration-200"
+                >
+                  About Developers
+                </button>
                 <span className="text-golden/50">•</span>
-                <a href="#" className="text-golden-light hover:text-golden transition-colors duration-200">
-                  Terms of Service
-                </a>
-                <span className="text-golden/50">•</span>
-                <a href="#" className="text-golden-light hover:text-golden transition-colors duration-200">
-                  Cookie Policy
-                </a>
+                <button 
+                  onClick={() => handleNavClick('#contact')}
+                  className="text-golden-light hover:text-golden transition-colors duration-200"
+                >
+                  Contact Us
+                </button>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Floating Action Button */}
-      <button className="fixed bottom-8 right-8 bg-gradient-to-r from-yellow-600 to-yellow-500 text-red-900 p-4 rounded-full shadow-2xl hover:shadow-yellow-500/25 transition-all duration-300 transform hover:scale-110 z-50">
+      {/* Floating Action Button - Scroll to Top */}
+      <button 
+        onClick={() => window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })}
+        className="fixed bottom-8 right-8 bg-gradient-to-r from-yellow-600 to-yellow-500 text-red-900 p-4 rounded-full shadow-2xl hover:shadow-yellow-500/25 transition-all duration-300 transform hover:scale-110 z-50"
+        aria-label="Scroll to top"
+      >
         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
         </svg>

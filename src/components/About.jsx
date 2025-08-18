@@ -60,7 +60,7 @@ const values = [
 ]
 
   return (
-    <section id="about" className="py-20 relative" style={{ backgroundColor: 'rgb(21, 21, 21)' }}>
+    <section id="about" className="py-16 sm:py-20 relative" style={{ backgroundColor: 'rgb(21, 21, 21)' }}>
       {/* Enhanced Spiritual Background - Without Circles */}
       <div className="absolute inset-0" style={{ backgroundColor: 'rgba(160, 40, 40, 0.3)' }}>
         {/* Floating Petals */}
@@ -78,46 +78,46 @@ const values = [
       <div className="absolute top-1/2 left-5 text-3xl opacity-20 animate-pulse delay-1000">🔱</div>
       <div className="absolute top-1/2 right-5 text-3xl opacity-20 animate-bounce delay-1200">🐚</div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 relative z-10">
         {/* Section Header */}
-        <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-golden mb-6">
+        <div className="text-center mb-12 sm:mb-16">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-golden mb-4 sm:mb-6">
             <span className="bg-gradient-to-r from-golden via-golden-light to-golden-dark bg-clip-text text-transparent">
               About KTYA
             </span>
           </h2>
-          <p className="text-xl text-golden-light max-w-4xl mx-auto leading-relaxed">
+          <p className="text-lg sm:text-xl text-golden-light max-w-4xl mx-auto leading-relaxed px-2">
             Krishna Township Youth Association (KTYA) is based in Krishna Township, located on Ambadi Road, Vasai (West) a
             vibrant and cosmopolitan community comprising 42 buildings and home to approximately 4,500 residents.
           </p>
         </div>
 
         {/* Main Content */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-20">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 items-center mb-16 sm:mb-20">
           {/* Left Content */}
-          <div className="space-y-6">
-            <div className="text-6xl mb-6">🐘</div>
-            <h3 className="text-3xl font-bold text-golden mb-6">
+          <div className="space-y-4 sm:space-y-6">
+            <div className="text-5xl sm:text-6xl mb-4 sm:mb-6">🐘</div>
+            <h3 className="text-2xl sm:text-3xl font-bold text-golden mb-4 sm:mb-6">
               Our Journey: 1995 - Present
             </h3>
-            <p className="text-lg text-golden-light leading-relaxed mb-6">
+            <p className="text-base sm:text-lg text-golden-light leading-relaxed mb-4 sm:mb-6">
               In 1995, as people from diverse backgrounds settled in Krishna Township, there was little opportunity for community
               interaction. To bridge this gap, a group of enthusiastic youth formed the Krishna Township Youth Association (KTYA).
             </p>
-            <p className="text-lg text-golden-light leading-relaxed mb-8">
+            <p className="text-base sm:text-lg text-golden-light leading-relaxed mb-6 sm:mb-8">
               KTYA began by organizing festivals like Ganeshotsav, Navratrotsav, and various social-cultural events—creating a
               shared space that brought residents together and fostered a strong sense of unity.
             </p>
 
             {/* Key Benefits */}
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
               <div className="flex items-center space-x-3">
-                <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
-                  <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                <div className="w-6 h-6 sm:w-8 sm:h-8 bg-green-500 rounded-full flex items-center justify-center">
+                  <svg className="w-3 h-3 sm:w-5 sm:h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                   </svg>
                 </div>
-                <span className="text-golden font-medium">Uniting Krishna Township since 1995 through cultural celebrations.</span>
+                <span className="text-sm sm:text-base text-golden font-medium">Uniting Krishna Township since 1995 through cultural celebrations.</span>
               </div>
               <div className="flex items-center space-x-3">
                 <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">

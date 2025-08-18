@@ -883,3 +883,252 @@ html {
 .golden-glow:hover {
   box-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
 }
+
+/* Cultural Learning Page Mobile Horizontal Scroll */
+@media (max-width: 767px) {
+  /* Cultural Learning Page Mobile Optimizations - Add smooth scrolling behavior */
+  .cultural-mantras-grid,
+  .cultural-recipes-grid,
+  .cultural-traditions-grid,
+  .cultural-books-grid,
+  .cultural-bhajans-grid {
+    scroll-behavior: smooth;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+    padding: 0 1rem; /* Better padding for mobile */
+    gap: 1rem; /* Smaller gap on mobile */
+  }
+  
+  /* Hide scrollbar for webkit browsers */
+  .cultural-mantras-grid::-webkit-scrollbar,
+  .cultural-recipes-grid::-webkit-scrollbar,
+  .cultural-traditions-grid::-webkit-scrollbar,
+  .cultural-books-grid::-webkit-scrollbar,
+  .cultural-bhajans-grid::-webkit-scrollbar {
+    display: none;
+  }
+  
+  /* Better touch scrolling */
+  .cultural-mantras-grid,
+  .cultural-recipes-grid,
+  .cultural-traditions-grid,
+  .cultural-books-grid,
+  .cultural-bhajans-grid {
+    touch-action: pan-x;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Mobile-specific card optimizations */
+  .content-container {
+    min-height: auto !important;
+    padding: 1rem !important;
+    margin-bottom: 0.5rem !important;
+  }
+
+  /* Responsive text adjustments */
+  .content-container h4 {
+    font-size: 1rem !important;
+    line-height: 1.4 !important;
+    margin-bottom: 0.5rem !important;
+  }
+
+  .content-container p {
+    font-size: 0.875rem !important;
+    line-height: 1.5 !important;
+    margin-bottom: 0.75rem !important;
+  }
+
+  /* Better button spacing on mobile */
+  .content-container button {
+    padding: 0.5rem 1rem !important;
+    font-size: 0.875rem !important;
+  }
+
+  /* Ensure proper spacing for sections */
+  .cultural-mantras-grid,
+  .cultural-recipes-grid,
+  .cultural-traditions-grid,
+  .cultural-books-grid,
+  .cultural-bhajans-grid {
+    margin-top: 1rem !important;
+    margin-bottom: 2rem !important;
+  }
+
+  /* Improve image containers on mobile */
+  .content-container img {
+    max-width: 3rem !important;
+    max-height: 3rem !important;
+  }
+}
+
+@media (max-width: 1023px) {
+  /* Mantras section - convert grid to horizontal scroll on mobile and tablet */
+  .cultural-mantras-grid {
+    display: flex !important;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    gap: 1.5rem;
+    padding: 0 0.5rem;
+  }
+  
+  .cultural-mantras-grid > * {
+    flex: none;
+    width: 18rem; /* 288px */
+    scroll-snap-align: center;
+    min-width: 18rem;
+  }
+}
+
+@media (max-width: 767px) {
+  .cultural-mantras-grid > * {
+    width: 16rem; /* 256px for mobile */
+    min-width: 16rem;
+  }
+  
+  .cultural-mantras-grid {
+    padding: 0 0.5rem;
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 1023px) {
+  /* Recipes section - convert grid to horizontal scroll on mobile and tablet */
+  .cultural-recipes-grid {
+    display: flex !important;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    gap: 1.5rem;
+    padding: 0 0.5rem;
+  }
+  
+  .cultural-recipes-grid > * {
+    flex: none;
+    width: 20rem; /* 320px - smaller for better mobile fit */
+    scroll-snap-align: center;
+    min-width: 20rem;
+  }
+}
+
+@media (max-width: 767px) {
+  .cultural-recipes-grid > * {
+    width: 18rem; /* 288px for mobile */
+    min-width: 18rem;
+  }
+  
+  .cultural-recipes-grid {
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 1023px) {
+  /* Traditions section - convert grid to horizontal scroll on mobile and tablet */
+  .cultural-traditions-grid {
+    display: flex !important;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    gap: 1.5rem;
+    padding: 0 0.5rem;
+  }
+  
+  .cultural-traditions-grid > * {
+    flex: none;
+    width: 20rem; /* 320px */
+    scroll-snap-align: center;
+    min-width: 20rem;
+  }
+}
+
+@media (max-width: 767px) {
+  .cultural-traditions-grid > * {
+    width: 18rem; /* 288px for mobile */
+    min-width: 18rem;
+  }
+  
+  .cultural-traditions-grid {
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 1023px) {
+  /* Books section - convert grid to horizontal scroll on mobile and tablet */
+  .cultural-books-grid {
+    display: flex !important;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    gap: 1.5rem;
+    padding: 0 0.5rem;
+  }
+  
+  .cultural-books-grid > * {
+    flex: none;
+    width: 18rem; /* 288px */
+    scroll-snap-align: center;
+    min-width: 18rem;
+  }
+}
+
+@media (max-width: 1023px) {
+  /* Bhajans section - convert grid to horizontal scroll on mobile and tablet */
+  .cultural-bhajans-grid {
+    display: flex !important;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    gap: 1.5rem;
+    padding: 0 0.5rem;
+  }
+  
+  .cultural-bhajans-grid > * {
+    flex: none;
+    width: 20rem; /* 320px for tablet */
+    scroll-snap-align: center;
+    min-width: 20rem;
+  }
+}
+
+@media (max-width: 767px) {
+  .cultural-books-grid > * {
+    width: 16rem; /* 256px for mobile */
+    min-width: 16rem;
+  }
+  
+  .cultural-books-grid {
+    padding: 0 0.5rem;
+    gap: 1rem;
+  }
+  
+  /* Bhajans section mobile override */
+  .cultural-bhajans-grid {
+    padding: 0 0.5rem;
+    gap: 1rem;
+  }
+  
+  .cultural-bhajans-grid > * {
+    width: 18rem; /* 288px for mobile - optimal for content */
+    min-width: 18rem;
+  }
+  
+  /* Optimize bhajan card content for mobile */
+  .cultural-bhajans-grid .group {
+    min-height: 350px !important;
+  }
+  
+  /* Better text sizing in bhajan cards for mobile */
+  .cultural-bhajans-grid h4 {
+    font-size: 1.25rem !important;
+    line-height: 1.3 !important;
+  }
+  
+  .cultural-bhajans-grid h5 {
+    font-size: 1rem !important;
+  }
+  
+  /* Adjust bhajan card padding for mobile */
+  .cultural-bhajans-grid .relative.z-10 {
+    padding: 1.5rem !important;
+  }
+}
