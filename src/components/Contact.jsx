@@ -60,29 +60,25 @@ const Contact = () => {
       icon: "📧",
       title: "Email Us",
       description: "Get in touch with our support team",
-      contact: "support@digitalganesha.com",
-      action: "mailto:support@digitalganesha.com"
+      contact: "support@digitalganesha.com"
     },
     {
       icon: "📱",
       title: "Call Us",
       description: "Speak directly with our team",
-      contact: "+91-XXXX-XXXXXX",
-      action: "tel:+91XXXXXXXXXX"
+      contact: "+91-9579037378"
     },
     {
       icon: "💬",
       title: "Live Chat",
       description: "Chat with us in real-time",
-      contact: "Available 24/7",
-      action: "#"
+      contact: "Available 24/7"
     },
     {
       icon: "📍",
       title: "Visit Us",
       description: "KTYA Ground, Krishna Township Vasai (W)",
       contact: "Mumbai, Maharashtra, India",
-      action: "#"
     }
   ]
 
@@ -132,10 +128,9 @@ const Contact = () => {
             {/* Contact Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               {contactInfo.map((info, index) => (
-                <a
+                <div
                   key={index}
-                  href={info.action}
-                  className="block bg-gradient-to-br from-red-900/80 to-amber-900/80 backdrop-blur-sm rounded-2xl p-6 hover:shadow-2xl transition-all duration-300 transform hover:scale-105 group border border-yellow-500/30 shadow-lg"
+                  className="bg-gradient-to-br from-red-900/80 to-amber-900/80 backdrop-blur-sm rounded-2xl p-6 hover:shadow-2xl transition-all duration-300 transform hover:scale-105 group border border-yellow-500/30 shadow-lg"
                 >
                   <div className="text-3xl mb-4 group-hover:animate-bounce">{info.icon}</div>
                   <h4 className="text-lg font-bold text-golden mb-2 group-hover:text-golden-light transition-colors duration-300">
@@ -143,7 +138,7 @@ const Contact = () => {
                   </h4>
                   <p className="text-golden-light text-sm mb-3">{info.description}</p>
                   <p className="text-yellow-300 font-semibold">{info.contact}</p>
-                </a>
+                </div>
               ))}
             </div>
 
