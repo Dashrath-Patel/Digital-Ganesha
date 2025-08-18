@@ -1,6 +1,13 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 
+// Import Hero images
+import ganeshImg from '/Hero/ganesh.svg';
+import omImg from '/Hero/om.svg';
+import modakImg from '/Hero/modak.png';
+import diyaImg from '/Hero/diya.png';
+import flowerImg from '/Hero/flower.png';
+
 const Hero = ({ firstLine, secondLine, isFirstLineAnimating, isSecondLineAnimating, currentMantraIndex, mantraTranslations }) => {
   const navigate = useNavigate()
   const [currentSlide, setCurrentSlide] = useState(0)
@@ -17,31 +24,31 @@ const Hero = ({ firstLine, secondLine, isFirstLineAnimating, isSecondLineAnimati
     {
       title: "गणपति बप्पा मोरया",
       subtitle: "Experience the divine presence of Lord Ganesha in the digital realm",
-      image: "Hero/ganesh.svg",
+      image: ganeshImg,
       mantra: "ॐ गं गणपतये नमः"
     },
     {
       title: "विघ्न हर्ता गणराजा",
       subtitle: "Let the remover of obstacles guide your spiritual journey",
-      image: "Hero/om.svg",
+      image: omImg,
       mantra: "गणानां त्वा गणपतिं हवामहे"
     },
     {
       title: "मोदकप्रिया एकदन्त",
       subtitle: "Join millions in celebrating the elephant-headed deity",
-      image: "Hero/modak.png",
+      image: modakImg,
       mantra: "वक्रतुण्ड महाकाय सूर्यकोटि समप्रभ"
     },
     {
       title: "दीपज्योति विघ्नहर्ता",
       subtitle: "May the divine light of Ganesha illuminate your path",
-      image: "Hero/diya.png",
+      image: diyaImg,
       mantra: "ॐ दीपप्रभाय नमः"
     },
     {
       title: "जपा पुष्प प्रिय गणेश",
       subtitle: "Adore Lord Ganesha with the sacred hibiscus bloom",
-      image: "Hero/flower.png",
+      image: flowerImg,
       mantra: "ॐ जपाकुसुम प्रीताय नमः"
     }
   ];
@@ -141,17 +148,11 @@ const Hero = ({ firstLine, secondLine, isFirstLineAnimating, isSecondLineAnimati
                 ref={imageRef}
                 className="w-24 h-24 sm:w-28 sm:h-28 md:w-36 md:h-36 lg:w-40 lg:h-40 mx-auto mb-3 sm:mb-4 animate-image-reveal drop-shadow-lg p-2"
               >
-                {slides[currentSlide].image.includes('.') ? (
-                  <img 
-                    src={`/${slides[currentSlide].image}`} 
-                    alt="Sacred Symbol" 
-                    className="w-full h-full object-contain rounded-lg"
-                  />
-                ) : (
-                  <div className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl flex items-center justify-center h-full">
-                    {slides[currentSlide].image}
-                  </div>
-                )}
+                <img 
+                  src={slides[currentSlide].image} 
+                  alt="Sacred Symbol" 
+                  className="w-full h-full object-contain rounded-lg"
+                />
               </div>
               <div className="absolute -top-2 -left-2 text-lg sm:text-xl md:text-2xl animate-pulse">🪔</div>
               <div className="absolute -top-2 -right-2 text-lg sm:text-xl md:text-2xl animate-pulse delay-300">🪔</div>

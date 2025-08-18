@@ -2,6 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 
+import React from 'react';
+import { motion } from 'framer-motion';
+
+// Import developer images
+import rabindraImg from '/developers/rabindra1.jpg';
+import dashrathImg from '/developers/Dashrath.jpg';
+import ayushImg from '/developers/ayush.jpg';
+
 const DevelopersPage = () => {
   const navigate = useNavigate();
   const [animatedCards, setAnimatedCards] = useState([]);
@@ -12,7 +20,7 @@ const DevelopersPage = () => {
       id: 1,
       name: "Rabindra Mishra",
       role: "Full Stack Developer",
-      image: "/developers/rabindra1.jpg", // Add your actual image to public/developers/
+      image: rabindraImg,
       cgpa: "9.5",
       course: "B.Tech - AI&DS",
       Qualification: "Graduate",
@@ -28,7 +36,7 @@ const DevelopersPage = () => {
       id: 2,
       name: "Dashrath Patel",
       role: "Backend & Database Architect",
-      image: "/developers/Dashrath.jpg",
+      image: dashrathImg,
       cgpa: "9.3",
       course: "B.Tech - AI&DS",
       Qualification: "Graduate",
@@ -44,7 +52,7 @@ const DevelopersPage = () => {
       id: 3,
       name: "Ayush Pandey",
       role: "Frontend Developer",
-      image: "/developers/ayush.jpg",
+      image: ayushImg,
       cgpa: "8.0",
       course: "B.Tech - AI&DS",
       Qualification: "Graduate",

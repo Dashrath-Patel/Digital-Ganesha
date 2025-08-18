@@ -12,7 +12,25 @@
   ],
   "routes": [
     {
+      "src": "/Hero/(.*)",
+      "headers": {
+        "cache-control": "public, max-age=31536000, immutable"
+      }
+    },
+    {
+      "src": "/developers/(.*)",
+      "headers": {
+        "cache-control": "public, max-age=31536000, immutable"
+      }
+    },
+    {
       "src": "/assets/(.*)",
+      "headers": {
+        "cache-control": "public, max-age=31536000, immutable"
+      }
+    },
+    {
+      "src": "/(.*\\.(jpg|jpeg|png|gif|svg|webp|ico))",
       "headers": {
         "cache-control": "public, max-age=31536000, immutable"
       }
