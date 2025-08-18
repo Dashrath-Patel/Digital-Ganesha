@@ -2,9 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 
-import React from 'react';
-import { motion } from 'framer-motion';
-
 // Import developer images
 import rabindraImg from '/developers/rabindra1.jpg';
 import dashrathImg from '/developers/Dashrath.jpg';
