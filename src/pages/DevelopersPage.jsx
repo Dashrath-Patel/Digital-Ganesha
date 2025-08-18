@@ -12,7 +12,7 @@ const DevelopersPage = () => {
       id: 1,
       name: "Rabindra Mishra",
       role: "Full Stack Developer",
-      image: "", // Add your actual image
+      image: "/developers/rabindra1.jpg", // Add your actual image to public/developers/
       cgpa: "9.5",
       course: "B.Tech - AI&DS",
       Qualification: "Graduate",
@@ -20,15 +20,15 @@ const DevelopersPage = () => {
       description: "Passionate about creating innovative web solutions with a focus on user experience and scalable architecture. Led the development of Digital Ganesha platform.",
       skills: ["React.js", "Node.js", "MongoDB", "Express.js", "JavaScript", "Python"],
       social: {
-        github: "https://github.com/yourusername",
-        linkedin: "https://linkedin.com/in/yourusername"
+        github: "https://github.com/RabindraMishra-AIDS",
+        linkedin: "https://www.linkedin.com/in/rabindra-mishra-18481427b/"
       },
     },
     {
       id: 2,
       name: "Dashrath Patel",
-      role: "Backend Developer & Database Architect",
-      image: "/team/member2.jpg", // Add actual image
+      role: "Backend & Database Architect",
+      image: "/developers/Dashrath.jpg",
       cgpa: "9.3",
       course: "B.Tech - AI&DS",
       Qualification: "Graduate",
@@ -36,15 +36,15 @@ const DevelopersPage = () => {
       description: "Expert in server-side development and database optimization. Architected the robust backend infrastructure for seamless user experiences.",
       skills: ["Node.js", "MongoDB", "Express.js", "API Development", "Database Design"],
       social: {
-        github: "https://github.com/member2username",
-        linkedin: "https://linkedin.com/in/member2username"
+        github: "https://github.com/Dashrath-Patel",
+        linkedin: "https://www.linkedin.com/in/dashrath-patel/"
       },
     },
     {
       id: 3,
       name: "Ayush Pandey",
-      role: "Frontend Developer & UI/UX Designer",
-      image: "/team/member3.jpg", // Add actual image
+      role: "Frontend Developer",
+      image: "/developers/ayush.jpg",
       cgpa: "8.0",
       course: "B.Tech - AI&DS",
       Qualification: "Graduate",
@@ -52,8 +52,8 @@ const DevelopersPage = () => {
       description: "Creative frontend developer with an eye for design. Crafted the beautiful and intuitive user interface that brings Digital Ganesha to life.",
       skills: ["React.js", "CSS3", "JavaScript", "Figma"],
       social: {
-        github: "https://github.com/member3username",
-        linkedin: "https://linkedin.com/in/member3username"
+        github: "https://github.com/Ayp47098",
+        linkedin: "https://www.linkedin.com/in/ayush-pandey-b60609226/"
       },
     }
   ];
@@ -128,8 +128,23 @@ const DevelopersPage = () => {
                   <div className="text-center mb-6">
                     <div className="relative mx-auto w-32 h-32 md:w-40 md:h-40 lg:w-48 lg:h-48 mb-4">
                       <div className="w-full h-full rounded-full bg-gradient-to-br from-golden/20 to-golden-light/20 border-4 border-golden/50 flex items-center justify-center overflow-hidden group-hover:border-golden transition-all duration-300 hover:scale-105">
-                        {/* Placeholder avatar - replace with actual images */}
-                        <div className="w-full h-full bg-gradient-to-br from-golden/10 to-golden-light/10 flex items-center justify-center">
+                        {/* Display actual image or placeholder */}
+                        {member.image ? (
+                          <img 
+                            src={member.image} 
+                            alt={member.name}
+                            className="w-full h-full object-cover rounded-full"
+                            onError={(e) => {
+                              // Fallback to placeholder if image fails to load
+                              e.target.style.display = 'none';
+                              e.target.nextSibling.style.display = 'flex';
+                            }}
+                          />
+                        ) : null}
+                        <div 
+                          className={`w-full h-full bg-gradient-to-br from-golden/10 to-golden-light/10 flex items-center justify-center ${member.image ? 'hidden' : 'flex'}`}
+                          style={{ display: member.image ? 'none' : 'flex' }}
+                        >
                           <span className="text-5xl md:text-6xl lg:text-7xl">👨‍💻</span>
                         </div>
                       </div>
