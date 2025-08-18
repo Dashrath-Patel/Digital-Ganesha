@@ -130,26 +130,15 @@ const Contact = () => {
               {contactInfo.map((info, index) => (
                 <div
                   key={index}
-
-                  className="bg-gradient-to-br from-red-900/80 to-amber-900/80 backdrop-blur-sm rounded-2xl p-6 hover:shadow-2xl transition-all duration-300 transform hover:scale-105 group border border-yellow-500/30 shadow-lg"
-
-                  href={info.action}
-                  className="block bg-gradient-to-br from-red-900/80 to-amber-900/80 backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-6 hover:shadow-2xl transition-all duration-300 transform hover:scale-105 group border border-yellow-500/30 shadow-lg"
-
+                  className="bg-gradient-to-br from-red-900/80 to-amber-900/80 backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-6 hover:shadow-2xl transition-all duration-300 transform hover:scale-105 group border border-yellow-500/30 shadow-lg"
                 >
                   <div className="text-2xl sm:text-3xl mb-3 sm:mb-4 group-hover:animate-bounce">{info.icon}</div>
                   <h4 className="text-base sm:text-lg font-bold text-golden mb-2 group-hover:text-golden-light transition-colors duration-300">
                     {info.title}
                   </h4>
-
-                  <p className="text-golden-light text-sm mb-3">{info.description}</p>
-                  <p className="text-yellow-300 font-semibold">{info.contact}</p>
-                </div>
-
                   <p className="text-golden-light text-xs sm:text-sm mb-2 sm:mb-3">{info.description}</p>
                   <p className="text-yellow-300 font-semibold text-sm sm:text-base">{info.contact}</p>
-                </a>
-
+                </div>
               ))}
             </div>
 

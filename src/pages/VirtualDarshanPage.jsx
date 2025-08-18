@@ -279,13 +279,8 @@ const VirtualDarshanPage = () => {
               ].map((tab) => (
                 <button
                   key={tab.id}
-
                   onClick={() => setActiveSection(tab.id)}
                   className={`flex flex-col sm:flex-row items-center justify-center space-y-1 sm:space-y-0 sm:space-x-2 py-2 sm:py-3 px-2 sm:px-4 rounded-lg sm:rounded-xl font-semibold transition-all duration-300 text-xs sm:text-sm md:text-base ${
-
-                  onClick={() => handleSectionChange(tab.id)}
-                  className={`flex items-center justify-center space-x-2 py-3 px-4 rounded-xl font-semibold transition-all duration-300 ${
-
                     activeSection === tab.id
                       ? 'bg-golden text-red-900 shadow-lg'
                       : 'text-golden hover:bg-red-800/40'
