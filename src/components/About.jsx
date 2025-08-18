@@ -11,11 +11,16 @@ const About = () => {
   // Preload the brochure for faster download
   useEffect(() => {
     const brochureUrl = import.meta.env.VITE_KTYA_BROCHURE_URL;
-    if (brochureUrl && brochureUrl !== 'https://drive.google.com/uc?export=download&id=YOUR_FILE_ID_HERE') {
+    // Only preload if we have a valid brochure URL and it's not the default placeholder
+    if (brochureUrl && 
+        brochureUrl !== 'https://drive.google.com/uc?export=download&id=YOUR_FILE_ID_HERE' &&
+        brochureUrl !== 'https://drive.google.com/uc?export=download&id=1x4bwVmGUy9-8NbelFjAOGj2Ga-BM8Ek1') {
       preloadFile(brochureUrl).then(preloaded => {
         if (preloaded) {
           console.log('Brochure preloaded for faster download');
         }
+      }).catch(err => {
+        console.warn('Failed to preload brochure:', err);
       });
     }
   }, []);
@@ -151,7 +156,10 @@ const values = [
               <button
                 onClick={async () => {
                   const brochureUrl = import.meta.env.VITE_KTYA_BROCHURE_URL;
-                  if (brochureUrl && brochureUrl !== 'https://drive.google.com/uc?export=download&id=YOUR_FILE_ID_HERE') {
+                  // Check if we have a valid brochure URL and it's not a placeholder or broken link
+                  if (brochureUrl && 
+                      brochureUrl !== 'https://drive.google.com/uc?export=download&id=YOUR_FILE_ID_HERE' &&
+                      brochureUrl !== 'https://drive.google.com/uc?export=download&id=1x4bwVmGUy9-8NbelFjAOGj2Ga-BM8Ek1') {
                     setIsDownloading(true);
                     info('Preparing download...', 1000);
                     
@@ -163,21 +171,22 @@ const values = [
                         },
                         onError: (errorMessage) => {
                           setIsDownloading(false);
-                          error(errorMessage);
+                          error(`Download failed: ${errorMessage}`);
                         }
                       });
                       
                       if (!downloadSuccess) {
                         setIsDownloading(false);
+                        error('Download failed. The file might not be accessible.');
                       }
                       
                     } catch (downloadError) {
                       console.error('Download failed:', downloadError);
                       setIsDownloading(false);
-                      error('Download failed. Please try again or contact support.');
+                      error('Download failed. Please try again later or contact support.');
                     }
                   } else {
-                    error('Brochure download link is not configured. Please contact administrator.');
+                    error('Brochure download is currently unavailable. Please contact us for more information.');
                   }
                 }}
                 disabled={isDownloading}
