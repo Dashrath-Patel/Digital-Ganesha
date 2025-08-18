@@ -12,6 +12,7 @@ import VirtualDarshanPage from './pages/VirtualDarshanPage';
 import MandalLocatorPage from './pages/MandalLocatorPage';
 import AdminDashboard from './pages/AdminDashboard';
 import CommitteeDashboard from './pages/CommitteeDashboard';
+import DevelopersPage from './pages/DevelopersPage';
 
 function App() {
   return (
@@ -47,6 +48,7 @@ function App() {
                 <Route path="/community" element={<CommunityPage />} />
                 <Route path="/mandal-locator" element={<MandalLocatorPage />} />
                 <Route path="/virtual-darshan" element={<VirtualDarshanPage />} />
+                <Route path="/developers" element={<DevelopersPage />} />
                 <Route path="/admin" element={
                   <ProtectedRoute requireAdmin={true}>
                     <AdminDashboard />

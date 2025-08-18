@@ -16,6 +16,7 @@ const Header = () => {
     { name: 'Features', href: '#features' },
     { name: 'About', href: '#about' },
     { name: 'Contact', href: '#contact' },
+    { name: 'Developers', href: '/developers' },
   ];
 
   const handleNavClick = (href) => {
