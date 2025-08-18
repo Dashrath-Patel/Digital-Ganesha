@@ -153,6 +153,38 @@ const userSchema = new mongoose.Schema({
     type: Date,
     select: false
   },
+  
+  // Two-Factor Authentication (2FA) - Only for admin users
+  twoFactorAuth: {
+    isEnabled: {
+      type: Boolean,
+      default: false
+    },
+    secret: {
+      type: String,
+      select: false // Never include in queries by default
+    },
+    backupCodes: [{
+      code: {
+        type: String,
+        select: false
+      },
+      used: {
+        type: Boolean,
+        default: false
+      },
+      usedAt: {
+        type: Date
+      }
+    }],
+    enabledAt: {
+      type: Date
+    },
+    lastUsed: {
+      type: Date
+    }
+  },
+  
   lastLogin: {
     type: Date
   },
