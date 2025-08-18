@@ -11,10 +11,8 @@ const About = () => {
   // Preload the brochure for faster download
   useEffect(() => {
     const brochureUrl = import.meta.env.VITE_KTYA_BROCHURE_URL;
-    // Only preload if we have a valid brochure URL and it's not the default placeholder
-    if (brochureUrl && 
-        brochureUrl !== 'https://drive.google.com/uc?export=download&id=YOUR_FILE_ID_HERE' &&
-        brochureUrl !== 'https://drive.google.com/uc?export=download&id=1x4bwVmGUy9-8NbelFjAOGj2Ga-BM8Ek1') {
+    // Only preload if we have a valid brochure URL
+    if (brochureUrl && brochureUrl.trim()) {
       preloadFile(brochureUrl).then(preloaded => {
         if (preloaded) {
           console.log('Brochure preloaded for faster download');
@@ -156,10 +154,8 @@ const values = [
               <button
                 onClick={async () => {
                   const brochureUrl = import.meta.env.VITE_KTYA_BROCHURE_URL;
-                  // Check if we have a valid brochure URL and it's not a placeholder or broken link
-                  if (brochureUrl && 
-                      brochureUrl !== 'https://drive.google.com/uc?export=download&id=YOUR_FILE_ID_HERE' &&
-                      brochureUrl !== 'https://drive.google.com/uc?export=download&id=1x4bwVmGUy9-8NbelFjAOGj2Ga-BM8Ek1') {
+                  // Check if we have a valid brochure URL
+                  if (brochureUrl && brochureUrl.trim()) {
                     setIsDownloading(true);
                     info('Preparing download...', 1000);
                     
