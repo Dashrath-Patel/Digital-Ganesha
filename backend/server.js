@@ -125,16 +125,24 @@ app.use(cors({
     // Allow requests with no origin (like mobile apps or curl requests)
     if (!origin) return callback(null, true)
     
+    // Get allowed origins from environment variables
     const allowedOrigins = [
+      // Development origins
       'http://localhost:5173',
       'http://localhost:3000',
       'http://127.0.0.1:5173',
       'http://127.0.0.1:3000',
-      'https://digital-ganesha.vercel.app',
-      'https://digital-ganesha-ln80lcszq-dashrath-patels-projects.vercel.app',
+      // Production origins from environment variables
       process.env.FRONTEND_URL,
-      process.env.CORS_ORIGIN
+      process.env.CORS_ORIGIN,
+      process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null,
     ].filter(Boolean) // Remove undefined values
+    
+    // Additional allowed origins from comma-separated env variable
+    if (process.env.ALLOWED_ORIGINS) {
+      const additionalOrigins = process.env.ALLOWED_ORIGINS.split(',').map(origin => origin.trim());
+      allowedOrigins.push(...additionalOrigins);
+    }
     
     if (allowedOrigins.includes(origin)) {
       return callback(null, true)
@@ -145,9 +153,9 @@ app.use(cors({
       return callback(null, true)
     }
     
-    // For production, allow all vercel.app domains for this project
-    if (process.env.NODE_ENV === 'production' && origin && 
-        (origin.includes('digital-ganesha') && origin.includes('vercel.app'))) {
+    // For production, allow Vercel preview deployments if ALLOW_VERCEL_PREVIEWS is true
+    if (process.env.NODE_ENV === 'production' && process.env.ALLOW_VERCEL_PREVIEWS === 'true' && 
+        origin && origin.includes('vercel.app') && origin.includes(process.env.VERCEL_PROJECT_NAME || 'digital-ganesha')) {
       return callback(null, true)
     }
     
