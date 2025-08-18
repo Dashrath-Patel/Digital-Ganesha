@@ -50,14 +50,20 @@ export const AuthProvider = ({ children }) => {
     }
   }, [])
 
-  const login = async (email, password) => {
+  const login = async (email, password, twoFactorToken = null, isBackupCode = false) => {
     try {
       setIsLoading(true)
-      const userData = await authAPI.login(email, password)
-      setUser(userData)
+      const response = await authAPI.login(email, password, twoFactorToken, isBackupCode)
+      
+      // Check if 2FA is required
+      if (response && response.requires2FA) {
+        throw new Error('2FA verification required')
+      }
+      
+      setUser(response)
       // Store user data in localStorage for persistence
-      localStorage.setItem('user', JSON.stringify(userData))
-      return userData
+      localStorage.setItem('user', JSON.stringify(response))
+      return response
     } catch (error) {
       console.error('Login error:', error)
       throw error
