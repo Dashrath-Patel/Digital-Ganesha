@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import Header from '../components/Header'
 import Captcha from '../components/Captcha'
+import TwoFactorLogin from '../components/TwoFactorLogin'
 
 const LoginPage = () => {
   const [formData, setFormData] = useState({
@@ -14,6 +15,7 @@ const LoginPage = () => {
   const [captchaValue, setCaptchaValue] = useState('')
   const [isCaptchaValid, setIsCaptchaValid] = useState(false)
   const [captchaError, setCaptchaError] = useState('')
+  const [requiresTwoFactor, setRequiresTwoFactor] = useState(false)
   const captchaRef = useRef(null)
   const { login } = useAuth()
   const navigate = useNavigate()
@@ -58,16 +60,44 @@ const LoginPage = () => {
     }
 
     try {
-      await login(formData.email, formData.password)
+      const userData = await login(formData.email, formData.password)
+      
+      // Check if 2FA is required
+      if (userData && userData.requires2FA) {
+        setRequiresTwoFactor(true)
+        return
+      }
+      
+      // Login successful
       navigate('/')
       setFormData({ email: '', password: '' })
       setCaptchaValue('')
       setIsCaptchaValid(false)
     } catch (err) {
+      // Handle case where backend returns requires2FA in error response
+      if (err.message.includes('2FA verification required') || err.message.includes('requires2FA')) {
+        setRequiresTwoFactor(true)
+        return
+      }
       setError(err.message)
     } finally {
       setIsLoading(false)
     }
+  }
+
+  const handleTwoFactorComplete = (userData) => {
+    // 2FA login successful
+    navigate('/')
+    setFormData({ email: '', password: '' })
+    setCaptchaValue('')
+    setIsCaptchaValid(false)
+    setRequiresTwoFactor(false)
+  }
+
+  const handleTwoFactorCancel = () => {
+    setRequiresTwoFactor(false)
+    setError('')
+    setIsLoading(false)
   }
 
   return (
@@ -80,27 +110,41 @@ const LoginPage = () => {
         <div className="flex items-center justify-center min-h-[calc(100vh-4rem)] p-4 relative z-10">
                     <div className="bg-red-900/80 backdrop-blur-sm rounded-3xl shadow-2xl w-full max-w-lg border border-yellow-500/30">
             <div className="p-8">
-              {/* Header Section */}
-              <div className="text-center mb-8">
-                <div className="flex justify-between items-center mb-6">
-                  <div></div>
-                  <Link 
-                    to="/signup" 
-                    className="bg-yellow-600/20 hover:bg-yellow-500/30 text-yellow-300 border border-yellow-500/30 px-4 py-2 rounded-lg text-sm font-medium transition-colors backdrop-blur-sm"
-                  >
-                    Sign Up
-                  </Link>
-                </div>
-                
-                <h2 className="text-2xl font-semibold text-yellow-300 mb-2">Welcome Back</h2>
-                <p className="text-yellow-200/80">May Lord Ganesha bless your spiritual journey</p>
-              </div>
+              {requiresTwoFactor ? (
+                /* Two-Factor Authentication Form */
+                <TwoFactorLogin
+                  email={formData.email}
+                  password={formData.password}
+                  onComplete={handleTwoFactorComplete}
+                  onCancel={handleTwoFactorCancel}
+                  isLoading={isLoading}
+                  setIsLoading={setIsLoading}
+                  setError={setError}
+                />
+              ) : (
+                /* Regular Login Form */
+                <>
+                  {/* Header Section */}
+                  <div className="text-center mb-8">
+                    <div className="flex justify-between items-center mb-6">
+                      <div></div>
+                      <Link 
+                        to="/signup" 
+                        className="bg-yellow-600/20 hover:bg-yellow-500/30 text-yellow-300 border border-yellow-500/30 px-4 py-2 rounded-lg text-sm font-medium transition-colors backdrop-blur-sm"
+                      >
+                        Sign Up
+                      </Link>
+                    </div>
+                    
+                    <h2 className="text-2xl font-semibold text-yellow-300 mb-2">Welcome Back</h2>
+                    <p className="text-yellow-200/80">May Lord Ganesha bless your spiritual journey</p>
+                  </div>
 
-              {/* Ganesha Symbol */}
-              <div className="text-center mb-6">
-                <div className="inline-block text-4xl mb-2">🕉️</div>
-                <p className="text-xs text-yellow-200/60 mt-1">Vakratunda Mahakaya Suryakoti Samaprabha</p>
-              </div>
+                  {/* Ganesha Symbol */}
+                  <div className="text-center mb-6">
+                    <div className="inline-block text-4xl mb-2">🕉️</div>
+                    <p className="text-xs text-yellow-200/60 mt-1">Vakratunda Mahakaya Suryakoti Samaprabha</p>
+                  </div>
 
               {error && (
                 <div className="bg-red-800/50 border border-red-500/50 text-red-300 px-4 py-3 rounded-lg mb-6 flex items-center backdrop-blur-sm">
@@ -201,6 +245,8 @@ const LoginPage = () => {
                   <span className="ml-1">🪔</span>
                 </p>
               </div>
+                </>
+              )}
             </div>
           </div>
         </div>
